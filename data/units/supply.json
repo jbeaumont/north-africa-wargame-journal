@@ -12,7 +12,7 @@
       "current_load": 999.0,
       "hex_id": "1001",
       "available_turn": 1,
-      "_note": "Infinite supply — main Axis port and supply terminus"
+      "_note": "Infinite supply \u2014 main Axis port and supply terminus"
     },
     {
       "id": "AX-BENGAZI-PORT",
@@ -120,7 +120,7 @@
       "capacity": 999.0,
       "current_load": 999.0,
       "hex_id": "2201",
-      "_note": "Infinite supply — main Allied base"
+      "_note": "Infinite supply \u2014 main Allied base"
     },
     {
       "id": "AL-ALEXANDRIA-PORT",
@@ -155,7 +155,7 @@
       "supply_type": "fuel",
       "capacity": 80.0,
       "current_load": 80.0,
-      "hex_id": "1910",
+      "hex_id": "1908",
       "available_turn": 1
     },
     {

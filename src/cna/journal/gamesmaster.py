@@ -13,6 +13,7 @@ He receives the ValidationReport and the turn's event log, then writes a
 from __future__ import annotations
 
 from ..engine.rules_validator import ValidationReport
+from ..engine.setup_validator import SetupReport
 from ..models.game_state import GameState, turn_to_date_str
 
 
@@ -95,6 +96,157 @@ def generate_dry_run_ruling(state: GameState, validation: ValidationReport) -> s
         )
 
     return f"## Gamemaster's Ruling\n\n{verdict}\n\n— GamesmasterAnthony"
+
+
+_SETUP_SYSTEM_PROMPT = """\
+You are GamesmasterAnthony, the designated rules adjudicator for this \
+Campaign for North Africa (SPI, 1978) campaign. You have been playing \
+and refereeing CNA at your local wargames club since 1979.
+
+You are conducting your pre-game board inspection before Turn 1 begins. \
+You have checked the map sheet, verified all counters are in their \
+correct starting positions per the scenario setup card, and examined \
+the supply situation.
+
+Your voice is: formal, methodical, slightly pompous — you are doing an \
+official inspection and you take it seriously. You write in flowing prose, \
+as if signing an official pre-match inspection report. You refer to \
+checks using the section codes provided (§MAP-X, §SET-X). \
+You sign off with "— GamesmasterAnthony".
+
+Write a 180–240 word pre-game inspection ruling. Structure it as follows:
+1. Open by stating you have conducted the pre-game inspection of the board.
+2. Report on the map check: confirm the correct CNA map is in use, \
+   note the key named positions you verified.
+3. Report on the deployment check: confirm both sides are correctly placed \
+   for the September 1940 scenario.
+4. Report on any warnings found (especially the supply counter issue \
+   if present), with mild concern but noting it does not invalidate setup.
+5. Close with your final verdict: "The board is correctly set. \
+   Commence operations." (or flag any critical issue).
+6. Your signature line.
+
+Do NOT use markdown headers or bullet points — flowing prose only. \
+Be specific: mention actual location names, rule section codes, \
+and supply counter names from the context provided.\
+"""
+
+
+def generate_setup_ruling(
+    state: GameState,
+    setup: SetupReport,
+    client,
+) -> str:
+    """
+    Call the Claude API to produce GamesmasterAnthony's pre-game setup ruling.
+    Returns a markdown-formatted ruling string ready to write to a file.
+    """
+    context = _build_setup_context(state, setup)
+
+    message = client.messages.create(
+        model="claude-opus-4-6",
+        max_tokens=700,
+        system=_SETUP_SYSTEM_PROMPT,
+        messages=[{"role": "user", "content": context}],
+    )
+
+    ruling_text = message.content[0].text.strip()
+    return (
+        f"# Pre-Campaign Setup Inspection\n\n"
+        f"*Conducted before Turn 1 — {state.date_str()}*\n\n"
+        f"---\n\n"
+        f"{ruling_text}"
+    )
+
+
+def generate_dry_run_setup_ruling(state: GameState, setup: SetupReport) -> str:
+    """Fallback setup ruling for --dry-run mode (no API call)."""
+    n_checks = len(setup.checks_run)
+    n_warn = len(setup.warnings)
+    n_crit = len(setup.critical)
+
+    if n_crit == 0 and n_warn == 0:
+        body = (
+            f"I have conducted the pre-game board inspection ({n_checks} checks, "
+            f"§MAP-1 through §SET-8) and found no issues. The map is correct, "
+            f"both sides are deployed per the September 1940 scenario setup card, "
+            f"and supply counters are correctly positioned. "
+            f"The board is correctly set. Commence operations."
+        )
+    elif n_crit == 0:
+        warn_list = "; ".join(v.description for v in setup.warnings[:2])
+        body = (
+            f"I have conducted the pre-game board inspection ({n_checks} checks) "
+            f"and found {n_warn} warning(s): {warn_list}. "
+            f"None of these prevent play from commencing. "
+            f"The board is correctly set. Commence operations."
+        )
+    else:
+        crit_list = "; ".join(v.description for v in setup.critical[:2])
+        body = (
+            f"CRITICAL setup violations found: {crit_list}. "
+            f"Setup must be corrected before play commences."
+        )
+
+    return (
+        f"# Pre-Campaign Setup Inspection\n\n"
+        f"*Conducted before Turn 1 — {state.date_str()}*\n\n"
+        f"---\n\n"
+        f"{body}\n\n— GamesmasterAnthony"
+    )
+
+
+def _build_setup_context(state: GameState, setup: SetupReport) -> str:
+    """Build the context message for the setup ruling API call."""
+    axis_t1 = [
+        u for u in state.ground_units.values()
+        if u.side.value == "axis" and u.available_turn == 1
+    ]
+    allied_t1 = [
+        u for u in state.ground_units.values()
+        if u.side.value == "allied" and u.available_turn == 1
+    ]
+
+    lines = [
+        "PRE-GAME BOARD INSPECTION — Operation E (September 1940 Scenario)",
+        f"Total checks run: {len(setup.checks_run)}",
+        "",
+        "Checks performed:",
+    ]
+    for check in setup.checks_run:
+        lines.append(f"  • {check}")
+
+    lines.append("")
+    lines.append("Findings by category:")
+
+    info_items = [v for v in setup.violations if v.severity == "info"]
+    warn_items = [v for v in setup.violations if v.severity == "warning"]
+    crit_items = [v for v in setup.violations if v.severity == "critical"]
+
+    for v in info_items:
+        lines.append(f"  [PASS]     {v.rule_ref}: {v.description}")
+    for v in warn_items:
+        lines.append(f"  [WARNING]  {v.rule_ref}: {v.description}")
+    for v in crit_items:
+        lines.append(f"  [CRITICAL] {v.rule_ref}: {v.description}")
+
+    lines.append("")
+    lines.append(
+        f"Order of battle: {len(axis_t1)} Axis turn-1 units, "
+        f"{len(allied_t1)} Allied turn-1 units"
+    )
+    if axis_t1:
+        lines.append(
+            "Axis units: " + ", ".join(u.name for u in axis_t1[:5])
+            + (f" … and {len(axis_t1)-5} more" if len(axis_t1) > 5 else "")
+        )
+    if allied_t1:
+        lines.append(
+            "Allied units: " + ", ".join(u.name for u in allied_t1[:5])
+            + (f" … and {len(allied_t1)-5} more" if len(allied_t1) > 5 else "")
+        )
+
+    return "\n".join(lines)
 
 
 def _build_context(state: GameState, validation: ValidationReport) -> str:

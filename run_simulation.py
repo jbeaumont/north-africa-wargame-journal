@@ -45,9 +45,13 @@ from cna.models.game_state import GameState, turn_to_date_str
 from cna.models.counter import Side
 from cna.engine.turn import process_turn
 from cna.engine.rules_validator import validate_turn
+from cna.engine.setup_validator import validate_setup
 from cna.journal.generator import generate_journal_entry
-from cna.journal.gamesmaster import generate_gamesmaster_ruling, generate_dry_run_ruling
-from cna.journal.formatter import write_journal_entry, write_master_index
+from cna.journal.gamesmaster import (
+    generate_gamesmaster_ruling, generate_dry_run_ruling,
+    generate_setup_ruling, generate_dry_run_setup_ruling,
+)
+from cna.journal.formatter import write_journal_entry, write_master_index, JOURNAL_DIR
 
 
 def build_initial_state() -> GameState:
@@ -181,6 +185,74 @@ def run_simulation(
         print(f"\nSimulation complete. {len(completed)} turns processed.")
 
 
+def _run_setup_inspection(
+    state: GameState,
+    dry_run: bool,
+    verbose: bool,
+) -> None:
+    """
+    Run the pre-campaign setup inspection and write the ruling to
+    journal/setup_ruling.md.  Halts on critical violations.
+    """
+    import anthropic as anthropic_module
+
+    if verbose:
+        print(f"\n{'='*60}")
+        print(f"  PRE-CAMPAIGN SETUP INSPECTION")
+        print(f"  GamesmasterAnthony checking the board...")
+        print(f"{'='*60}")
+
+    setup = validate_setup(state)
+
+    if verbose:
+        print(f"  Checks run: {len(setup.checks_run)}")
+        if setup.warnings:
+            for w in setup.warnings:
+                print(f"  [WARNING] {w.rule_ref}: {w.description}")
+        if setup.infos:
+            print(f"  {len(setup.infos)} checks passed cleanly")
+
+    if not setup.passed:
+        print(f"\n{'!'*60}")
+        print(f"  SETUP VIOLATION — cannot start simulation")
+        print(f"{'!'*60}")
+        for v in setup.critical:
+            print(f"  [CRITICAL] {v.rule_ref}: {v.description}")
+        print("\nCorrect the setup errors above and re-run.")
+        sys.exit(1)
+
+    # Generate the ruling
+    if dry_run:
+        ruling_text = generate_dry_run_setup_ruling(state, setup)
+    else:
+        if verbose:
+            print(f"  Generating setup ruling via Claude API...")
+        api_key = os.environ.get("ANTHROPIC_API_KEY")
+        if not api_key:
+            ruling_text = generate_dry_run_setup_ruling(state, setup)
+        else:
+            try:
+                client = anthropic_module.Anthropic(api_key=api_key)
+                ruling_text = generate_setup_ruling(state, setup, client)
+            except Exception as e:
+                print(f"  WARNING: Setup ruling API call failed ({e}), using fallback")
+                ruling_text = generate_dry_run_setup_ruling(state, setup)
+
+    # Write to journal/setup_ruling.md
+    JOURNAL_DIR.mkdir(parents=True, exist_ok=True)
+    setup_path = JOURNAL_DIR / "setup_ruling.md"
+    setup_path.write_text(ruling_text, encoding="utf-8")
+
+    if verbose:
+        warn_note = (
+            f" ({len(setup.warnings)} warning(s) noted)"
+            if setup.warnings else " (all clear)"
+        )
+        print(f"  Setup inspection complete{warn_note}")
+        print(f"  Written: {setup_path.name}")
+    print()
+
+
 def _generate_dry_run_entry(turn: int, state: GameState, supply_report) -> str:
     """Generate a placeholder journal entry for --dry-run mode."""
     date_str = turn_to_date_str(turn)
@@ -245,6 +317,10 @@ def main() -> None:
     print()
 
     state = build_initial_state()
+
+    # === SETUP INSPECTION (Turn 1 only) ===
+    if args.start == 1:
+        _run_setup_inspection(state, args.dry_run, not args.quiet)
 
     # Fast-forward state to start_turn (skip processing; just advance turn counter)
     if args.start > 1:

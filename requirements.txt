@@ -1,0 +1,4 @@
+anthropic>=0.40.0
+dataclasses-json>=0.6.0
+pytest>=8.0
+pytest-cov>=5.0

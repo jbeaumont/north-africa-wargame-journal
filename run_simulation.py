@@ -28,6 +28,15 @@ import sys
 import time
 from pathlib import Path
 
+# Load .env if present
+_env_file = Path(__file__).parent / ".env"
+if _env_file.exists():
+    for _line in _env_file.read_text().splitlines():
+        _line = _line.strip()
+        if _line and not _line.startswith("#") and "=" in _line:
+            _k, _, _v = _line.partition("=")
+            os.environ.setdefault(_k.strip(), _v.strip())
+
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 

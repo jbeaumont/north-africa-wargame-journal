@@ -12,6 +12,7 @@ from pathlib import Path
 
 from ..models.game_state import GameState, turn_to_date_str
 from ..models.counter import Side, UnitStatus
+from .map_renderer import render_ascii_map
 
 
 JOURNAL_DIR = Path(__file__).parent.parent.parent.parent / "journal"
@@ -35,8 +36,17 @@ def write_journal_entry(
     filepath = journal_dir / filename
 
     frontmatter = _build_frontmatter(turn, state)
+    map_block = render_ascii_map(state)
     sidebar = _build_sidebar(state)
-    content = frontmatter + "\n\n" + entry_text + "\n\n---\n\n" + sidebar
+    content = (
+        frontmatter
+        + "\n\n"
+        + map_block
+        + "\n\n"
+        + entry_text
+        + "\n\n---\n\n"
+        + sidebar
+    )
 
     filepath.write_text(content, encoding="utf-8")
     return filepath

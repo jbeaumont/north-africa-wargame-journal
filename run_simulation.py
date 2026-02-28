@@ -53,6 +53,7 @@ from cna.journal.gamesmaster import (
 )
 from cna.journal.commanders import (
     generate_commander_update, generate_dry_run_commander_update,
+    generate_journal_contribution, generate_dry_run_journal_contribution,
     write_commander_doc,
 )
 from cna.journal.board_reporter import (
@@ -173,8 +174,32 @@ def run_simulation(
                 print(f"  WARNING: Ruling API call failed ({e}), using dry-run fallback")
                 ruling = generate_dry_run_ruling(state, validation)
 
+        # === PLAYER JOURNAL CONTRIBUTIONS ===
+        axis_notes = ""
+        allied_notes = ""
+        for side, attr in ((Side.AXIS, "axis_notes"), (Side.ALLIED, "allied_notes")):
+            side_label = side.value.title()
+            if dry_run:
+                notes = generate_dry_run_journal_contribution(state, side)
+            else:
+                if verbose:
+                    print(f"  Generating {side_label} player notes...")
+                try:
+                    notes = generate_journal_contribution(state, side, client=client)
+                except Exception as e:
+                    print(f"  WARNING: {side_label} player notes API call failed ({e}), "
+                          f"using fallback")
+                    notes = generate_dry_run_journal_contribution(state, side)
+            if side == Side.AXIS:
+                axis_notes = notes
+            else:
+                allied_notes = notes
+
         # === WRITE JOURNAL TO FILE ===
-        filepath = write_journal_entry(turn, entry_text, state, ruling=ruling)
+        filepath = write_journal_entry(
+            turn, entry_text, state, ruling=ruling,
+            axis_notes=axis_notes, allied_notes=allied_notes,
+        )
         if verbose:
             print(f"  Written: {filepath.name}")
 

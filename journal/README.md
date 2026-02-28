@@ -13,4 +13,4 @@ the 1978 SPI wargame widely regarded as the most complex board game ever created
 
 | Turn | Date | Preview |
 |------|------|---------|
-| [1](turn_001_1940-09-09.md) | 09 September 1940 | # Journal Entry — Turn 1, Week of 9 September 1940... |
+| [1](turn_001_1940-09-09.md) | 09 September 1940 | ## Campaign for North Africa — Turn 1 Session Notes (09 September 1940)... |

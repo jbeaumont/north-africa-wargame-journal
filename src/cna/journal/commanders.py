@@ -1,17 +1,17 @@
 """
-Strategic commander agents for The Campaign for North Africa simulation.
+Strategic player agents for The Campaign for North Africa simulation.
 
 Two player-side agents, one per side, each maintaining a living markdown
-document that accumulates strategic doctrine across the campaign.
+document that accumulates strategic notes across the campaign.
 
 Each turn they receive:
   - Their side's full supply and unit situation
   - A summary of observable enemy activity
-  - Their existing doctrine document (current assessment + last 3 lessons)
+  - Their existing notes (current assessment + last 3 turn lessons)
 
 They output:
-  - An updated Current Strategic Assessment (what matters right now)
-  - A new Turn Lesson entry (what was learned this turn)
+  - An updated Current Assessment (what matters right now)
+  - A new Turn Note entry (what was learned this turn)
 
 The documents are stored as:
   journal/axis_commander.md
@@ -19,13 +19,13 @@ The documents are stored as:
 
 Characters
 ----------
-Axis:  GeneraleD'Amico — Italian 10th Army commander (later HQ liaison
-       for DAK).  Analytical, formal, learning the brutal economics of
-       desert logistics the hard way.
+Axis:  Phil — club member playing the Axis side.  Experienced CNA player.
+       Analytical about supply math, treats Italian logistics as a puzzle
+       to solve rather than a tragedy to suffer through.
 
-Allied: BrigadierHartington — Western Desert Force staff officer.
-        Methodical, dry, tracks Axis supply problems as intelligence,
-        waits for the right moment to commit armour.
+Allied: Terry — club member playing the Allied side.  Patient and
+        methodical.  Reads a lot of Western Desert history.  Knows the
+        early game is quiet and waits for the right moment.
 """
 
 from __future__ import annotations
@@ -38,61 +38,49 @@ from ..models.game_state import GameState, turn_to_date_str
 
 JOURNAL_DIR = Path("journal")
 
-# ── Commander character definitions ──────────────────────────────────────────
+# ── Player character definitions ──────────────────────────────────────────────
 
 _AXIS_SYSTEM = """\
-You are GeneraleD'Amico, senior staff officer and strategic advisor to \
-the Italian 10th Army in the Western Desert, September 1940 onward.
+You are Phil, playing the Axis side in a Campaign for North Africa (SPI, 1978) \
+campaign at a wargames club. You've played CNA before and know what you're in for.
 
-You are playing the Axis side in a Campaign for North Africa (SPI, 1978) \
-simulation. Your goal is to WIN — to capture Alexandria, Cairo, and the \
-Suez Canal. You reason analytically about how to achieve this.
-
-Key facts you are learning about CNA:
-- Fuel evaporates each turn (3% for Italian, less for German when they arrive)
-- Water consumption is tracked per Operations Stage
-- Italian infantry require a pasta ration or suffer cohesion penalties
+Key mechanics you're managing:
+- Fuel evaporates each turn (3% Italian, lower for Germans when they arrive)
+- Water is tracked per Operations Stage — units that run dry lose combat effectiveness
+- Italian infantry need a pasta ration allocation or they take cohesion hits (§38.5)
 - Supply lines must be within 5 hexes of a depot or units go out of supply
-- The DAK (German Africa Korps) arrives at Turn 14 — they are more mobile \
-  and less dependent on pasta
-- Tobruk (hex 1701) is a critical port for advancing supply eastward
-- The Axis starts with more units but worse logistics than the Allies
+- The DAK arrives at Turn 14 — better logistics, no pasta dependency
+- Tobruk port (hex 1701) is essential for pushing supply east
+- The Axis has more units but Italian logistics are genuinely fragile
 
-Your voice: formal, military, precise. You cite unit names, hex positions, \
-and supply figures when you have them. When you are losing, you acknowledge \
-it and find the root cause. You do not make excuses — you adapt.
-
-Write in the first person as a staff officer writing an internal assessment, \
-not a public communiqué. Italian or German phrases are fine occasionally.\
+Write as a player thinking through the game. Talk about units by name, \
+cite hex positions, reason through supply math. Reference historical context \
+when it's interesting background, not as immersion. Voice: analytical, \
+occasionally dry about the Italian supply situation, focused on solving the \
+logistics puzzle. First person, game-club voice.\
 """
 
 _ALLIED_SYSTEM = """\
-You are BrigadierHartington, Western Desert Force senior planning officer, \
-September 1940 onward.
+You are Terry, playing the Allied side in a Campaign for North Africa (SPI, 1978) \
+campaign at a wargames club. You've read a lot about the Western Desert campaign. \
+You know the early game is quiet for your side.
 
-You are playing the Allied side in a Campaign for North Africa (SPI, 1978) \
-simulation. Your goal is to WIN — to destroy the Axis forces and prevent \
-the fall of Cairo and the Suez Canal. You reason analytically about how \
-to achieve this.
-
-Key facts you are learning about CNA:
-- Allied supply evaporates at 7% per turn (worse than Axis 3%)
+Key mechanics you're managing:
+- Allied supply evaporates at 7% per turn (worse than Axis — worth watching)
 - Cairo (hex 2201) and Alexandria (hex 2001) are infinite supply bases — \
-  protecting these is existential
-- The Italian 10th Army is numerically superior but logistically fragile — \
-  their pasta rule and fuel problems are exploitable
-- German reinforcements (DAK) arrive at Turn 14 and change the equation
-- Mersa Matruh (hex 1801) and El Alamein (hex 1902) are natural defensive \
-  positions to hold
-- The Qattara Depression anchors your southern flank — no need to defend it
-- Allied armour (7th Armoured) is your primary mobile offensive weapon
+  protecting these is non-negotiable
+- Italian 10th Army is larger but logistically fragile — pasta rule, fuel \
+  evaporation, and OOS attrition all work against Phil
+- DAK arrives at Turn 14 and changes the balance — that's the clock running
+- Mersa Matruh (hex 1801) and El Alamein (hex 1902) are your natural defense lines
+- Qattara Depression (hex 1910) locks your southern flank — free anchor
+- 7th Armoured is your main mobile strike force — wait for the right moment
 
-Your voice: clipped, precise British military prose. Occasionally dry. \
-You cite supply figures, unit positions, and force ratios. When you are \
-losing, you diagnose why and pivot — no sentiment, just doctrine revision.
-
-Write in the first person as a staff officer writing an internal planning \
-assessment for the campaign archive.\
+Write as a player thinking through the game. Talk about units by name, \
+reason through positions and force ratios, note what you're watching. \
+Reference historical parallels as interesting background context. Voice: patient, \
+methodical, occasionally dry about watching Phil's supply situation deteriorate. \
+First person, game-club voice.\
 """
 
 _UPDATE_PROMPT = """\
@@ -174,9 +162,9 @@ def _side_title(side: Side) -> str:
 
 def _commander_name(side: Side) -> str:
     return (
-        "GeneraleD'Amico — Italian 10th Army / Axis Liaison"
+        "Phil — playing Axis"
         if side == Side.AXIS
-        else "BrigadierHartington — Western Desert Force"
+        else "Terry — playing Allied"
     )
 
 
@@ -392,6 +380,103 @@ def _parse_response(text: str, turn: int, date: str) -> tuple[str, str]:
 
 
 # ── Public API ────────────────────────────────────────────────────────────────
+
+_JOURNAL_CONTRIBUTION_PROMPT = """\
+It is Turn {turn} — {date}.  Write your player notes for this turn's journal entry.
+
+{side_label} side.  Active units: {my_active}.  OOS: {my_oos}.
+{pasta_line}\
+Supply snapshot: {supply_snapshot}
+Notable events: {my_events}
+
+Write 110–140 words in your own voice — what you observed this turn, what you're \
+thinking about for next turn, what the mechanics gave or took from you. \
+Be specific: name units, cite hex positions or supply figures. \
+No dramatic language. No character immersion. Just a player's honest notes.
+
+IMPORTANT: Do NOT start with a date header, bold text header, or any markdown \
+heading. Start directly with your notes. End with a complete sentence.\
+"""
+
+
+def generate_journal_contribution(
+    state: GameState,
+    side: Side,
+    client,
+) -> str:
+    """
+    Generate a short (100-130 word) player-notes section for inclusion in
+    the main turn journal.  Returns plain text (no markdown headers).
+    """
+    date = turn_to_date_str(state.turn)
+    side_label = "Axis (Phil)" if side == Side.AXIS else "Allied (Terry)"
+    system = _AXIS_SYSTEM if side == Side.AXIS else _ALLIED_SYSTEM
+
+    my_units = state.active_units_for_side(side)
+    my_oos = [
+        u.name for u in my_units
+        if u.id in state.supply_lines and not state.supply_lines[u.id].in_supply
+    ]
+    my_events_raw = [
+        e.description for e in state.events
+        if e.severity in ("notable", "critical")
+        and any(u_id in [u.id for u in my_units] for u_id in e.unit_ids)
+    ]
+
+    pasta_line = ""
+    if side == Side.AXIS and state.supply_report and state.supply_report.pasta_deprived_units:
+        pasta_line = (
+            f"Pasta-deprived: {', '.join(state.supply_report.pasta_deprived_units[:3])}\n"
+        )
+
+    supply_snapshot = "(no data)"
+    if state.supply_report:
+        sr = state.supply_report
+        parts = [f"fuel evaporated {sr.fuel_evaporated:.1f} pts"]
+        if sr.out_of_supply_units:
+            parts.append(f"{len(sr.out_of_supply_units)} unit(s) OOS")
+        supply_snapshot = ", ".join(parts)
+
+    events_text = (
+        "; ".join(my_events_raw[:4]) if my_events_raw else "(none notable)"
+    )
+
+    prompt = _JOURNAL_CONTRIBUTION_PROMPT.format(
+        turn=state.turn,
+        date=date,
+        side_label=side_label,
+        my_active=len(my_units),
+        my_oos=", ".join(my_oos[:4]) if my_oos else "none",
+        pasta_line=pasta_line,
+        supply_snapshot=supply_snapshot,
+        my_events=events_text,
+    )
+
+    message = client.messages.create(
+        model="claude-opus-4-6",
+        max_tokens=350,
+        system=system,
+        messages=[{"role": "user", "content": prompt}],
+    )
+    return message.content[0].text.strip()
+
+
+def generate_dry_run_journal_contribution(state: GameState, side: Side) -> str:
+    """Fallback for --dry-run mode."""
+    date = turn_to_date_str(state.turn)
+    label = "Phil (Axis)" if side == Side.AXIS else "Terry (Allied)"
+    my_units = state.active_units_for_side(side)
+    my_oos = [
+        u.name for u in my_units
+        if u.id in state.supply_lines and not state.supply_lines[u.id].in_supply
+    ]
+    return (
+        f"[DRY RUN — {label}] Turn {state.turn} ({date}): "
+        f"{len(my_units)} units active, "
+        + (f"{len(my_oos)} OOS ({', '.join(my_oos[:2])}). " if my_oos else "all in supply. ")
+        + "No API call made."
+    )
+
 
 def generate_commander_update(
     state: GameState,

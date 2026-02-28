@@ -24,10 +24,16 @@ def write_journal_entry(
     state: GameState,
     journal_dir: Path = JOURNAL_DIR,
     ruling: str = "",
+    axis_notes: str = "",
+    allied_notes: str = "",
 ) -> Path:
     """
     Write a journal entry to journal/turn_NNN_YYYY-MM-DD.md.
     Returns the path of the written file.
+
+    axis_notes / allied_notes: short player-perspective contributions from
+    Phil (Axis) and Terry (Allied).  Inserted between the session notes and
+    the stats sidebar.
     """
     journal_dir.mkdir(parents=True, exist_ok=True)
 
@@ -40,7 +46,17 @@ def write_journal_entry(
     map_block = render_map(state, turn, journal_dir)
     sidebar = _build_sidebar(state)
 
-    parts = [frontmatter, map_block, entry_text, "---", sidebar]
+    parts = [frontmatter, map_block, entry_text]
+
+    if axis_notes or allied_notes:
+        player_section = "---\n\n### Player Notes"
+        if axis_notes:
+            player_section += f"\n\n**Phil (Axis):** {axis_notes}"
+        if allied_notes:
+            player_section += f"\n\n**Terry (Allied):** {allied_notes}"
+        parts.append(player_section)
+
+    parts += ["---", sidebar]
     if ruling:
         parts.append("---")
         parts.append(ruling)

@@ -1,6 +1,6 @@
 # Axis Commander's Strategic Journal
 
-*GeneraleD'Amico — Italian 10th Army / Axis Liaison*
+*Phil — playing Axis*
 
 ---
 
@@ -8,13 +8,13 @@
 
 *Updated Turn 1 — 09 September 1940*
 
-The campaign opens with serious logistical deficiencies that must be rectified before any eastward advance is contemplated. Of twenty active units, three are out of supply — 141st Infantry Regiment 'Catanzaro', 2nd Libyan Infantry Division HQ, and 3rd Libyan Infantry Regiment — and three additional regiments of the newly arriving Cirene and Marmarica divisions are already pasta-deprived, meaning degraded cohesion before a single shot is fired. This is unacceptable.
+Turn 1 and the logistics picture is exactly as bad as expected, just in specific ways I need to address before anything else. Twenty fuel points gone to evaporation before a single truck moves — that's the Italian 3% tax on existence. Alpha at 1405 dropped to 78/80, Beta at 59/60, and the rest bled from the Tripoli-Benghazi pipeline. This rate compounds every turn, so fuel sitting in dumps is fuel dying.
 
-Fuel evaporation of 20.3 points on Turn 1 represents roughly 25% of Fuel Dump Beta's entire capacity. At this rate, we cannot sustain mobile operations beyond the Libyan frontier without establishing forward dumps immediately.
+The three out-of-supply units — 141st 'Catanzaro', 2nd Libyan HQ, 3rd Libyan Regiment — are clearly positioned between Benghazi at 1201 and Alpha at 1405 but outside the 5-hex trace to either. I need to either establish a tertiary dump around hex 1302-1303 or consolidate these units toward Alpha. Moving them is cheaper than splitting another fuel dump that evaporates independently.
 
-The British disposition — 7th Armoured Division concentrated around hexes 2009-2011, 4th Indian Division at 2015 — indicates a screening force approximately 600 kilometers east. They are weak but mobile.
+The pasta crisis is my real emergency. Three regiments arrived with cohesion hits. The 125th, 126th 'Cirene' and 115th 'Marmarica' need explicit ration allocation this Administrative Phase — §38.5 doesn't auto-feed arrivals. If I let this slide another turn, I'm degrading combat power on units that haven't seen a British soldier.
 
-Immediate priority: consolidate supply lines from Benghazi (1201) forward to the 10th Army concentration at 1405. No unit advances until the out-of-supply and pasta situations are resolved. Logistics before glory.
+The British at 2009-2015 are screening with 7th Armoured and 4th Indian. Eight units, light and fast. They won't attack. My priority is not engaging them — it's building a supply architecture that can sustain Graziani's advance when Rome demands it around Turn 4-5.
 
 ---
 
@@ -22,9 +22,9 @@ Immediate priority: consolidate supply lines from Benghazi (1201) forward to the
 
 ### Turn 1 — 09 September 1940
 
-Three critical findings. First, Benghazi depot at 120/200 capacity is dangerously under-stocked to support the forward army. Units arriving at hexes 1404-1406 are at the extreme edge of the five-hex supply radius from Fuel Dump Alpha (1405), but the Libyan units further afield have fallen outside coverage entirely. The 141st 'Catanzaro' and 2nd Libyan Division HQ must be pulled within range of Dump Alpha or a new subsidiary dump established.
+Three operational failures confirmed, all logistics, all preventable. First: fuel evaporation cost me 20.3 points across all dumps. Alpha and Beta lost 2 and 1 respectively; the bulk came from Tripoli depot stocks and transit losses. The lesson is that every fuel dump is a leaking bucket — I should consolidate rather than proliferate dumps, and never stockpile fuel I'm not using within two turns.
 
-Second, pasta deprivation affecting 125th and 126th 'Cirene' and 115th 'Marmarica' on their arrival turn confirms that ration allocation must be pre-positioned before units enter the map. This is a planning failure at army level. I am directing the quartermaster to dedicate transport capacity to pasta stocks before ammunition redistribution.
+Second: the 141st 'Catanzaro' and both Libyan units are out of supply because their positions fall in the gap between Benghazi at 1201 and Alpha at 1405. Five-hex trace doesn't reach. The fix is moving these units to within range of Alpha during movement, not creating another dump to evaporate. Unit repositioning is free; new dumps cost fuel I'm already losing.
 
-Third, 20.3 fuel points evaporated — effectively lost to the desert heat. Every turn of delay costs us irreplaceable mobility. We must minimize fuel stockpile exposure by consuming forward rather than hoarding.
+Third and most critical: pasta allocation under §38.5 must be explicitly queued during the Administrative Phase for all Italian infantry, including fresh arrivals. The 125th, 126th, and 115th arrived hungry. This is a bookkeeping discipline problem. I'm adding pasta checks to my pre-movement checklist permanently.
 

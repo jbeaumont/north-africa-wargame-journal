@@ -1,6 +1,6 @@
 # Allied Commander's Strategic Journal
 
-*BrigadierHartington — Western Desert Force*
+*Terry — playing Allied*
 
 ---
 
@@ -8,11 +8,13 @@
 
 *Updated Turn 1 — 09 September 1940*
 
-Western Desert Force is now on the map in reasonable order. Eight units concentrated between hexes 2009 and 2015, all in supply, with forward fuel dumps at 2010 (98/100) and 1908 (78/80). Cairo depot at 985/999 and Alexandria at 250/300 give us adequate depth. The 7% evaporation rate has already cost us 20.3 points — this will compound mercilessly if we push dumps too far west too early.
+Right. Turn 1, September 1940, and we're exactly where O'Connor was historically — watching a large but clumsy Italian force assembling around Bardia and points west while we hold the desert with a screening force that couldn't stop a determined push if one came. But it won't. Not yet.
 
-The Italian 10th Army is deploying around hex 1405 with approximately 20 units. Three enemy units are already out of supply — 141st Infantry "Catanzaro" and elements of 2nd Libyan Division. This is significant. Their logistics are failing before they have even advanced. The gap between our forward screen and their concentration area is roughly six hexes — adequate buffer.
+Eight units on the map now. 7th Armoured Division is concentrating nicely around hex 2009-2011 with 4th and 7th Armoured Brigades flanking the HQ and 4th RHA co-located at 2010 for artillery support. That's my mobile fist — I don't spend it cheaply. 4th Indian Division HQ at 2015 anchors the southern approach toward Qattara.
 
-Immediate priority: do not advance. Hold 7th Armoured between 2009-2011 as a mobile screen. Let Italian supply problems deepen. Preserve every fuel point. The Qattara Depression secures our southern flank without expenditure. We fight this war on the logistics table first.
+Immediate priority: conservation. Zero units out of supply, but 20.3 fuel points already evaporated — that 7% Allied rate is gnawing at Forward Fuel Dump Alpha (98/100 at 2010) and Beta (78/80 at 1908) every single turn. Meanwhile Phil's already got Catanzaro's 141st Regiment and two Libyan formations out of supply on Turn 1. The pasta is going stale before Graziani even moves. I'm watching 63rd Cirene assembling at 1404-1406 and 62nd Marmarica at 1505-1506 with professional interest and genuine amusement. Screen, conserve, let the rot spread.
+
+Critical pressure: don't overextend before Compass. Keep 7th Armoured concentrated. DAK arrives Turn 14 — distant but the clock is real.
 
 ---
 
@@ -20,9 +22,9 @@ Immediate priority: do not advance. Hold 7th Armoured between 2009-2011 as a mob
 
 ### Turn 1 — 09 September 1940
 
-Confirmed: Italian supply fragility is real and exploitable from day one. Three enemy units out of supply at turn of entry — 141st Infantry "Catanzaro," 2nd Libyan Division HQ, and 3rd Libyan Infantry Regiment — before a single shot fired. Their pasta ration requirements and extended lines from Tripoli are already telling. This is the structural weakness we must compound, not relieve by forcing them to concentrate defensively.
+Confirmed the fundamental early-game dynamic: I'm outnumbered roughly 19 to 8 but my supply chain is intact while Phil's is already fraying. Three Italian units OOS on Turn 1 — 141st Infantry Regiment Catanzaro, 2nd Libyan Division HQ, and 3rd Libyan Infantry Regiment — are bleeding combat effectiveness before a shot is fired. That's the game rewarding patience.
 
-Our own 20.3-point evaporation is a warning. Forward Dump Beta at 1908 lost 2 points to 78/80 — acceptable now, ruinous if we establish further western dumps prematurely. Every fuel point forwarded past the Matruh line (hex 1801) must justify itself against the 7% bleed.
+Supply math to track: Forward Fuel Dump Alpha at 2010 dropped to 98/100, Beta at 1908 at 78/80. Cairo base at 985/999, Alexandria at 250/300. At 7% evaporation Alpha loses roughly 7 points per turn — it becomes operationally marginal around Turn 8 without resupply. I need to plan consumption windows around Compass timing.
 
-Root principle established: time favours us against the Italians. It will not favour us after Turn 14 when the DAK arrives. We have thirteen turns to destroy the 10th Army or make its position untenable. Clock starts now.
+Force disposition is sound. WDF HQ at 2012 provides command radius to 7th Armoured concentrated at 2009-2011 and 4th Indian at 2015. No reason to push forward. Screen, conserve, let Italian supply deteriorate. Time is my ally — for now.
 

@@ -44,7 +44,9 @@ from cna.data.loader import load_all_ground_units, load_all_supply_counters, loa
 from cna.models.game_state import GameState, turn_to_date_str
 from cna.models.counter import Side
 from cna.engine.turn import process_turn
+from cna.engine.rules_validator import validate_turn
 from cna.journal.generator import generate_journal_entry
+from cna.journal.gamesmaster import generate_gamesmaster_ruling, generate_dry_run_ruling
 from cna.journal.formatter import write_journal_entry, write_master_index
 
 
@@ -114,6 +116,20 @@ def run_simulation(
         # === RUN THE TURN ===
         supply_report = process_turn(state)
 
+        # === VALIDATE THE TURN ===
+        validation = validate_turn(state)
+        if not validation.passed:
+            print(f"\n{'!'*60}")
+            print(f"  RULES VIOLATION — Turn {turn} halted")
+            print(f"{'!'*60}")
+            for v in validation.critical:
+                print(f"  [CRITICAL] {v.rule_ref}: {v.description}")
+            print("\nFix the engine bug above and re-run from this turn.")
+            sys.exit(1)
+        if verbose and validation.warnings:
+            print(f"  Rules: {len(validation.warnings)} warning(s) — "
+                  f"passed to GamesmasterAnthony")
+
         if verbose:
             axis_active = len(state.active_units_for_side(Side.AXIS))
             allied_active = len(state.active_units_for_side(Side.ALLIED))
@@ -129,17 +145,25 @@ def run_simulation(
         # === GENERATE JOURNAL ENTRY ===
         if dry_run:
             entry_text = _generate_dry_run_entry(turn, state, supply_report)
+            ruling = generate_dry_run_ruling(state, validation)
         else:
             if verbose:
                 print(f"  Generating journal entry via Claude API...")
             try:
                 entry_text = generate_journal_entry(state, client=client)
             except Exception as e:
-                print(f"  WARNING: API call failed ({e}), using dry-run fallback")
+                print(f"  WARNING: Journal API call failed ({e}), using dry-run fallback")
                 entry_text = _generate_dry_run_entry(turn, state, supply_report)
+            if verbose:
+                print(f"  Generating Gamemaster's Ruling...")
+            try:
+                ruling = generate_gamesmaster_ruling(state, validation, client=client)
+            except Exception as e:
+                print(f"  WARNING: Ruling API call failed ({e}), using dry-run fallback")
+                ruling = generate_dry_run_ruling(state, validation)
 
         # === WRITE TO FILE ===
-        filepath = write_journal_entry(turn, entry_text, state)
+        filepath = write_journal_entry(turn, entry_text, state, ruling=ruling)
         if verbose:
             print(f"  Written: {filepath.name}")
 

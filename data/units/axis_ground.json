@@ -19,7 +19,14 @@
       "pasta_rule": false,
       "initial_hex": "1405",
       "available_turn": 1,
-      "subordinates": ["IT-CIRENE-63INF", "IT-MARMARICA-62INF", "IT-CATANZARO-64INF", "IT-1LIB", "IT-2LIB", "IT-MALETTI"]
+      "subordinates": [
+        "IT-CIRENE-63INF",
+        "IT-MARMARICA-62INF",
+        "IT-CATANZARO-64INF",
+        "IT-1LIB",
+        "IT-2LIB",
+        "IT-MALETTI"
+      ]
     },
     {
       "id": "IT-CIRENE-63INF",
@@ -39,7 +46,11 @@
       "pasta_rule": false,
       "initial_hex": "1405",
       "available_turn": 1,
-      "subordinates": ["IT-CIRENE-125REG", "IT-CIRENE-126REG", "IT-CIRENE-63ART"]
+      "subordinates": [
+        "IT-CIRENE-125REG",
+        "IT-CIRENE-126REG",
+        "IT-CIRENE-63ART"
+      ]
     },
     {
       "id": "IT-CIRENE-125REG",
@@ -119,7 +130,11 @@
       "pasta_rule": false,
       "initial_hex": "1505",
       "available_turn": 1,
-      "subordinates": ["IT-MARMARICA-115REG", "IT-MARMARICA-116REG", "IT-MARMARICA-62ART"]
+      "subordinates": [
+        "IT-MARMARICA-115REG",
+        "IT-MARMARICA-116REG",
+        "IT-MARMARICA-62ART"
+      ]
     },
     {
       "id": "IT-MARMARICA-115REG",
@@ -199,7 +214,10 @@
       "pasta_rule": false,
       "initial_hex": "1308",
       "available_turn": 1,
-      "subordinates": ["IT-CATANZARO-141REG", "IT-CATANZARO-142REG"]
+      "subordinates": [
+        "IT-CATANZARO-141REG",
+        "IT-CATANZARO-142REG"
+      ]
     },
     {
       "id": "IT-CATANZARO-141REG",
@@ -259,7 +277,10 @@
       "pasta_rule": false,
       "initial_hex": "1602",
       "available_turn": 1,
-      "subordinates": ["IT-1LIB-1REG", "IT-1LIB-2REG"]
+      "subordinates": [
+        "IT-1LIB-1REG",
+        "IT-1LIB-2REG"
+      ]
     },
     {
       "id": "IT-1LIB-1REG",
@@ -319,7 +340,10 @@
       "pasta_rule": false,
       "initial_hex": "1610",
       "available_turn": 1,
-      "subordinates": ["IT-2LIB-3REG", "IT-2LIB-4REG"]
+      "subordinates": [
+        "IT-2LIB-3REG",
+        "IT-2LIB-4REG"
+      ]
     },
     {
       "id": "IT-2LIB-3REG",
@@ -337,7 +361,7 @@
       "water_factor": 0.8,
       "ammo_factor": 1.0,
       "pasta_rule": false,
-      "initial_hex": "1611",
+      "initial_hex": "1610",
       "available_turn": 1,
       "subordinates": []
     },
@@ -397,7 +421,7 @@
       "water_factor": 1.0,
       "ammo_factor": 1.0,
       "pasta_rule": false,
-      "initial_hex": "1510",
+      "initial_hex": "1509",
       "available_turn": 1,
       "subordinates": []
     },
@@ -419,7 +443,10 @@
       "pasta_rule": false,
       "initial_hex": "1302",
       "available_turn": 9,
-      "subordinates": ["IT-ARIETE-132TANK", "IT-ARIETE-8BERSAGLIERI"]
+      "subordinates": [
+        "IT-ARIETE-132TANK",
+        "IT-ARIETE-8BERSAGLIERI"
+      ]
     },
     {
       "id": "IT-ARIETE-132TANK",
@@ -479,7 +506,10 @@
       "pasta_rule": false,
       "initial_hex": "1205",
       "available_turn": 12,
-      "subordinates": ["IT-TRIESTE-65REG", "IT-TRIESTE-66REG"]
+      "subordinates": [
+        "IT-TRIESTE-65REG",
+        "IT-TRIESTE-66REG"
+      ]
     },
     {
       "id": "IT-TRIESTE-65REG",
@@ -539,7 +569,10 @@
       "pasta_rule": false,
       "initial_hex": "1202",
       "available_turn": 14,
-      "subordinates": ["GE-5LIGHT", "GE-15PZ"]
+      "subordinates": [
+        "GE-5LIGHT",
+        "GE-15PZ"
+      ]
     },
     {
       "id": "GE-5LIGHT",
@@ -559,7 +592,11 @@
       "pasta_rule": false,
       "initial_hex": "1202",
       "available_turn": 14,
-      "subordinates": ["GE-PZR5", "GE-MG8BTN", "GE-2RECCE"]
+      "subordinates": [
+        "GE-PZR5",
+        "GE-MG8BTN",
+        "GE-2RECCE"
+      ]
     },
     {
       "id": "GE-PZR5",
@@ -639,7 +676,11 @@
       "pasta_rule": false,
       "initial_hex": "1203",
       "available_turn": 22,
-      "subordinates": ["GE-PZR8", "GE-IR115", "GE-33RECCE"]
+      "subordinates": [
+        "GE-PZR8",
+        "GE-IR115",
+        "GE-33RECCE"
+      ]
     },
     {
       "id": "GE-PZR8",
@@ -719,7 +760,11 @@
       "pasta_rule": false,
       "initial_hex": "1205",
       "available_turn": 35,
-      "subordinates": ["GE-IR155", "GE-IR200", "GE-IR361"]
+      "subordinates": [
+        "GE-IR155",
+        "GE-IR200",
+        "GE-IR361"
+      ]
     },
     {
       "id": "GE-IR155",
@@ -799,7 +844,11 @@
       "pasta_rule": false,
       "initial_hex": "1207",
       "available_turn": 50,
-      "subordinates": ["GE-IR125-164", "GE-IR382", "GE-IR433"]
+      "subordinates": [
+        "GE-IR125-164",
+        "GE-IR382",
+        "GE-IR433"
+      ]
     },
     {
       "id": "GE-IR125-164",
@@ -879,7 +928,10 @@
       "pasta_rule": false,
       "initial_hex": "1802",
       "available_turn": 52,
-      "subordinates": ["IT-FOLGORE-186REG", "IT-FOLGORE-187REG"]
+      "subordinates": [
+        "IT-FOLGORE-186REG",
+        "IT-FOLGORE-187REG"
+      ]
     },
     {
       "id": "IT-FOLGORE-186REG",

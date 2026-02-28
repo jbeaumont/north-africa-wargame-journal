@@ -23,6 +23,7 @@ def write_journal_entry(
     entry_text: str,
     state: GameState,
     journal_dir: Path = JOURNAL_DIR,
+    ruling: str = "",
 ) -> Path:
     """
     Write a journal entry to journal/turn_NNN_YYYY-MM-DD.md.
@@ -38,16 +39,13 @@ def write_journal_entry(
     frontmatter = _build_frontmatter(turn, state)
     map_block = render_map(state, turn, journal_dir)
     sidebar = _build_sidebar(state)
-    content = (
-        frontmatter
-        + "\n\n"
-        + map_block
-        + "\n\n"
-        + entry_text
-        + "\n\n---\n\n"
-        + sidebar
-    )
 
+    parts = [frontmatter, map_block, entry_text, "---", sidebar]
+    if ruling:
+        parts.append("---")
+        parts.append(ruling)
+
+    content = "\n\n".join(parts)
     filepath.write_text(content, encoding="utf-8")
     return filepath
 

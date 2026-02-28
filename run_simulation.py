@@ -55,6 +55,9 @@ from cna.journal.commanders import (
     generate_commander_update, generate_dry_run_commander_update,
     write_commander_doc,
 )
+from cna.journal.board_reporter import (
+    generate_board_report, generate_dry_run_board_report, write_board_doc,
+)
 from cna.journal.formatter import write_journal_entry, write_master_index, JOURNAL_DIR
 
 
@@ -192,6 +195,21 @@ def run_simulation(
             cmd_path = write_commander_doc(side, cmd_doc)
             if verbose:
                 print(f"  Updated: {cmd_path.name}")
+
+        # === BOARD STATE REPORT ===
+        if dry_run:
+            board_doc = generate_dry_run_board_report(state)
+        else:
+            if verbose:
+                print(f"  Generating board state report...")
+            try:
+                board_doc = generate_board_report(state, client=client)
+            except Exception as e:
+                print(f"  WARNING: Board report API call failed ({e}), using fallback")
+                board_doc = generate_dry_run_board_report(state)
+        board_path = write_board_doc(board_doc)
+        if verbose:
+            print(f"  Updated: {board_path.name}")
 
         first_line = entry_text.split("\n")[0][:100]
         completed.append((turn, first_line, state))

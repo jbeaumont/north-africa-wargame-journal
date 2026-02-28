@@ -51,6 +51,10 @@ from cna.journal.gamesmaster import (
     generate_gamesmaster_ruling, generate_dry_run_ruling,
     generate_setup_ruling, generate_dry_run_setup_ruling,
 )
+from cna.journal.commanders import (
+    generate_commander_update, generate_dry_run_commander_update,
+    write_commander_doc,
+)
 from cna.journal.formatter import write_journal_entry, write_master_index, JOURNAL_DIR
 
 
@@ -166,10 +170,28 @@ def run_simulation(
                 print(f"  WARNING: Ruling API call failed ({e}), using dry-run fallback")
                 ruling = generate_dry_run_ruling(state, validation)
 
-        # === WRITE TO FILE ===
+        # === WRITE JOURNAL TO FILE ===
         filepath = write_journal_entry(turn, entry_text, state, ruling=ruling)
         if verbose:
             print(f"  Written: {filepath.name}")
+
+        # === COMMANDER STRATEGIC UPDATES ===
+        for side in (Side.AXIS, Side.ALLIED):
+            side_label = side.value.title()
+            if dry_run:
+                cmd_doc = generate_dry_run_commander_update(state, side)
+            else:
+                if verbose:
+                    print(f"  Generating {side_label} commander update...")
+                try:
+                    cmd_doc = generate_commander_update(state, side, client=client)
+                except Exception as e:
+                    print(f"  WARNING: {side_label} commander API call failed ({e}), "
+                          f"using fallback")
+                    cmd_doc = generate_dry_run_commander_update(state, side)
+            cmd_path = write_commander_doc(side, cmd_doc)
+            if verbose:
+                print(f"  Updated: {cmd_path.name}")
 
         first_line = entry_text.split("\n")[0][:100]
         completed.append((turn, first_line, state))

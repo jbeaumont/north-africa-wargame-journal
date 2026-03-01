@@ -1,0 +1,11 @@
+{
+  "rulebook_pdf": {
+    "url": "https://github.com/jbeaumont/jason-s-playground/releases/download/assets-v1/The.Campaign.for.North.Africa.pdf",
+    "description": "The Campaign for North Africa — full rulebook PDF (Land Game, Air & Logistics, Scenarios)",
+    "note": "Too large for git; stored as a GitHub Release asset. Download locally if needed for rule lookups."
+  },
+  "map_image": {
+    "path": "data/map/CNA Map Vassal Mitch Guthrie 2021.png",
+    "description": "Full-resolution Vassal module map by Mitch Guthrie (2021)"
+  }
+}

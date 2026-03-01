@@ -92,6 +92,14 @@ Transcribe the Crusader scenario starting positions from PDF pages 80–85 (alre
 - **Scenario scope:** Land game only until it's solid. Air and naval/logistics modules are planned but deferred. Code should assume they exist (leave hooks) but not implement them yet.
 - **Journal tone:** Factual, low-drama, low-hyperbole. Narrative focus is on *reasoning* — what the commander was trying to do, why, what happened. Not a thriller; more like a staff officer's after-action report with some inner voice.
 
+## Architectural Notes (from PDF pass, 2026-03-01)
+
+- **Multi-stage combat atomicity:** Close assault is a chain — anti-armor fire → loss calculation → close assault → retreat/breakthrough. The Rules Arbiter must receive the *full combat sequence* as a single atomic proposal, not individual steps. Player agents must batch combat proposals accordingly. If any sub-phase is invalid the whole chain rejects.
+- **Formation hierarchy:** Units belong to parent formations (19.0). CP allowances are pooled across a formation's children (6.15); detached units get their own CPA. Board State must maintain formation trees, not a flat unit list, or CP accounting will be wrong.
+- **Arbiter context must be pre-computed:** The arbiter must never calculate context itself. Engine pre-computes and injects: cohesion levels, supply status, active ZOC hexes, weather terrain modifiers, breakdown ratings. Arbiter only pattern-matches against what it receives.
+- **Pasta / prisoners / weather:** Engine complexity already in scope. Pasta rule (52.6) triggers automatic disorganization on missed water ration — engine fires it, not arbiter. Prisoners (28.0) consume stores at 1:5. Weather rolls per OpStage (not per turn).
+- **Optional Supply Tracer:** A lightweight Claude call (not every turn, only on request from player agents) that answers "if I move my corps 12 hexes north, how many turns until supply breaks?" Deferred — not needed for MVP.
+
 ## Open Questions
 
 - **Fog of war implementation:** Does the Allied agent get told *that* enemy units exist in a hex (but not what type), or does it only learn from adjacency/combat contact? CNA has explicit reconnaissance rules (16.0). Decide when we build `player_allied.py`.

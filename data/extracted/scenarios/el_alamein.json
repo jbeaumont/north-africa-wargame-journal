@@ -1,0 +1,596 @@
+{
+  "_meta": {
+    "source": "The Campaign for North Africa (SPI, 1979) — Scenario Group Four, Case 63.0",
+    "source_pages": "84-88 (PDF text layer)",
+    "extraction_date": "2026-03-01",
+    "rules_mode": "land_and_logistics",
+    "notes": [
+      "Scenario Group Four contains two sub-scenarios: 'The Last Chance' (1 game-turn) and 'The Long Retreat' (full retreat).",
+      "Both sub-scenarios share the same initial setup.",
+      "The designer's notes describe both scenarios as 'stultifying' and 'dull'; included for historical completeness.",
+      "ALL Axis infantry-type units are reduced to 2/3 (fractions rounded up) of their maximum TOE Strength at setup.",
+      "Extensive minefield and fortification setup — most complex construction state of any scenario.",
+      "El Alamein front: Commonwealth in map E, Axis front along D-E border.",
+      "Air forces stubbed — land game only for MVP.",
+      "OCR artifacts: 'nd New Zeland' → '2nd New Zealand'; hex codes with leading 'I' likely 'D' or 'E' (corrected where obvious)."
+    ]
+  },
+
+  "scenario": {
+    "name": "El Alamein",
+    "scenario_group": 4,
+    "rule": "63.0",
+    "description": "The end of the Axis advance. Rommel's army is at el Alamein, exhausted and overstretched. The Commonwealth holds a narrow coastal corridor. Two sub-scenarios: a desperate last Axis lunge for Alexandria, and a grinding Commonwealth pursuit after El Alamein.",
+    "sub_scenarios": [
+      {
+        "id": "last_chance",
+        "name": "The Last Chance",
+        "rule": "63.91",
+        "start": {"game_turn": 102, "opstage": 1, "historical_date": "1942-08-30"},
+        "end": {"game_turn": 102, "opstage": 3, "historical_date": "1942-09-05"},
+        "estimated_play_hours": "~10",
+        "description": "Axis Player has one week to break through Commonwealth lines and reach Alexandria. No reinforcements or replacements.",
+        "special_rules": ["No Reinforcements or Replacements for either player", "10th Italian Light Flotilla NOT available", "Raid on Rommel NOT available"]
+      },
+      {
+        "id": "long_retreat",
+        "name": "The Long Retreat",
+        "rule": "63.92",
+        "start": {"game_turn": 102, "opstage": 1, "historical_date": "1942-08-30"},
+        "end": {"game_turn": 111, "opstage": 3, "historical_date": "1942-12-??"},
+        "estimated_play_hours": "50-100",
+        "description": "Can the Axis survive the end of the campaign? Axis Player scores points for occupying locations as long as possible during the retreat.",
+        "special_rules": ["Reinforcements normal", "Axis replacements reduced to 5% rounded down", "Strategic attacks on Malta allowed (44.41)"]
+      }
+    ],
+    "initiative_note": "Historically Germans had initiative during first OpStage. Players may roll to determine if preferred (63.6)."
+  },
+
+  "construction_state": {
+    "fortifications": [
+      {"location": "C4807 Tobruk", "level": 1, "hexes": "all 4 adjacent hexes"},
+      {"location": "C4321 Bardia", "level": 1, "hexes": "up to 3 of 4 adjacent hexes — Axis player chooses which 3"}
+    ],
+    "minefields": {
+      "commonwealth": {
+        "required_hexes": ["D3033", "E3101", "E2901", "E2801", "E2701", "E2702", "E2601", "E2501", "E2401", "E2302"],
+        "additional": "5 more hexes on map E at Commonwealth player's choice",
+        "total": 15,
+        "real_vs_dummy": "10 Real, 5 Dummy — distribution at Commonwealth player's choice",
+        "status": "all start face-up (unknown)"
+      },
+      "axis": {
+        "required_hexes": ["D3233", "D3133", "D3032", "D2933", "D2833", "D2733", "D2632", "D2633", "D2533", "D2429", "D2433", "D2831", "D2832", "D2731"],
+        "additional_near_tobruk": "up to 5 Real + 2 Dummy within 3 hexes of Tobruk",
+        "additional_maps_a_to_c": "up to 2 Real + 2 Dummy anywhere on maps A-C not within 5 hexes of Tobruk",
+        "total_required": 14,
+        "real_vs_dummy_required": "11 Real, 3 Dummy",
+        "status": "all start face-up (unknown)"
+      }
+    },
+    "railroad": {
+      "status": "entire unfinished railroad complex built",
+      "exception": "3 hexes immediately west of el Alamein are destroyed"
+    },
+    "pipeline": {
+      "note": "Only pipeline in railroad hexes. Axis draws water from Tobruk through it; Commonwealth draws from Alexandria."
+    },
+    "roads": "all unfinished roads built",
+    "ports": {
+      "all_at_full_efficiency_except": [
+        {"location": "A4827", "name": "Benghazi", "efficiency_level": 1},
+        {"location": "C4807", "name": "Tobruk", "efficiency_level": 5}
+      ]
+    },
+    "repair_facilities": {
+      "axis": [
+        {"location": "C4807", "name": "Tobruk", "type": "major"},
+        {"location": "C4321", "name": "Bardia", "type": "temporary"},
+        {"location": "D3714", "name": "Mersa Matruh", "type": "temporary"}
+      ],
+      "commonwealth": [
+        {"note": "Commonwealth has NO temporary repair facility"},
+        {"location": "E3613", "name": "Alexandria", "type": "major"},
+        {"location": "E2132", "name": "Cairo", "type": "major"}
+      ]
+    }
+  },
+
+  "commonwealth": {
+    "land_units": [
+      {
+        "placement_type": "fixed",
+        "hex": "E3101",
+        "trucks": {"light": 30, "medium": 55, "heavy": 15},
+        "units": [{"name": "9th Australian Division", "nationality": "australian", "size": "division", "type": "infantry", "org_flags": "Det: 24th Aus Bde; Att: 40 RTR [23/8]"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "E3001",
+        "trucks": {"light": 5, "medium": 25, "heavy": 6},
+        "units": [{"name": "24th Australian Brigade", "nationality": "australian", "size": "brigade", "type": "infantry", "org_flags": "9 Aus"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "D3033",
+        "trucks": {"light": 40, "medium": 70, "heavy": 21},
+        "units": [{"name": "51st Infantry Division", "nationality": "british", "size": "division", "type": "infantry", "org_flags": "Att: 50 RTR [23/8]"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "E2901",
+        "trucks": {"light": 30, "medium": 90, "heavy": 20},
+        "units": [{"name": "2nd New Zealand Division", "nationality": "new_zealand", "size": "division", "type": "infantry", "org_flags": "2nd NZ Cav now TOE 5 Recce + 6 Stuart tanks; Less: 4th NZ Bde; Att: 9th Armoured Bde [10]; Att: 3rd Hussars, 14th Sherwood Foresters [I]"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "E2801",
+        "trucks": {"light": 35, "medium": 85, "heavy": 25},
+        "units": [{"name": "1st South African Division", "nationality": "south_african", "size": "division", "type": "infantry", "org_flags": "Less: 50th SA Bde; Assg: 3rd SA Bde [#SA; in its place]; Att: 8th RTR [#1 Army#], 1st SA Field Arty [#2 SA#], Die Middelandse MG Regt [#SA#], 2nd Botha [5/1SA]"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "E2701",
+        "trucks": {"light": 10, "medium": 25, "heavy": 10},
+        "units": [
+          {"name": "5th Indian Brigade", "nationality": "indian", "size": "brigade", "type": "infantry", "org_flags": "4 In; Less: 1st Royal Fusiliers and 4/6 Rajput Rifles; Assg: 1/4 Essex and 3/10 Baluchis in their places"},
+          {"name": "6th Rajput Rifles MG Battalion", "nationality": "indian", "size": "battalion", "type": "infantry"},
+          {"name": "1st Field Artillery Regiment", "nationality": "indian", "size": "regiment", "type": "artillery"},
+          {"name": "149th Anti-Tank Regiment", "nationality": "british", "size": "regiment", "type": "anti_tank"},
+          {"name": "11th Field Artillery Regiment", "nationality": "british", "size": "regiment", "type": "artillery"},
+          {"name": "32nd Field Artillery Regiment", "nationality": "british", "size": "regiment", "type": "artillery"},
+          {"name": "57th Light AA Regiment HQ", "nationality": "british", "size": "battalion", "type": "anti_aircraft"},
+          {"name": "HQ 4th Indian Division", "nationality": "indian", "size": "hq", "type": "hq", "org_flags": "Less: 11th In Bde, 31st Field Arty, Central India Horse R; Det: 5th and 7th In Bdes and 1st Field Arty"}
+        ]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "E2601",
+        "trucks": {"light": 5, "medium": 25, "heavy": 5},
+        "units": [
+          {"name": "7th Indian Brigade", "nationality": "indian", "size": "brigade", "type": "infantry", "org_flags": "4 In; Less: 4/11 Sikh; Assg: 1/2 Gurkha Rifles in its place"},
+          {"name": "161st Indian Motor Brigade", "nationality": "indian", "size": "brigade", "type": "infantry", "org_flags": "consists of: 1st Argyll & Sutherland [16/17], 1/1 Punjab Regt, 4/7 Rajputanis, J/1/4 In"}
+        ]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "E2501",
+        "trucks": {"light": 35, "medium": 65, "heavy": 21},
+        "units": [{"name": "50th Infantry Division", "nationality": "british", "size": "division", "type": "infantry", "org_flags": "Less: 150th Bde, 2nd Cheshire MG Bn and 72nd Field Arty; Assg: Greek Bde and 111th Field Arty in place of Inf Bde and Arty Regt; Att: 154th Field Arty, 102nd AT Regt [2Spt/2], 34th Light AA"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "E2302",
+        "trucks": {"light": 0, "medium": 75, "heavy": 40},
+        "units": [{"name": "7th Armoured Division", "nationality": "british", "size": "division", "type": "armor", "org_flags": "Consists of: 4th Armoured Bde [4/8 Hussars, Royal Scots Greys (8/10), 1KRRC (7Spt/7)]; 22nd Armoured Bde [1 RTR (7/7), 5 RTR (3/2), 4 CLY (22 Amr Bde), 1 Rifle Bde (2//)]; 11th Hussars R 7; 3 RHA (83 TOE, 25lbrs); 4th Field Arty; 97th Field Arty [20/10 In]; 65th AT; 15th Light AA; Att: 2nd Derby Yeomanry R 8 (TOE 6), 44th Recce Regt [44]"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "E3005",
+        "trucks": {"light": 10, "medium": 90, "heavy": 30},
+        "units": [{"name": "1st Armoured Division", "nationality": "british", "size": "division", "type": "armor", "org_flags": "Consists of: 2nd Armoured Bde Less: 1st Rifle Bde; 7th Motor Bde [7] (2nd Rifle Bde [7Spt/7], 7th Rifle Bde [23/8], 2nd KRRC [/Spt/J]), 2nd RHA [#Spt/2], 4th RHA [7Spt/7], 11th RHA self-propelled, 78th Field Arty, 76th AT [Spt/J], 1st RNF MG Bn, 42nd Light AA, 12 Lancers R [/Spt/J]; Att: 'Hammerforce' (4/6 SA Armoured Car Regt [TOE 7], 146th Field Arty, 73rd AT, 56th Light AA)"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "E3007",
+        "trucks": {"light": 0, "medium": 5, "heavy": 0},
+        "units": [{"name": "8th Armoured Division", "nationality": "british", "size": "division", "type": "armor", "org_flags": "Det: 40 RTR and 50 RTR of 23rd Armoured Bde, 2nd Derby Yeomanry R; Less: 24th Armoured Bde, 7th Rifle Bde of 23rd Armoured Bde; with 121st Field Arty"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "E2805",
+        "trucks": {"light": 0, "medium": 75, "heavy": 40},
+        "units": [{"name": "10th Armoured Division", "nationality": "british", "size": "division", "type": "armor", "org_flags": "Consists of: 8th Armoured Bde [10]; Less: Royal Scots Greys; Assg: 3rd RTR [J/2; in its place] and 1st Buffs (I); 24th Armoured Bde [8]; 133rd Infantry Bde [44]; 1st Royal Dragoons R; 1st RHA; 104th RHA; 98th Field Arty; 5th RHA self-propelled; 84th AT; 53rd Light AA"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "E2904",
+        "trucks": {"light": 0, "medium": 5, "heavy": 0},
+        "units": [{"name": "1st Army Tank Brigade", "nationality": "british", "size": "brigade", "type": "armor", "org_flags": "Det: 8th RTR"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "E2401",
+        "trucks": {"light": 20, "medium": 55, "heavy": 6},
+        "units": [{"name": "44th Infantry Division", "nationality": "british", "size": "division", "type": "infantry", "org_flags": "Det: 44th Recce; Less: 133rd Inf Bde; Att: 53rd Field Arty"}]
+      },
+      {
+        "placement_type": "within_n_hexes",
+        "placement_center": "E2403",
+        "placement_radius": 1,
+        "units": [
+          {"name": "1st Free French Brigade", "nationality": "french", "size": "brigade", "type": "infantry", "trucks": {"light": 10, "medium": 35, "heavy": 5}},
+          {"name": "2nd Free French Brigade", "nationality": "french", "size": "brigade", "type": "infantry", "trucks": {"light": 5, "medium": 12, "heavy": 1}}
+        ]
+      },
+      {
+        "placement_type": "within_n_hexes",
+        "placement_center": "E3002",
+        "placement_radius": 2,
+        "location_label": "El Alamein area AA",
+        "trucks": {"light": 0, "medium": 5, "heavy": 0},
+        "units": [
+          {"name": "14th Light AA Regiment", "nationality": "british", "size": "regiment", "type": "anti_aircraft"},
+          {"name": "16th Light AA Regiment", "nationality": "british", "size": "regiment", "type": "anti_aircraft"},
+          {"name": "27th Light AA Regiment", "nationality": "british", "size": "regiment", "type": "anti_aircraft"},
+          {"name": "88th Heavy AA Regiment", "nationality": "british", "size": "regiment", "type": "anti_aircraft"},
+          {"name": "94th Heavy AA Regiment", "nationality": "british", "size": "regiment", "type": "anti_aircraft"}
+        ]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "E2302_area",
+        "trucks": {"light": 10, "medium": 25, "heavy": 7},
+        "units": [
+          {"name": "21st Indian Infantry Brigade", "nationality": "indian", "size": "brigade", "type": "infantry", "org_flags": "0 In; consists of: 1/6 Rajput Rifles [1/4 In], 3/7 Rajputana Regt [6/1 In Motor Bde], 2/8 Gurkha Rifles"},
+          {"name": "7th Medium Artillery Regiment", "nationality": "british", "size": "regiment", "type": "artillery"},
+          {"name": "64th Medium Artillery Regiment", "nationality": "british", "size": "regiment", "type": "artillery"},
+          {"name": "69th Medium Artillery Regiment", "nationality": "british", "size": "regiment", "type": "artillery"}
+        ]
+      }
+    ],
+
+    "tank_assignments": [
+      {"unit": "40 RTR (23rd Armoured Brigade)", "tanks": [{"type": "Valentine", "toe_points": 8}]},
+      {"unit": "46 RTR (23rd Armoured Brigade)", "tanks": [{"type": "Valentine", "toe_points": 10}]},
+      {"unit": "50 RTR (23rd Armoured Brigade)", "tanks": [{"type": "Valentine", "toe_points": 9}]},
+      {"unit": "8th RTR (1st Army Tank Brigade)", "tanks": [{"type": "Valentine", "toe_points": 10}]},
+      {"unit": "3rd Hussars (9th Armoured Brigade)", "tanks": [{"type": "Grant", "toe_points": 2}, {"type": "Sherman", "toe_points": 2}, {"type": "Crusader I", "toe_points": 3}]},
+      {"unit": "Royal Wiltshire Yeomanry (9th Armoured Brigade)", "tanks": [{"type": "Grant", "toe_points": 3}, {"type": "Sherman", "toe_points": 2}, {"type": "Crusader I", "toe_points": 3}]},
+      {"unit": "Warwick Yeomanry (9th Armoured Brigade)", "tanks": [{"type": "Grant", "toe_points": 3}, {"type": "Sherman", "toe_points": 3}, {"type": "Crusader II", "toe_points": 3}]},
+      {"unit": "9th Australian Division Cavalry (9th Aus Div)", "tanks": [{"type": "Crusader II", "toe_points": 3}, {"type": "Stuart", "toe_points": 1}]},
+      {"unit": "Royal Scots Greys (4th Armoured Brigade)", "tanks": [{"type": "Stuart", "toe_points": 4}, {"type": "Grant", "toe_points": 3}]},
+      {"unit": "4/8th Hussars (4th Armoured Brigade)", "tanks": [{"type": "Stuart", "toe_points": 9}]},
+      {"unit": "1st RTR (22nd Armoured Brigade)", "tanks": [{"type": "Stuart", "toe_points": 4}, {"type": "Grant", "toe_points": 5}]},
+      {"unit": "5th RTR (22nd Armoured Brigade)", "tanks": [{"type": "Crusader II", "toe_points": 4}, {"type": "Grant", "toe_points": 5}]},
+      {"unit": "4th CLY (22nd Armoured Brigade)", "tanks": [{"type": "Crusader II", "toe_points": 6}, {"type": "Grant", "toe_points": 2}]},
+      {"unit": "Queens Bays (2nd Armoured Brigade)", "tanks": [{"type": "Sherman", "toe_points": 7}, {"type": "Crusader II", "toe_points": 3}]},
+      {"unit": "9th Lancers (2nd Armoured Brigade)", "tanks": [{"type": "Sherman", "toe_points": 6}, {"type": "Crusader II", "toe_points": 4}]},
+      {"unit": "10th Hussars (2nd Armoured Brigade)", "tanks": [{"type": "Sherman", "toe_points": 5}, {"type": "Crusader II", "toe_points": 5}]},
+      {"unit": "7th Motor Brigade HQ", "tanks": [{"type": "Churchill", "toe_points": 1}]},
+      {"unit": "3rd RTR (8th Armoured Brigade)", "tanks": [{"type": "Crusader III", "toe_points": 3}, {"type": "Sherman", "toe_points": 2}, {"type": "Grant", "toe_points": 3}]},
+      {"unit": "Nottingham Yeomanry (8th Armoured Brigade)", "tanks": [{"type": "Crusader III", "toe_points": 3}, {"type": "Sherman", "toe_points": 2}, {"type": "Grant", "toe_points": 4}]},
+      {"unit": "Staffordshire Yeomanry (8th Armoured Brigade)", "tanks": [{"type": "Crusader III", "toe_points": 3}, {"type": "Sherman", "toe_points": 2}, {"type": "Grant", "toe_points": 4}]},
+      {"unit": "41st RTR (24th Armoured Brigade)", "tanks": [{"type": "Crusader III", "toe_points": 3}, {"type": "Sherman", "toe_points": 6}]},
+      {"unit": "45th RTR (24th Armoured Brigade)", "tanks": [{"type": "Crusader III", "toe_points": 3}, {"type": "Sherman", "toe_points": 6}]},
+      {"unit": "47th RTR (24th Armoured Brigade)", "tanks": [{"type": "Crusader III", "toe_points": 3}, {"type": "Sherman", "toe_points": 7}]},
+      {"unit": "42nd RTR (1st Army Tank Brigade)", "tanks": [{"type": "Scorpion", "toe_points": 10}]},
+      {"unit": "44th RTR (1st Army Tank Brigade)", "tanks": [{"type": "Scorpion", "toe_points": 10}]}
+    ],
+
+    "supply_dumps": {
+      "total_dumps": 10,
+      "dummy_dumps": 3,
+      "front_line_dumps": {
+        "count": "up to 5",
+        "placement": "within 1 hex of front line (any hex east of and adjacent to an Axis unit)",
+        "required_hexes": ["E3002 el Alamein", "E2805", "E2403"],
+        "total_supplies": {"ammo": 2500, "fuel": 2000, "stores": 1500, "water": 1500}
+      },
+      "rear_dumps": {
+        "count": "remaining dumps",
+        "placement": "anywhere on map E but not within 1 hex of front",
+        "total_supplies": {"ammo": 1000, "fuel": 3000, "stores": 500, "water": 2000}
+      },
+      "fixed": [
+        {"location": "E3613", "name": "Alexandria", "ammo_unlimited": true, "fuel_unlimited": true, "stores_unlimited": true, "water_unlimited": true},
+        {"location": "E2132", "name": "Cairo", "ammo_unlimited": true, "fuel_unlimited": true, "stores_unlimited": true, "water_unlimited": true}
+      ]
+    },
+
+    "convoy_trucks": {
+      "maps_D_and_E": {"light": 200, "medium": 725, "heavy": 225},
+      "air_facility_trucks": {"medium": 100, "heavy": 60}
+    },
+
+    "air": {
+      "_note": "Deferred — land game only for MVP. Full data in PDF rule 63.33.",
+      "placements": [
+        {"location": "E3109 Burg el Arab", "sgsu": 3, "planes": "Spitfire VB (18), Hurricane IIA (12), Tomahawk (6), Maryland (4), Baltimore (4)"},
+        {"location": "E2418 Wadi Natrun", "sgsu": 1, "planes": "Maryland (12)"},
+        {"location": "E3212 Amiriya complex (6 airfields)", "sgsu": 28, "planes": "Boston III (48), Baltimore II (24), Baltimore III (24), Tomahawk (16), Kittyhawk I (56), Kittyhawk II (91), Kittyhawk III (39), Hurricane IIB (48), Hurricane IIC (64), Hurricane IID (32), Hurricane IIE (16), Spitfire VB (48)"},
+        {"location": "E3817 Idku", "sgsu": 2, "planes": "Beaufighter IC (16), Beaufighter VIF (16)"},
+        {"location": "E3512 Degheila", "sgsu": 2, "planes": "Albacore (24)"}
+      ],
+      "pilots": {"Four": 1, "Three": 5, "Two": 22, "One": 31},
+      "note": "All Commonwealth planes refitted at start"
+    },
+
+    "fleet": {
+      "_note": "Deferred.",
+      "at_alexandria": {"heavy_cruisers": 2, "light_cruisers": 3, "destroyers": 4}
+    }
+  },
+
+  "axis": {
+    "important_note": "ALL Axis infantry-type units are reduced to 2/3 (fractions rounded up) of their maximum TOE Strength at scenario start.",
+
+    "land_units": [
+      {
+        "placement_type": "fixed",
+        "hex": "D3328",
+        "trucks": {"light": 10, "medium": 40, "heavy": 7},
+        "units": [{"name": "90th Light Division", "nationality": "german", "size": "division", "type": "infantry", "org_flags": "Det: 580th Aufklarungs Bn [R]"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "D3132",
+        "trucks": {"light": 15, "medium": 40, "heavy": 10},
+        "units": [{"name": "15th Panzer Division", "nationality": "german", "size": "division", "type": "armor", "org_flags": "Less: 200th and 104th Regts; Det: 33rd Recce; Assg: 2nd MG Bn [5 Le]"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "D3032",
+        "trucks": {"light": 5, "medium": 45, "heavy": 5},
+        "units": [{"name": "164th Light Division", "nationality": "german", "size": "division", "type": "infantry"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "D2931",
+        "trucks": {"light": 2, "medium": 0, "heavy": 0},
+        "units": [{"name": "3rd Aufklarungs Battalion", "nationality": "german", "size": "battalion", "type": "recce", "org_flags": "R; 21st Panzer"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "D2831",
+        "trucks": {"light": 7, "medium": 20, "heavy": 10},
+        "units": [{"name": "21st Panzer Division", "nationality": "german", "size": "division", "type": "armor", "org_flags": "Less: 2nd MG Bn; Assg: 200th Rifle Regt [/15] which begins scenario detached"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "D2733",
+        "trucks": {"light": 0, "medium": 0, "heavy": 0},
+        "units": [{"name": "Ramcke Brigade", "nationality": "german", "size": "brigade", "type": "infantry", "note": "No trucks assigned"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "D2630",
+        "trucks": {"light": 5, "medium": 25, "heavy": 0},
+        "units": [{"name": "104th Rifle Regiment", "nationality": "german", "size": "regiment", "type": "infantry", "org_flags": "Now assigned to 21st Panzer; begins scenario detached"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "D2532",
+        "units": [{"name": "33rd Aufklarungs Battalion", "nationality": "german", "size": "battalion", "type": "recce", "org_flags": "R; 15th Panzer"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "D2431",
+        "trucks": {"light": 5, "medium": 0, "heavy": 0},
+        "units": [{"name": "580th Aufklarungs Battalion", "nationality": "german", "size": "battalion", "type": "recce", "org_flags": "R; 90th Light"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "D3327",
+        "trucks": {"light": 25, "medium": 15, "heavy": 0},
+        "units": [{"name": "136th GGFF Division", "nationality": "italian", "size": "division", "type": "infantry"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "D3326",
+        "trucks": {"light": 5, "medium": 55, "heavy": 5},
+        "units": [{"name": "101st Trieste Division", "nationality": "italian", "size": "division", "type": "infantry", "org_flags": "Det: 21st Arty Regt; Att: III(M)"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "D3325",
+        "trucks": {"light": 30, "medium": 30, "heavy": 0},
+        "units": [{"name": "16th Pistoia Division", "nationality": "italian", "size": "division", "type": "infantry"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "D3232",
+        "trucks": {"light": 25, "medium": 25, "heavy": 6},
+        "units": [{"name": "133rd Littorio Division", "nationality": "italian", "size": "division", "type": "armor", "org_flags": "Det: 12th Bersaglieri Regt; Less: X(M) and XII(M) tank Bns, V and VI Arty Bns self-propelled; Assg: IV(M) and LI(M) tank Bns, DLIV and DLVI Arty Bns self-propelled in their places"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "E3133",
+        "trucks": {"light": 6, "medium": 20, "heavy": 0},
+        "units": [{"name": "12th Bersaglieri Regiment", "nationality": "italian", "size": "regiment", "type": "infantry", "org_flags": "Littorio Division"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "D2933",
+        "trucks": {"light": 0, "medium": 68, "heavy": 7},
+        "units": [{"name": "102nd Trento Division", "nationality": "italian", "size": "division", "type": "infantry", "org_flags": "Det: 7th Bersaglieri Regt"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "D2932",
+        "trucks": {"light": 0, "medium": 20, "heavy": 0},
+        "units": [{"name": "7th Bersaglieri Regiment", "nationality": "italian", "size": "regiment", "type": "infantry", "org_flags": "102nd Trento Division"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "D2833",
+        "trucks": {"light": 12, "medium": 60, "heavy": 10},
+        "units": [
+          {"name": "25th Bologna Division", "nationality": "italian", "size": "division", "type": "infantry"},
+          {"name": "21st Artillery Regiment", "nationality": "italian", "size": "regiment", "type": "artillery", "org_flags": "101st Trieste"}
+        ]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "D2732",
+        "trucks": {"light": 10, "medium": 65, "heavy": 7},
+        "units": [{"name": "27th Brescia Division", "nationality": "italian", "size": "division", "type": "infantry"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "D2632",
+        "trucks": {"light": 25, "medium": 45, "heavy": 10},
+        "units": [{"name": "132nd Ariete Division", "nationality": "italian", "size": "division", "type": "armor", "org_flags": "Less: VII(M); Assg: LII(M) in its place; with V and VI Arty Bns self-propelled (Littorio); Att: XIII(M); 132nd Arty Regt contains 3 TOE of 105/28 guns and 2 TOE of 90mm Flak guns"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "D2533",
+        "trucks": {"light": 30, "medium": 30, "heavy": 0},
+        "units": [{"name": "185th Folgore Division", "nationality": "italian", "size": "division", "type": "infantry"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "D2432",
+        "trucks": {"light": 10, "medium": 65, "heavy": 7},
+        "units": [{"name": "17th Pavia Division", "nationality": "italian", "size": "division", "type": "infantry"}]
+      },
+      {
+        "placement_type": "flexible",
+        "placement_area": "Anywhere on Map D",
+        "units": [
+          {"name": "Italian XXIV Corps Artillery", "nationality": "italian", "size": "regiment", "type": "artillery"},
+          {"name": "Italian XXVI Corps Artillery", "nationality": "italian", "size": "regiment", "type": "artillery"},
+          {"name": "1/2nd Raggruppamento Artiglieria", "nationality": "italian", "size": "battalion", "type": "artillery"},
+          {"name": "2/2nd Raggruppamento Artiglieria", "nationality": "italian", "size": "battalion", "type": "artillery"},
+          {"name": "3/2nd Raggruppamento Artiglieria", "nationality": "italian", "size": "battalion", "type": "artillery"},
+          {"name": "4/2nd Raggruppamento Artiglieria", "nationality": "italian", "size": "battalion", "type": "artillery"},
+          {"name": "RECAM (Italian Armoured Car Regiment)", "nationality": "italian", "size": "regiment", "type": "recce"},
+          {"name": "III(L) Light Tank Battalion", "nationality": "italian", "size": "battalion", "type": "armor"},
+          {"name": "II(L) Light Tank Battalion", "nationality": "italian", "size": "battalion", "type": "armor"},
+          {"name": "Sonderverband 288 Regiment", "nationality": "german", "size": "regiment", "type": "infantry"},
+          {"name": "707th Heavy Weapons Company", "nationality": "german", "size": "company", "type": "infantry"},
+          {"name": "708th Heavy Weapons Company", "nationality": "german", "size": "company", "type": "infantry"},
+          {"name": "13th Company Brandenburg Regiment", "nationality": "german", "size": "company", "type": "infantry"}
+        ]
+      },
+      {
+        "placement_type": "flexible",
+        "placement_area": "Anywhere on Maps A through D",
+        "units": [
+          {"name": "Any four Oasis Companies (German)", "nationality": "german", "size": "company", "type": "infantry", "count": 4},
+          {"name": "778th Naval Engineers", "nationality": "german", "size": "battalion", "type": "engineer"},
+          {"name": "All remaining unassigned German independent artillery and AA units", "note": "Including 1st and 2nd African Arty HQs, Arko 104 and 155th Arty HQs and subsidiaries"}
+        ]
+      }
+    ],
+
+    "tank_assignments": [
+      {"unit": "I/5th Panzer (15th Panzer)", "tanks": [{"type": "Pz II", "toe_points": 2}, {"type": "Pz III H", "toe_points": 4}, {"type": "Pz III E", "toe_points": 1}, {"type": "Pz III J Special", "toe_points": 4}]},
+      {"unit": "II/5th Panzer (15th Panzer)", "tanks": [{"type": "Pz II", "toe_points": 2}, {"type": "Pz III E", "toe_points": 2}, {"type": "Pz III H", "toe_points": 4}, {"type": "Pz III J Special", "toe_points": 4}, {"type": "Pz IV E", "toe_points": 1}]},
+      {"unit": "I/8th Panzer (21st Panzer)", "tanks": [{"type": "Pz II", "toe_points": 1}, {"type": "Pz III H", "toe_points": 4}, {"type": "Pz III J Special", "toe_points": 5}, {"type": "Pz IV F2 Special", "toe_points": 3}]},
+      {"unit": "II/8th Panzer (21st Panzer)", "tanks": [{"type": "Pz II", "toe_points": 1}, {"type": "Pz III H", "toe_points": 3}, {"type": "Pz III 6", "toe_points": 1}, {"type": "Pz III J Special", "toe_points": 5}, {"type": "Pz IV 6", "toe_points": 1}, {"type": "Pz IV F", "toe_points": 3}]},
+      {"unit": "LII(M) Tank Battalion", "tanks": [{"type": "M13/40", "toe_points": 6}]},
+      {"unit": "VIII(M) Tank Battalion", "tanks": [{"type": "M13/40", "toe_points": 6}]},
+      {"unit": "I(L) Light Tank Battalion", "tanks": [{"type": "L6", "toe_points": 6}]},
+      {"unit": "II(L) Light Tank Battalion", "tanks": [{"type": "L6", "toe_points": 4}]},
+      {
+        "location": "Tobruk Repair Facility",
+        "status": "broken_down",
+        "tanks": [{"type": "Pz III H", "toe_points": 3}, {"type": "Pz IV D", "toe_points": 1}]
+      }
+    ],
+
+    "supply_dumps": {
+      "total_dumps": 10,
+      "dummy_dumps": 3,
+      "distribution": {
+        "map_D_dumps": {
+          "count": "at least 5 must be on maps A/B/C; up to 5 may be on map D",
+          "supplies": {"ammo": 2700, "fuel": 4000, "stores": 1500, "water": 800},
+          "max_per_dump_pct": 33
+        },
+        "other_dumps": {
+          "supplies": {"ammo": 500, "fuel": 500, "stores": 500, "water": 500},
+          "max_per_dump_pct": 33
+        }
+      },
+      "city_supplies": [
+        {"location": "D3328 Ghazal", "ammo": 200, "fuel": 500, "stores": 0, "water": 500},
+        {"location": "D3714 Mersa Matruh", "ammo": 500, "fuel": 1500, "stores": 250, "water": 500},
+        {"location": "C4131 Sidi Barrani", "ammo": 200, "fuel": 500, "stores": 0, "water": 500},
+        {"location": "C4321 Bardia", "ammo": 300, "fuel": 1000, "stores": 250, "water": 0},
+        {"location": "C4807 Tobruk", "ammo": 800, "fuel": 3000, "stores": 250, "water": 0},
+        {"location": "B5925 Derna", "ammo": 200, "fuel": 500, "stores": 0, "water": 500},
+        {"location": "A4827 Benghazi", "ammo": 300, "fuel": 1000, "stores": 250, "water": 0},
+        {"location": "A2109 Marble Arch", "ammo": 200, "fuel": 500, "stores": 250, "water": 500}
+      ],
+      "airfield_supplement": {
+        "per_airfield": {"ammo": 150, "fuel": 350, "stores": 25, "water": 50},
+        "per_strip_or_basin": {"ammo": 20, "fuel": 25, "stores": 10, "water": 10},
+        "exception": "Tripoli/Tunisia airfields excluded"
+      }
+    },
+
+    "convoy_trucks": {
+      "maps_A_to_D": {"light": 115, "medium": 350, "heavy": 75},
+      "air_facility_trucks": {"light": 50, "medium": 100}
+    },
+
+    "air": {
+      "_note": "Deferred — land game only for MVP. Full data in PDF rule 63.43.",
+      "german_planes": {
+        "Ju 87D": {"available": 70, "refitted": 44},
+        "Bf 109F": {"available": 83, "refitted": 40},
+        "Bf 109G": {"available": 90, "refitted": 50},
+        "Bf 109E": {"available": 16, "refitted": 6},
+        "Bf 110C": {"available": 16, "refitted": 10}
+      },
+      "german_pilots": {"Four": 4, "Three": 4, "Two": 11, "One": 16},
+      "german_sgsu": 21,
+      "german_crete": {"Ju 88": {"available": 75, "refitted": 60}, "He 111": {"available": 15, "refitted": 10}},
+      "italian_planes": {
+        "Cant Z.1007": {"available": 14, "refitted": 14},
+        "Fiat CR 42": {"available": 125, "refitted": 75},
+        "Fiat G.50": {"available": 12, "refitted": 0},
+        "Macchi C.200": {"available": 58, "refitted": 40},
+        "Macchi C.202": {"available": 139, "refitted": 84},
+        "SM 79": {"available": 34, "refitted": 24}
+      },
+      "italian_pilots": {"Four": 1, "Three": 3, "Two": 20, "One": 18},
+      "italian_sgsu": 27,
+      "note": "Non-refitted planes not ready until 2nd OpStage. Axis may transfer max 10% to Italy/Sicily."
+    }
+  },
+
+  "equipment_upgrades": {
+    "rule": "63.48",
+    "note": "Applied at scenario start before play begins.",
+    "commonwealth": [
+      "Each non-motorized infantry battalion may add 1 TOE of 6-pdr AT guns",
+      "Each motorized infantry battalion (CPA 10+) may add 2 TOE of 6-pdr AT guns",
+      "40% (rounded up) of all AT units may replace 2-pdr with 6-pdr AT guns",
+      "Armoured car units may be upgraded per rules",
+      "Artillery units with 18-pdr or 18/25-pdr may replace with 25-pdr"
+    ],
+    "axis": [
+      "All eligible Axis armoured car/recce units upgraded per rules (no Replacement Points needed)",
+      "Any 2 of these 4 Italian inf divisions may upgrade 75mm heavy AA to 90mm: 16th Pistoia, 17th Pavia, 25th Bologna, 27th Brescia",
+      "605th SP of 21st Panzer: 6 TOE Marder SP AT guns",
+      "15th and 21st Panzer 3.7cm AT guns → 5cm AT guns",
+      "5cm AT guns in 15th/21st Panzer and 90th Light → 7.62cm Pak(R) guns",
+      "Any 4 Italian bde-level HQs → ad hoc AT batteries with 4 TOE Italian AT guns",
+      "Any 2 German bde-level HQs → ad hoc AT batteries with 4 TOE 2.8cm AT guns",
+      "All Italian divisional artillery 75/18 howitzers → 75/27 guns",
+      "Littorio and Ariete SP arty units → 4 TOE Semovente 75/18 each",
+      "III/220 and II/220 arty bns (164th Div): 3 TOE 15cm K18 + 3 TOE 15cm sFH18",
+      "149th, 526th, 533rd Coastal Defense arty bns → 15cm sIG33, 17cm K18, 21cm Mrs18 respectively"
+    ]
+  },
+
+  "victory_conditions": {
+    "last_chance": {
+      "rule": "63.91",
+      "axis_strategic": "Occupy at least one hex of Alexandria with at least a Brigade-equivalent unit (supply irrelevant)",
+      "tactical": "Player with most TOE Strength Points in the opponent's operational area wins Tactical Victory (Axis counts map E; Commonwealth counts map D, excluding Layforce and SAS)"
+    },
+    "long_retreat": {
+      "rule": "63.92",
+      "method": "Axis scores points for occupying locations with supplied combat units able to fire all weapons twice and move 20 CPs",
+      "vp_table": [
+        {"location": "Mersa Matruh", "axis_vp": 3},
+        {"location": "Bardia", "axis_vp": 2},
+        {"location": "Tobruk", "axis_vp": 3},
+        {"location": "Derna", "axis_vp": 2},
+        {"location": "Benghazi", "axis_vp": 3},
+        {"location": "El Agheila", "axis_vp": 2},
+        {"location": "Marble Arch", "axis_vp": 2}
+      ],
+      "victory_levels": [
+        {"points": "10+", "result": "Strategic Victory"},
+        {"points": "4-9", "result": "Substantive Victory"},
+        {"points": "1-3", "result": "Marginal Victory"},
+        {"points": "0", "result": "Commonwealth wins"}
+      ]
+    }
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "_meta": {
+    "source": "The Campaign for North Africa (SPI, 1979) — Scenario Group Five, Case 64.0",
+    "source_pages": "88-89 (PDF text layer)",
+    "extraction_date": "2026-03-01",
+    "rules_mode": "land_and_logistics",
+    "notes": [
+      "The Campaign Game has no unique unit setup — it references Scenario 60 or 61 for initial deployment.",
+      "This file captures only the campaign-specific adjustments (replacement pool changes, initiative, special rules).",
+      "At runtime, the engine loads the referenced base_scenario's setup, then applies these adjustments.",
+      "Designer's note: 'requires not so much a commitment in time... but a commitment to planning and foresight. A campaign game will need at least ten players, perhaps more.' (64.1)"
+    ]
+  },
+
+  "scenario": {
+    "name": "The Campaign for North Africa",
+    "scenario_group": 5,
+    "rule": "64.0",
+    "description": "The full campaign — the entire North African war from the Italian offensive in September 1940 through the Axis retreat to Tunisia. Two entry points available.",
+    "sub_scenarios": [
+      {
+        "id": "full_campaign",
+        "name": "Full Campaign",
+        "base_scenario": "italian_campaign",
+        "base_scenario_rule": "60.0",
+        "start": {"game_turn": 1, "opstage": 1, "historical_date": "1940-09-09"},
+        "end": {"game_turn": 111, "opstage": 3, "historical_date": "1943-05-13"},
+        "note": "Uses Scenario 60 initial deployment and initiative rules"
+      },
+      {
+        "id": "shorter_campaign",
+        "name": "Shorter Campaign (Rommel's Arrival)",
+        "base_scenario": "desert_fox",
+        "base_scenario_rule": "61.0",
+        "start": {"game_turn": 26, "opstage": 3, "historical_date": "1941-03-24"},
+        "end": {"game_turn": 111, "opstage": 3, "historical_date": "1943-05-13"},
+        "note": "Uses Scenario 61 initial deployment and initiative rules"
+      }
+    ],
+    "initiative_note": "Use initiative rules from the referenced base scenario (60.0 or 61.0). Normal procedure once base scenario restrictions expire."
+  },
+
+  "special_rules": {
+    "rule": "64.5",
+    "notes": [
+      "No restrictions on normal game actions (Raids on Rommel, Commonwealth Fleet, etc. may all be performed as per rules).",
+      "Axis Player's Malta Air Availability uses the campaign game row on the Axis Strategic Airforce Commitment Chart (64.52)."
+    ]
+  },
+
+  "replacement_pool_adjustments": {
+    "applies_to": "shorter_campaign only",
+    "rule": "64.53 (Axis) and 64.54 (Commonwealth)",
+    "axis_adjustments": {
+      "german_production_chart": "No change",
+      "axis_truck_production": {
+        "light": 800,
+        "medium": 2400,
+        "heavy": 500,
+        "note": "These are total trucks Axis may bring in for the entire campaign (not per turn)"
+      },
+      "italian_production_chart": {
+        "note": "One-half of all replacement points plannable through Game-Turn 24 are unavailable",
+        "exception": "Axis Player still has 60 CV L.3 and CV 33/35 tank replacement points available"
+      }
+    },
+    "commonwealth_adjustments": {
+      "truck_production_table": "No change",
+      "infantry_production_table": "No change",
+      "production_chart_reductions": {
+        "note": "These specific items are REDUCED TO (not by) the listed numbers. All other replacement points unaffected.",
+        "items": [
+          {"type": "Armoured Car / Armoured Recce", "total_available": 75},
+          {"type": "Light Anti-Aircraft", "total_available": 70},
+          {"type": "25-pounder artillery", "total_available": 230},
+          {"type": "2-pounder AT guns", "total_available": 50},
+          {"type": "Mk VI Light tanks", "total_available": 5},
+          {"type": "A9 Cruiser tanks", "total_available": 3},
+          {"type": "A10 Cruiser tanks", "total_available": 3},
+          {"type": "A13 Cruiser tanks", "total_available": 5},
+          {"type": "Matilda tanks", "total_available": 20}
+        ]
+      }
+    }
+  },
+
+  "air_and_logistics_abstractions": {
+    "rule": "64.6",
+    "designer_note": "'Why anyone would play a campaign game without the Air and/or Logistics Game(s) is beyond me.' — Designer (64.6)",
+    "instructions": "Players pick start point (Italian Offensive or Desert Fox) and use abstraction rules from the appropriate scenario section (32.0, 47.0, or 58.0), plus the replacement point adjustments in Case 64.5."
+  },
+
+  "victory_conditions": {
+    "rule": "64.7",
+    "designer_note": "'It would be hard to imagine anything more exasperating than playing a game for five years, getting to the end, and finding out that you have lost by one point or two hexes... Victory conditions for a game of this size and scope are almost meaningless: survival itself is a victory.' — Designer (64.7)",
+    "method": "Point-based — see PDF pages 88-89 for complete VP table and threshold levels",
+    "vp_location_table": "_note: VP table spans pages 88-89 and was not fully captured due to OCR column alignment issues. See source PDF rule 64.71-64.76 for complete conditions.",
+    "known_thresholds": {
+      "rule": "64.76",
+      "note": "Full threshold table in PDF page 89"
+    }
+  }
+}

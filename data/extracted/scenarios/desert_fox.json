@@ -1,0 +1,355 @@
+{
+  "_meta": {
+    "source": "The Campaign for North Africa (SPI, 1979) — Scenario Group Two, Case 61.0",
+    "source_pages": "80-82 (PDF text layer)",
+    "extraction_date": "2026-03-01",
+    "rules_mode": "land_and_logistics",
+    "notes": [
+      "Scenario Group Two contains two playable sub-scenarios sharing the same setup.",
+      "Rommel and DAK arrive; Italian line divisions are already in place.",
+      "All German units arriving before GT26/OS3 may deploy within 1 hex of El Agheila (A1816), not east of it.",
+      "7th Armoured Division is fully broken down in Alexandria at scenario start — special release rules apply (61.38).",
+      "Supply quantities from Case 61.44 (Axis) and 61.35-36 (Commonwealth) — full Logistics Game.",
+      "Air forces stubbed — land game only for MVP."
+    ]
+  },
+
+  "scenario": {
+    "name": "The Desert Fox",
+    "scenario_group": 2,
+    "rule": "61.0",
+    "description": "Arrival of the Deutsche Afrika Korps under Rommel. The Axis drive east and besiege Tobruk. Two sub-scenarios: a short race for Tobruk, and a longer campaign from this starting point.",
+    "sub_scenarios": [
+      {
+        "id": "race_for_tobruk",
+        "name": "The Race for Tobruk",
+        "start": {"game_turn": 26, "opstage": 3, "historical_date": "1941-03-24"},
+        "end": {"game_turn": 38, "opstage": 3, "historical_date": "1941-06-15"},
+        "estimated_play_hours": "75-125"
+      },
+      {
+        "id": "desert_fox_campaign",
+        "name": "Desert Fox Campaign",
+        "start": {"game_turn": 26, "opstage": 3, "historical_date": "1941-03-24"},
+        "end": null,
+        "note": "Complete campaign starting from this setup point"
+      }
+    ],
+    "initiative_note": "Axis Player has Initiative through end of Game-Turn 27. Normal die roll from Game-Turn 28 (61.5)."
+  },
+
+  "construction_state": {
+    "fortifications": [
+      {"location": "Tobruk (C4807)", "level": 1, "count": 4, "placement": "Commonwealth places up to 4 Level 1 Fortifications within 2 hexes of Tobruk"}
+    ],
+    "minefields": "none",
+    "pipeline": "none",
+    "railroad": {
+      "terminus": "D3714",
+      "note": "Railroad runs to Mersa Matruh and ends there"
+    },
+    "roads": {
+      "built": ["Sollum-Sidi Barrani road", "entire road network around Tobruk"],
+      "note": "Unfinished roads connecting Sollum (C4021) and Sidi Barrani (C4131) and the entire Tobruk network have been built (61.6)"
+    },
+    "ports": {
+      "all_at_listed_efficiency_except": [
+        {"location": "A4827", "name": "Benghazi", "efficiency_level": 0},
+        {"location": "C4807", "name": "Tobruk", "efficiency_level": 7, "note": "San Giorgio still partially sunk"}
+      ]
+    },
+    "repair_facilities": {
+      "commonwealth": [
+        {"location": "C4807", "name": "Tobruk", "type": "temporary"},
+        {"location": "D3714", "name": "Mersa Matruh", "type": "temporary"},
+        {"location": "E3613", "name": "Alexandria", "type": "major"},
+        {"location": "E2132", "name": "Cairo", "type": "major"}
+      ],
+      "axis": [
+        {"location": "off_map_tripoli", "name": "Tripoli", "type": "major"},
+        {"note": "No temporary facility listed for Axis at start of this scenario"}
+      ]
+    }
+  },
+
+  "axis": {
+    "land_units": [
+      {
+        "placement_type": "within_n_hexes",
+        "placement_center": "A1816",
+        "placement_radius": 1,
+        "placement_constraint": "Not east of El Agheila",
+        "location_label": "German DAK — all units scheduled to arrive before GT26/OS3",
+        "note": "Axis player may arrange in any formation, including Battle Groups. All German units at OA Sheet strength (including tanks).",
+        "units": [
+          {"name": "DAK (all German units per Reinforcement Schedule arriving before GT26/OS3)", "nationality": "german", "size": "corps", "type": "mixed", "note": "Exact unit list per Reinforcement Track — variable"}
+        ]
+      },
+      {
+        "placement_type": "within_n_hexes",
+        "placement_center": "A1816",
+        "placement_radius": 2,
+        "placement_constraint": "Not east of El Agheila",
+        "units": [{"name": "132nd Ariete Division", "nationality": "italian", "size": "division", "type": "armor", "note": "All at OA Sheet strength including tanks"}]
+      },
+      {
+        "placement_type": "flexible",
+        "placement_area": "Anywhere between Ras el Ali (A2010) and Nofilia (A2703); no division less than 2 hexes from another",
+        "units": [
+          {"name": "17th Pavia Division", "nationality": "italian", "size": "division", "type": "infantry"},
+          {"name": "25th Bologna Division", "nationality": "italian", "size": "division", "type": "infantry"},
+          {"name": "27th Brescia Division", "nationality": "italian", "size": "division", "type": "infantry"},
+          {"name": "55th Savona Division", "nationality": "italian", "size": "division", "type": "infantry"}
+        ]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "off_map_tripoli",
+        "units": [
+          {"name": "102nd Trento Division", "nationality": "italian", "size": "division", "type": "infantry"},
+          {"name": "XXI Corps Artillery", "nationality": "italian", "size": "regiment", "type": "artillery"},
+          {"name": "350th GaF Artillery Regiment", "nationality": "german", "size": "regiment", "type": "artillery"},
+          {"name": "2nd Raggruppamento Artiglieria", "nationality": "italian", "size": "regiment", "type": "artillery"},
+          {"name": "Sabratha Division (reduced)", "nationality": "italian", "size": "division", "type": "infantry", "note": "Lost 6 infantry battalions; MG Bn and Arty Regt reduced to 1 TOE each. Rebuilding via Replacements."}
+        ]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "A1318",
+        "units": [{"name": "Oasis Company (German)", "nationality": "german", "size": "company", "type": "infantry", "note": "Maaten Groter"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "A0817",
+        "units": [{"name": "Oasis Company (German)", "nationality": "german", "size": "company", "type": "infantry", "note": "Magadah"}]
+      }
+    ],
+
+    "supply_dumps": {
+      "flexible": {
+        "total_dumps": 5,
+        "active_dumps": 3,
+        "dummy_dumps": 2,
+        "placement_constraint": "Any hex between El Agheila and Nofilia",
+        "max_per_dump_pct": 50,
+        "total_available": {"fuel": 9600, "ammo": 2500, "stores": 950, "water": 1100}
+      },
+      "fixed": [
+        {"location": "off_map_tripoli", "name": "Tripoli", "ammo": 1500, "fuel": 3000, "stores": 500, "water": null}
+      ],
+      "air_facility_supplement": {
+        "total": {"fuel": 50, "ammo": 50},
+        "note": "Tripoli/Tunisia air facilities have unlimited Fuel and Ammo"
+      }
+    },
+
+    "convoy_trucks": {
+      "italian_first_line": {"light": 45, "medium": 220, "heavy": 50},
+      "second_third_line": {"light": 95, "medium": 280, "heavy": 50},
+      "air_facility": {"medium": 10},
+      "note": "German first-line trucks distributed freely among German units per Reinforcement Schedule. Axis Player does not receive a Convoy during Game-Turn 26; must plan for GT27 and GT28."
+    },
+
+    "air": {
+      "_note": "Deferred — land game only for MVP. Full data in PDF rule 61.42.",
+      "german_note": "All German planes on Reinforcement Chart arriving before GT26/OS3, all refitted",
+      "italian_planes": {
+        "CR 42": {"available": 61, "refitted": 27},
+        "G 50": {"available": 62, "refitted": 33},
+        "BR 20": {"available": 1, "refitted": 0},
+        "SM 79": {"available": 30, "refitted": 14},
+        "Z 1007bis": {"available": 1, "refitted": 1}
+      },
+      "italian_pilots": {"Three": 3, "Two": 11, "One": 12},
+      "sgsu_italian": 13
+    }
+  },
+
+  "commonwealth": {
+    "land_units": [
+      {
+        "placement_type": "fixed",
+        "hex": "A2022",
+        "trucks": {"light": 0, "medium": 20, "heavy": 0},
+        "units": [
+          {"name": "3rd Armoured Brigade", "nationality": "british", "size": "brigade", "type": "armor", "org_flags": "2 Arm; Assg: 6th RTR [4/7], 3rd Hussars"},
+          {"name": "HQ 2nd Armoured Division", "nationality": "british", "size": "hq", "type": "hq"}
+        ]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "A2021",
+        "trucks": {"light": 0, "medium": 25, "heavy": 5},
+        "units": [{"name": "2nd Support Group", "nationality": "british", "size": "brigade", "type": "support", "org_flags": "2 Arm"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "C4507",
+        "trucks": {"light": 5, "medium": 25, "heavy": 0},
+        "units": [{"name": "3rd Indian Motor Brigade", "nationality": "indian", "size": "brigade", "type": "infantry"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "B4004",
+        "trucks": {"light": 0, "medium": 3, "heavy": 0},
+        "units": [{"name": "1st Company French Motor Marines", "nationality": "french", "size": "company", "type": "infantry"}]
+      },
+      {
+        "placement_type": "within_triangle",
+        "triangle_vertices": ["B5501", "A4830", "A4827"],
+        "location_label": "Tocra-Er Regima-Benghazi triangle",
+        "trucks": {"light": 5, "medium": 35, "heavy": 0},
+        "units": [
+          {"name": "24th Australian Brigade", "nationality": "australian", "size": "brigade", "type": "infantry", "org_flags": "9 Aus; Less: 2/32 Bn"},
+          {"name": "20th Australian Brigade", "nationality": "australian", "size": "brigade", "type": "infantry", "org_flags": "9 Aus"},
+          {"name": "2/3rd Australian AT Regiment", "nationality": "australian", "size": "regiment", "type": "anti_tank", "org_flags": "9 Aus"},
+          {"name": "51st Field Artillery Regiment", "nationality": "british", "size": "regiment", "type": "artillery"}
+        ]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "B0513",
+        "units": [{"name": "LRDG (one unit)", "nationality": "british", "size": "company", "type": "recce", "note": "Long Range Desert Group — one unit"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "C4807",
+        "trucks": {"light": 5, "medium": 5, "heavy": 0},
+        "units": [
+          {"name": "HQ 9th Australian Division", "nationality": "australian", "size": "hq", "type": "hq"},
+          {"name": "26th Australian Brigade", "nationality": "australian", "size": "brigade", "type": "infantry", "org_flags": "9 Aus"},
+          {"name": "1st RHA", "nationality": "british", "size": "regiment", "type": "artillery"},
+          {"name": "8th Field Artillery Regiment", "nationality": "british", "size": "regiment", "type": "artillery"},
+          {"name": "104th RHA", "nationality": "british", "size": "regiment", "type": "artillery"},
+          {"name": "65th Anti-Tank Regiment", "nationality": "british", "size": "regiment", "type": "anti_tank"},
+          {"name": "2nd Heavy AA Regiment", "nationality": "british", "size": "regiment", "type": "anti_aircraft"},
+          {"name": "9th Heavy AA Regiment", "nationality": "british", "size": "regiment", "type": "anti_aircraft"},
+          {"name": "15th Light AA Regiment", "nationality": "british", "size": "regiment", "type": "anti_aircraft"},
+          {"name": "57th Light AA Regiment", "nationality": "british", "size": "regiment", "type": "anti_aircraft"}
+        ]
+      },
+      {
+        "placement_type": "within_n_hexes",
+        "placement_center": "E3613",
+        "placement_radius": 1,
+        "location_label": "Alexandria area — 7th Armoured Division (BROKEN DOWN)",
+        "units": [
+          {"name": "7th Armoured Division", "nationality": "british", "size": "division", "type": "armor",
+           "special_status": "all_tanks_broken_down",
+           "note": "All 7th Armoured tanks broken down. Units may not be released until at least 75% repaired, then one tank bn per OpStage starting April GT1. Contains: 4th Armoured Bde (6th RTR reassigned, ARTR assigned), 7th Armoured Bde, 7th Support Group."}
+        ]
+      },
+      {
+        "placement_type": "within_n_hexes",
+        "placement_center": "E3613",
+        "placement_radius": 1,
+        "location_label": "Alexandria area",
+        "units": [
+          {"name": "HQ 70th Infantry Division", "nationality": "british", "size": "hq", "type": "hq"},
+          {"name": "22nd Guards Brigade", "nationality": "british", "size": "brigade", "type": "infantry", "org_flags": "I; Att: 1st Buffs, 2nd Scots Guards, 3rd Coldstream Guards"},
+          {"name": "107th RHA", "nationality": "british", "size": "regiment", "type": "artillery"},
+          {"name": "149th Anti-Tank Regiment", "nationality": "british", "size": "regiment", "type": "anti_tank"},
+          {"name": "13th Light AA Regiment", "nationality": "british", "size": "regiment", "type": "anti_aircraft"},
+          {"name": "Layforce", "nationality": "british", "size": "brigade", "type": "infantry"}
+        ],
+        "special": "No units in Cairo or Alexandria may move during GT26/OS3. After that, only one battalion released per OpStage."
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "D3714",
+        "units": [
+          {"name": "1st Royal Northumberland Fusiliers MG Battalion", "nationality": "british", "size": "battalion", "type": "infantry"},
+          {"name": "7th Medium Artillery Regiment", "nationality": "british", "size": "regiment", "type": "artillery"}
+        ]
+      },
+      {
+        "placement_type": "flexible",
+        "placement_area": "Any hex in Cairo",
+        "units": [
+          {"name": "Polish Brigade", "nationality": "polish", "size": "brigade", "type": "infantry"},
+          {"name": "11th Czech Battalion", "nationality": "czech", "size": "battalion", "type": "infantry"},
+          {"name": "1st Cheshire MG Battalion", "nationality": "british", "size": "battalion", "type": "infantry"},
+          {"name": "1st South Staffordshires", "nationality": "british", "size": "battalion", "type": "infantry"},
+          {"name": "2nd Kings Own Royal Regiment", "nationality": "british", "size": "battalion", "type": "infantry"},
+          {"name": "8th Medium Field Artillery", "nationality": "british", "size": "regiment", "type": "artillery"},
+          {"name": "64th Medium Field Artillery", "nationality": "british", "size": "regiment", "type": "artillery"},
+          {"name": "106th Anti-Tank Regiment", "nationality": "british", "size": "regiment", "type": "anti_tank"},
+          {"name": "74th Heavy AA Regiment", "nationality": "british", "size": "regiment", "type": "anti_aircraft"},
+          {"name": "52nd Light AA Regiment", "nationality": "british", "size": "regiment", "type": "anti_aircraft"},
+          {"name": "1st Essex", "nationality": "british", "size": "battalion", "type": "infantry", "org_flags": "23/70"}
+        ]
+      }
+    ],
+
+    "tank_assignments": [
+      {
+        "unit": "3rd Hussars (3rd Armoured Brigade)",
+        "tanks": [{"type": "Mk VI Light", "toe_points": 3}]
+      },
+      {
+        "unit": "5th RTR / 3rd Armoured Brigade",
+        "tanks": [
+          {"type": "A/9", "toe_points": 1},
+          {"type": "A/13", "toe_points": 4},
+          {"type": "M13/40 (Captured)", "toe_points": 5}
+        ]
+      },
+      {
+        "note": "7th Armoured Division tanks at maximum TOE but ALL broken down — repair starts April 1941",
+        "status": "broken_down"
+      }
+    ],
+
+    "supply_dumps": {
+      "note": "Commonwealth has 9 active Dumps and 3 Dummy Dumps. Benghazi and Tobruk are also supply dumps.",
+      "fixed": [
+        {"location": "A4827", "name": "Benghazi", "ammo": 50, "fuel": 100, "stores": 150, "water": null, "prisoners": 10, "note": "Also has POW Camp and one Commonwealth Guard"},
+        {"location": "C4807", "name": "Tobruk", "ammo": 1500, "fuel": 500, "stores": 1000, "water": null},
+        {"location": "E3613", "name": "Alexandria", "ammo_unlimited": true, "fuel_unlimited": true, "stores_unlimited": true, "water_unlimited": true},
+        {"location": "E2132", "name": "Cairo", "ammo_unlimited": true, "fuel_unlimited": true, "stores_unlimited": true, "water_unlimited": true}
+      ],
+      "flexible": {
+        "active_dumps": 9,
+        "dummy_dumps": 3,
+        "total_available": {"ammo": 1700, "fuel": 2550, "stores": 1600, "water": null},
+        "per_dump_minimum": {"ammo": 50, "fuel": 50, "stores": 50},
+        "per_dump_maximum_pct": 25,
+        "candidate_locations": ["B4004 Msus", "B5407 Tecnis", "B5526 Martuba", "B4921 Mechili", "B5229 Timimi", "A3729 El Magrun", "B5504 Barce", "A2021 Mersa Brega", "B5925 Derna", "A2629 Agadabia", "B5501 Tocra", "A3933 Sceledima"],
+        "note": "All 9 actual dumps must be placed. Historically Msus and Tecnis were the major areas."
+      },
+      "air_supply": {"ammo": 250, "fuel": 180, "stores": 50, "note": "Distribute among Air Facilities"}
+    },
+
+    "convoy_trucks": {
+      "second_third_line_maps_A_to_D": {"light": 45, "medium": 100, "heavy": 25},
+      "at_alexandria_or_cairo": {"light": 25, "medium": 175, "heavy": 35}
+    },
+
+    "air": {
+      "_note": "Deferred — land game only for MVP. Full data in PDF rule 61.33.",
+      "fixed_placements": [
+        {"location": "A4829 Benina", "type": "Hurricane I", "available": 15},
+        {"location": "A2629 Agadabia", "type": "Lysander", "available": 3},
+        {"location": "B5410 Maraua", "type": "Blenheim IV", "available": 15},
+        {"location": "B5504 Barce", "type": "Lysander", "available": 9},
+        {"location": "C4807 Tobruk", "type": "Hurricane I", "available": 16}
+      ],
+      "pilots": {"Two": 1, "One": 4}
+    },
+
+    "fleet": {
+      "_note": "Deferred. All counters in Alexandria. May not move before GT27/OS1.",
+      "at_alexandria": "all fleet counters, armed and undamaged"
+    }
+  },
+
+  "victory_conditions": {
+    "race_for_tobruk": {
+      "axis_win": "Holds Tobruk at end of scenario",
+      "axis_decisive": "Holds Tobruk AND Bardia (C4321)",
+      "axis_strategic": "Holds Benghazi + Tobruk + Bardia + any 2 villages/cities in Egypt",
+      "commonwealth_win": "Anything less than Axis holding Tobruk",
+      "commonwealth_smashing": "Commonwealth holds all of the above including Benghazi"
+    }
+  }
+}

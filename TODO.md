@@ -1,6 +1,6 @@
 # CNA Journal — Todo List
 
-Last updated: 2026-03-01
+Last updated: 2026-03-01 (decisions logged)
 
 ---
 
@@ -86,9 +86,12 @@ Transcribe the Crusader scenario starting positions from PDF pages 80–85 (alre
 
 ---
 
-## Open Questions / Decisions
+## Decisions
 
-- **How granular should player agent actions be?** A single Claude call per Operations Stage (proposing all moves at once) vs. one call per unit. Per-OpStage is cheaper and more realistic (a commander issues orders for the whole stage).
-- **Fog of war implementation:** Does the Allied agent get told *that* enemy units exist in a hex (but not what type), or does it only learn from adjacency/combat contact? CNA has explicit reconnaissance rules (16.0).
-- **Scenario scope:** Start with just the land game (no air, no logistics) for Turn 1, then add complexity? Or full game from the start?
-- **Journal tone:** First-person as "Claude playing the game" (meta), or as historical commanders writing dispatches?
+- **Action granularity:** One Claude call per Operations Stage. The agent proposes all its moves for that stage at once, then the arbiter validates them. Reflects how a commander actually thinks; also much cheaper.
+- **Scenario scope:** Land game only until it's solid. Air and naval/logistics modules are planned but deferred. Code should assume they exist (leave hooks) but not implement them yet.
+- **Journal tone:** Factual, low-drama, low-hyperbole. Narrative focus is on *reasoning* — what the commander was trying to do, why, what happened. Not a thriller; more like a staff officer's after-action report with some inner voice.
+
+## Open Questions
+
+- **Fog of war implementation:** Does the Allied agent get told *that* enemy units exist in a hex (but not what type), or does it only learn from adjacency/combat contact? CNA has explicit reconnaissance rules (16.0). Decide when we build `player_allied.py`.

@@ -1,3 +1,4 @@
+
 === PAGE 1 ===
 THE CAMPAIGN FO 
 NORTH AFRIC 
@@ -74,7 +75,8 @@ Campaign for North Africa
 257 Park Avenue South 
 New York, N.Y. 10010 
 214P 
-11
+11 
+
 === PAGE 2 ===
 1.0 INTRODUCTION 
 2.0 HOW TO PLAY THE GAME 
@@ -180,7 +182,8 @@ Results Table
 17.6 Training Chart 
 18.0 RESERVE STATUS 
 18.1 Which Units May Be Placed in Reserve 
-18.2 Effects of Reserve Status
+18.2 Effects of Reserve Status 
+
 === PAGE 3 ===
 19.0 ORGANIZATION AND 
 REORGANIZATION 
@@ -289,7 +292,8 @@ Reinforcement Schedule
 32.6 Simplified Axis Naval Convoys 
 32.7 Bombardment of the Commonwealth Fleet 
 32.8 Anti-Air Unit Modifications 
-32.9 Road and Track Stacking Modification
+32.9 Road and Track Stacking Modification 
+
 === PAGE 4 ===
 [1.0] INTRODUCTION 
 The Campaign 
@@ -553,7 +557,8 @@ Africa will take at least twelve hundred hours
 (that’s 1200)! Probably more, and that’s just play- 
 ing time. Each Game-Turn takes about 10 hours, 
 perhaps less when there is little movement or com- 
-bat (we have completed a full Game-Turn in under
+bat (we have completed a full Game-Turn in under 
+
 === PAGE 5 ===
 two hours, but that was because both sides were 
 logistically exhausted). This is a long game. 
@@ -845,7 +850,8 @@ Dummy Tank Formations, which do not possess a
 counter. 
 [3.22] For Barrage and aircraft attacks (Strafing 
 and Bombardment) units are grouped into the 
-following classes:
+following classes: 
+
 === PAGE 6 ===
 Infantry-class: 
 All 
@@ -1107,7 +1113,8 @@ bat units — and certain non-combat units — have
 parenthesized Combat Ratings. These ratings may 
 be used only if such a unit is in a hex not occupied 
 by Friendly combat units with appropriate non- 
-parenthesized ratings is attacked by Enemy units.
+parenthesized ratings is attacked by Enemy units. 
+
 === PAGE 7 ===
 [3.5] UNIT CHARACTERISTICS 
 Each 
@@ -1286,7 +1293,8 @@ Infantry-Type
 3) Mechanized Infantry 
 b><g Motorized 
 Infantry 
-Motorcycle Infantry
+Motorcycle Infantry 
+
 === PAGE 8 ===
 Motorized Machinegun 
 Motorized Heavy Weapons 
@@ -1416,7 +1424,8 @@ Construction Underway
 Destroyed Road 
 | 
 Railhead 
-Blocked Harbor
+Blocked Harbor 
+
 === PAGE 9 ===
 Front 
 f 
@@ -1672,7 +1681,8 @@ for North Africa. However, if you have informa-
 tion to the contrary about a specific unit, feel free 
 to adjust the game to fit that information. If you 
 feel like it, we would also like to hear about that in- 
-formation.
+formation. 
+
 === PAGE 10 ===
 10 
 There are three identically organized OA Charts, 
@@ -1947,7 +1957,8 @@ of
 units 
 over 
 that 
-formation’s
+formation’s 
+
 === PAGE 11 ===
 organization 
 structure. 
@@ -2207,7 +2218,8 @@ Table and determines how many
 Replacement Points he will receive two turns henc 
 and plans for their arrival. 
 : 
-11
+11 
+
 === PAGE 12 ===
 12 
 B. Tactical Shipping Phase 
@@ -2478,7 +2490,8 @@ ported by Truck units assume the CPA of the
 Truck unit carrying them. Thus, if the Ist RNF 
 were to be motorized by Medium Trucks it would 
 now have a CPA of ‘20’, instead of ‘8’. (See also 
-Section 8.9). Anti-air units with listed CPAs of
+Section 8.9). Anti-air units with listed CPAs of 
+
 === PAGE 13 ===
 0+ may be motorized by assigning one Medium or 
 one Heavy Truck Point per TOE Strength Point of 
@@ -2736,7 +2749,8 @@ tracks (see Case 8.34).
 [8.12] Under certain conditions — usually combat 
 — a unit may be forced to Retreat. This is con- 
 sidered involuntary movement, in that the retreat- 
-13
+13 
+
 === PAGE 14 ===
 14 
 ing Player does not move by his own choice but 
@@ -2990,7 +3004,8 @@ Players should note that in an Operations Stage in
 which the Weather is Rainstorm wadis in affected 
 map sections are impassable at all points, except 
 where they are traversed by roads. The cost to 
-cross a rain-swollen wadi by Road is +2 CP’s;
+cross a rain-swollen wadi by Road is +2 CP’s; 
+
 === PAGE 15 ===
 there is no additional Breakdown cost (i.e., it is 
 still 4% BP). 
@@ -3263,7 +3278,8 @@ ZOC. The unit is then moved to the desired point
 along the line where it stops. It may not enter an 
 Enemy ZOC or Enemy-occupied hex at any time 
 while using Rail Movement. 
-16
+16 
+
 === PAGE 16 ===
 16 
 {8.74] The Commonwealth Player may use his 
@@ -3553,7 +3569,8 @@ Panzer Battalion has 1 Stacking Point.
 Regiment, 
 have parenthesized 
 Stacking 
-Point
+Point 
+
 === PAGE 17 ===
 values. This means the Stacking Point value of 
 that HQ is ‘0’ when it has no combat units of any 
@@ -3821,7 +3838,8 @@ minefields, airfields, etc., do not exert a ZOC.
 worse do not exert 
 a ZOC. 
 [10.15] Regardless of 10.11, any unit(s) in a hex 
-that total Jess than ten Raw Defensive Close
+that total Jess than ten Raw Defensive Close 
+
 === PAGE 18 ===
 18 
 Assault Points do not exert 
@@ -4089,7 +4107,8 @@ both Anti-Armor Assault and Close Assault. This
 is done by dividing the TOE Strength Points of 
 that unit between both types of Assault. However, 
 an individual TOE Strength Point may never be so 
-divided. Players may also choose to withhold un-
+divided. Players may also choose to withhold un- 
+
 === PAGE 19 ===
 pinned Armor or Gun-class units out of combat 
 (for whatever reason they so desire; usually am- 
@@ -4331,7 +4350,8 @@ Combat)
 GENERAL RULI 
 Barrage is the first ‘‘step’’ of the Combat Seg- 
 ment. Any combat or HQ unit with a Barrage 
-CT
+CT 
+
 === PAGE 20 ===
 20 
 Rating (and enough ammunition) may Barrage 
@@ -4598,7 +4618,8 @@ against Major Cities, Fortifications, Roads, Rail-
 roads, Supply Dumps, and Air Facilities. 
 [12.52] Barrage against Facilities follows all the 
 rules of normal Barrage, with the exception that 
-the Target designated is the specific facility.
+the Target designated is the specific facility. 
+
 === PAGE 21 ===
 [12.53] In barrages directed against any Facility 
 other than a Supply Dump or Air Facility the 
@@ -4841,7 +4862,8 @@ within the hex.
 [14.34] No Anti-Armor fire may be directed from 
 or against Phasing TOE Strength Points assaulting 
 through Ridges that are not crossed by tracks or 
-roads, or down a Slope hexside uncrossed by a
+roads, or down a Slope hexside uncrossed by a 
+
 === PAGE 22 ===
 Road or Track, or down an Escarpment uncrossed 
 bya Track. 
@@ -5109,7 +5131,8 @@ greater, any TOE Strength Points remaining
 after losses are assessed are captured (if the 
 Enemy forces survive). 
 @ 
-Thus, an AA/Flak unit, for example, may be able
+Thus, an AA/Flak unit, for example, may be able 
+
 === PAGE 23 ===
 to hold off a small Enemy detachment, but it will 
 most likely be overrun by anything larger. 
@@ -5368,7 +5391,8 @@ units involved) unit in terms of organization of
 one side in an assault is bigger than the largest unit 
 organization on the other side there will be a col- 
 umn shift benefitting the side with the larger unit. 
-Unit equivalents apply here (see Case 9.2).
+Unit equivalents apply here (see Case 9.2). 
+
 === PAGE 24 ===
 24 
 [15.53] The column adjustments 
@@ -5639,7 +5663,8 @@ major city) may ignore retreat results (or the rest
 of any retreat result). 
 [15.83] Percentage Losses are determined in the 
 following manner: 
-a. The Player affected determines the percentage
+a. The Player affected determines the percentage 
+
 === PAGE 25 ===
 = 
 loss from the Assault Combat Results Table then 
@@ -5924,7 +5949,8 @@ Player removes 1 TOE of PzIII Specials (taking
 them from those tanks assigned to Anti-Armor, 
 rather than upset his Assault power.) 
 Both Players now determine their Assault Dif- 
-ferentials. The Attacking Axis has 42 Raw Points
+ferentials. The Attacking Axis has 42 Raw Points 
+
 === PAGE 26 ===
 26 
 from Infantry (7 x 2 x 3 = 42) and 21 Raw from 
@@ -6194,7 +6220,8 @@ of Tanks, usually made from wood or canvas
 covered cars (the Germans used Volkswagons), 
 designed to fool Enemy intelligence into thinking 
 there were Tank Brigades in places where they 
-weren’t.
+weren’t. 
+
 === PAGE 27 ===
 [16.41] Each Player may use Dummy Tank For- 
 mations. These are the equivalent of Tank bat- 
@@ -6455,7 +6482,8 @@ Experience that that unit may reach, through
 Training. 
 {17.32] A Commonwealth unit undergoes Train- 
 ing in any one of three areas: Cairo (any one of the 
-city hexes); Helwan (1430); or Alexandria (any city
+city hexes); Helwan (1430); or Alexandria (any city 
+
 === PAGE 28 ===
 28 
 hex), or Amiriya, Abougir or Deghelia. 
@@ -6727,7 +6755,8 @@ tainly be accomplished. Most of all, this Section
 should be played with attention to the flavor and 
 meaning of the campaign which is being fought. 
 GENERAL RULE: 
-Each unit represented by a counter in the game is
+Each unit represented by a counter in the game is 
+
 === PAGE 29 ===
 either independent or assigned and/or attached to 
 a Parent Formation. Companies, battalions, and 
@@ -7009,7 +7038,8 @@ Parent Formation only during the owning Player’s
 Reorganization Segment or Movement Segment 
 at a cost of one Capability Point each to both 
 units. However, note that units are moved in- 
-dividually or.as a stack, and once stopped, can be
+dividually or.as a stack, and once stopped, can be 
+
 === PAGE 30 ===
 30 
 moved no further. Thus, 
@@ -7282,6 +7312,7 @@ a CPA Rating of 10 (whether or not they were
 historically motorized; i.e., CPA Rating of 10+) 
 :
 :
+
 === PAGE 31 ===
 and Offensive/Defense Close Assault Ratings of 
 either 1/2 or 2/2 may be so augmented. 
@@ -7564,7 +7595,8 @@ for this purpose.
 [20.49] Replacement Points may be absorbed on- 
 ly during the-Reorganization Segment. They then 
 acquire the assigned unit’s cohesion, breakdown 
-and other levels.
+and other levels. 
+
 === PAGE 32 ===
 32 
 [20.5] UPGRADING ARMORED CAR 
@@ -7826,7 +7858,8 @@ and Repair attempt
 to 
 simulate this facet of the Desert Campaign. Like 
 many other rules in CNA, Breakdown requires 
-working with a lot of numbers. The rule itself is
+working with a lot of numbers. The rule itself is 
+
 === PAGE 33 ===
 simple; it is the record-keeping that will tax the im- 
 agination (and patience). Sheets for Breakdown 
@@ -8083,7 +8116,8 @@ for each of the two Road hexes (it was using Road
 Movement), 8 for entering the Rough terrain hex, 
 2 for crossing the Ridge hexside and 4 for entering 
 the Clear Terrain hex. 
-33
+33 
+
 === PAGE 34 ===
 34 
 Rating of 2L, and the Weather is Hot, so the 
@@ -8336,7 +8370,8 @@ Facility (exceptions: see Cases 22.6 and 22.7).
 [22.22] Field Repairs may take place in any hex in 
 which there is a Broken down vehicle stacked with 
 a Friendly unit of any type, even a Squadron 
-Ground Support Unit (see Case 22.13a). Field
+Ground Support Unit (see Case 22.13a). Field 
+
 === PAGE 35 ===
 Repairs may not be made if the vehicle in question 
 has been towed in that Repair Phase (see also Case 
@@ -8580,7 +8615,8 @@ Engineer units may never enter Enemy-controlled
 hexes voluntarily, and they may use their paren- 
 thesized strength only if they are stacked with a 
 Friendly combat unit. 
-35
+35 
+
 === PAGE 36 ===
 36 
 [23.12] Engineer units may be replaced even if 
@@ -8839,7 +8875,8 @@ with the exception of Alexandria and Cairo, which
 [24.5] ROAD CONSTRUCTION 
 The Via Balbia is the major — actually the only — 
 road that runs through North Africa. It provides 
-the sole communications link and is of vital impor-
+the sole communications link and is of vital impor- 
+
 === PAGE 37 ===
 tance to both Players. At the beginning of the war, 
 several sections of the Via Balbia were incomplete 
@@ -9101,7 +9138,8 @@ should keep track (obviously) of the presence of
 supplies in a hex with no supply dump. However, 
 there are restrictions on the maximum number of 
 points that may be so deployed—see the Logistics 
-Game.
+Game. 
+
 === PAGE 38 ===
 38 
 [25.0] FORTIFICATIONS 
@@ -9338,7 +9376,8 @@ on a separate piece of paper (against a case of a
 “Matter of Disbelief Between Gentlemen’’). The 
 desert raiders follow all the normal rules of Move- 
 ment (they are vehicle units, Recce type) except 
-that they are usually not on the game-map.
+that they are usually not on the game-map. 
+
 === PAGE 39 ===
 [27.33] Desert raiders remain hidden until either 
 of the following occurs: 
@@ -9585,7 +9624,8 @@ that, it must be supplied like any other unit.
 [27.75] If Layforce ‘‘A’’ Battalion is being used 
 for a Commando raid, trucks may not be loaded 
 with it. 
-39
+39 
+
 === PAGE 40 ===
 40 
 [27.76] Layforce 
@@ -9858,7 +9898,8 @@ judiciously and with common sense.
 [28.3] CAPTURED EQUIPMENT 
 Note that captured equipment, unlike prisoners, 
 may be used against their former Player’s units, as 
-long as it has been repaired.
+long as it has been repaired. 
+
 === PAGE 41 ===
 [29.0] WEATHER 
 GENERAL RULE: 
@@ -10113,7 +10154,8 @@ hex adjacent to the coastal hex they are in.
 [30.22] Ship Gun Ratings are used as if they were 
 Actual Artillery Strength Points, with the excep- 
 tion that they need no ammunition. The Com- 
-monwealth Player just considers them as if they
+monwealth Player just considers them as if they 
+
 === PAGE 42 ===
 42 
 were Artillery units in determining the effect of the 
@@ -10380,7 +10422,8 @@ manders) was a pure design decision. While Rom-
 mel did have a great affect on tactical operations 
 and decisions, including only him in the game is a 
 Design Affectation, pure and simple. However, 
-the effect of the Rommel counter is historical.
+the effect of the Rommel counter is historical. 
+
 === PAGE 43 ===
 [32.0] ABSTRACT LOGISTICS 
 AND 
@@ -10684,7 +10727,8 @@ are placed in Cairo unless more than three are
 received in a single Game-Turn. In sucha 
 case, one 
 Supply Unit for every three received may be placed 
-in Alexandria.
+in Alexandria. 
+
 === PAGE 44 ===
 [32.43] At the beginning of each Game-Turn, the 
 Players plan for the arrival of their supply units. 
@@ -10983,7 +11027,8 @@ emplaced gun units (ID Code ‘“‘pp’’) are removed
 from play (just the AA points); 
 3. Artillery units that may be assigned anti-air 
 points (ID Code ‘‘kk’’) lose all assigned Heavy 
-anti-air TOE Strength Points.
+anti-air TOE Strength Points. 
+
 === PAGE 45 ===
 4. All Heavy anti-air (i.e., 75mm and 90mm) 
 Replacement Points are lost. 
@@ -11269,7 +11314,8 @@ D. 141st Regiment of the 64th Catanzaro Division
 is missing its organization size indicator of “‘IIf.’’ 
 E. The IV/66 (10st Trieste) Company should 
 show Heavy Weapons and not an Anti-tank sym- 
-bol.
+bol. 
+
 === PAGE 46 ===
 46 
 Counter Section Nr. 2 
@@ -11348,7 +11394,8 @@ and POW
 Camp counters should 
 be labelled 
 as ‘‘Com- 
-monwealth’’ and not ‘‘Allies.”’
+monwealth’’ and not ‘‘Allies.”’ 
+
 === PAGE 47 ===
 DESIGN CREDITS: 
 Game Design: Richard Berg 
@@ -11387,7 +11434,8 @@ Chief of Mission:Tom Herman
 *Courtmartialed and convicted of charges of excessive cruelty t6 Prisoners-of-War. 
 +Courtmartialed and cleared of charges of excessive cruelty to Prisoners-of-War. 
 Production: Orhan Agis, Mike W. Barr, Rosalind Fruchtman, Ted Koller, 
-Manfred F. Milkuhn, Bob Ryer
+Manfred F. Milkuhn, Bob Ryer 
+
 === PAGE 48 ===
 THE CAMPAIGN FOR 
 NORTH AFRICA 
@@ -11474,7 +11522,8 @@ MALTA
 44.3 Invasion of Malta 
 44.4 Strategic Air Raids on Malta 
 44.5 Malta Air Facility Construction Table 
-214P 12
+214P 12 
+
 === PAGE 49 ===
 45.0 
 46.0 
@@ -11626,6 +11675,7 @@ CONCLUSION
 DESIGNER’S NOTES 
 BIBLIOGRAPHY 
 ’
+
 === PAGE 50 ===
 THE AL 
 GAME 
@@ -11880,7 +11930,8 @@ close assault. Player “A” determines which
 assaults will be probes (although he need not 
 reveal this decision) and which TOE Strength 
 Points will be withheld from assault. 
-e. Anti-Armor Step: Both of the Players simul-
+e. Anti-Armor Step: Both of the Players simul- 
+
 === PAGE 51 ===
 taneously resolve any anti-armor fire, extract- 
 ing any casualties. Destroyed tank markers are 
@@ -12141,7 +12192,8 @@ TRANSPRT
 [34.5] TRANSPORTS 
 [34.51] Both sides are given planes of minimal 
 combat value that are used for transporting (TT) 
-personnel and/or supplies.
+personnel and/or supplies. 
+
 === PAGE 52 ===
 [34.52] Transports are given a Transport Capaci- 
 ty, expressed in TOE strength points or Supply 
@@ -12416,7 +12468,8 @@ planes assigned to that squadron. Each SGSU
 counter is placed on the game-map to indicate 
 where that squadron is located. They are usually 
 placed at air facilities. SGSU counters do not in- 
-clude the airplanes attached to the squadron;
+clude the airplanes attached to the squadron; 
+
 === PAGE 53 ===
 SGSU’s are the mechanics, trucks, equipment, 
 etc., that are part of that squadron. They are not 
@@ -12697,7 +12750,8 @@ minimal
 maintenance 
 facilities. 
 They 
-are
+are 
+
 === PAGE 54 ===
 represented by air landing strip counters, and they 
 are treated exactly as airfields except that each air 
@@ -12934,7 +12988,8 @@ airfield or air strip simply limits the number of
 SGSU’s that may operate there. 
 [38.23] An SGSU may refuel planes from any 
 squadron. However, it may never refuel more 
-planes than the maximum capacity of that SGSU
+planes than the maximum capacity of that SGSU 
+
 === PAGE 55 ===
 (readied plus reserve). Therefore, an Italian SGSU 
 can handle refueling chores for a total of 12 
@@ -13176,7 +13231,8 @@ squadron may not be divided between strategic
 and land support missions. 
 [39.17] There is no limit to the number of the type 
 of missions that may occur in (or rather over) a 
-given hex (limited, of course, by what is in that hex
+given hex (limited, of course, by what is in that hex 
+
 === PAGE 56 ===
 worth going after). Players should keep the planes 
 assigned to each specific mission separate, so as to 
@@ -13450,7 +13506,8 @@ on
 Malta 
 may 
 fly 
-CAP
+CAP 
+
 === PAGE 57 ===
 10 
 against Axis Naval Convoys only. Axis planes bas- 
@@ -13716,7 +13773,8 @@ fighters
 (individual 
 planes) that fly flak suppression, one point of anti- 
 aircraft/flak fire is neutralized and may not be us- 
-ed that Operations Stage. Only light AA points
+ed that Operations Stage. Only light AA points 
+
 === PAGE 58 ===
 and ship AA points may be suppressed by fighters. 
 Heavy AA points may not be suppressed by 
@@ -13981,7 +14039,8 @@ B-RR): This is done in the same fashion as Bomb-
 ing Cities, using the same table (but a different 
 row, according to the target). Roads may be 
 bombed at night if the Road is in a Coastal Hex. 
-11
+11 
+
 === PAGE 59 ===
 12 
 The results are simply having the road or railroad 
@@ -14246,7 +14305,8 @@ ZOC; and
 such unit may not leave that ZOC; and 
 4. Such unit may not voluntarily engage in com- 
 bat; i.e., it may not barrage or use Offensive Close 
-Assault or Anti-Armour.
+Assault or Anti-Armour. 
+
 === PAGE 60 ===
 As soon as the OpStage switches to the B Player 
 these results are no longer in effect. 
@@ -14493,7 +14553,8 @@ duty.
 The German 
 Player 
 is, 
-13
+13 
+
 === PAGE 61 ===
 14 
 therefore, required to base a certain percentage of 
@@ -14745,7 +14806,8 @@ applies
 this revised 
 (and usually 
 lower) 
-loss
+loss 
+
 === PAGE 62 ===
 number to those planes he actually has in the 
 game. Planes not actually in play never take losses; 
@@ -15094,7 +15156,8 @@ hex from
 different 
 squadrons the owning Player would have to in- 
 dicate the parent squadron for each of those 
-planes.
+planes. 
+
 === PAGE 63 ===
 16 
 Figure C: The Commonwealth Player an- 
@@ -15352,7 +15415,8 @@ tually was not shot down and has managed to limp
 back to base. (This roll is the same used for 
 recovery of the pilot (45.66); thus if a ‘1’ is thrown, 
 both the pilot and fighter return. On a 2, only the 
-pilot makes it back.)
+pilot makes it back.) 
+
 === PAGE 64 ===
 [45.64] Once 
 the 
@@ -15597,7 +15661,8 @@ Alexandria) that is within 15 Capability Points.
 described in Section 32.0) and Depot supply units. 
 A Depot initially contains 180 Fuel and 40 Ammo 
 Points. It retains its Depot status until it contains 
-17
+17 
+
 === PAGE 65 ===
 18 
 no more than 60 Fuel Points, at which time it is 
@@ -15858,7 +15923,8 @@ from each side be assigned to this area, and this
 area alone. Testing proved that rare was the player 
 who could handle military matters, strategy, tac- 
 tics, etc., and also coordinate supply for his 
-troops.
+troops. 
+
 === PAGE 66 ===
 [48.0] SEQUENCE OF PLAY 
 (Logistics Game) 
@@ -16121,7 +16187,8 @@ supplies. Otherwise this Phase is omitted.
 L. Repair Phase: 
 1. Towing Segment: Player ‘‘A’’ may tow broken- 
 down and recovered vehicles. 
-2. Maintenance Segment: Player ‘‘A’’ may at-
+2. Maintenance Segment: Player ‘‘A’’ may at- 
+
 === PAGE 67 ===
 20 
 tempt to repair brokendown or destroyed vehicles 
@@ -16385,7 +16452,8 @@ be transported
 by 
 trucks or aircraft; it may be airdropped. It is 
 available for use when in first line trucks or supply 
-dumps. Ammunition with truck convoys may not
+dumps. Ammunition with truck convoys may not 
+
 === PAGE 68 ===
 be used until off-loaded. Combat units may carry 
 enough ammo to fire once. 
@@ -16631,7 +16699,8 @@ their CPA for the Operations Stage they are
 deprived of water. Furthermore, they may not 
 engage in offensive close assault; they defend at 
 half strength. 
-21
+21 
+
 === PAGE 69 ===
 22 
 [52.53] For every consecutive operations Stage 
@@ -16876,7 +16945,8 @@ counter is removed upon revelation.
 [54.14] Players may attempt to ‘‘blow’’ supply 
 dumps and their supplies. Only non-gun units may 
 attempt to blow dumps. Only one Phasing unit per 
-{continued on page 23]
+{continued on page 23] 
+
 === PAGE 70 ===
 [8.37] TERRAIN EFFECTS CHART 
 CP Cost 
@@ -16948,7 +17018,8 @@ cost in Capability or Breakdown Points.
 12. Armor targets receive the defensive benefit only if the hex isa Major City hex. 
 13. Engineer units reduce cost to enter (Case 26.2). If assaulting forces are in an Enemy minefield, the non-Phasing 
 forces receive L1 shifts for Anti-Armor and Close Assault if not already receiving them for occupying a Friendly 
-minefield.
+minefield. 
+
 === PAGE 71 ===
 [36.53] ALLIED OFF-MAP AIR 
 FACILITIES CHART 
@@ -17084,7 +17155,8 @@ Ben Gania lies along the northwest-southeast axis that intersects both paths. Ex
 ample 2: Agedabia to Ismailia (Allied off-map airfield). East 33 hexes to B2629 + 
 33 hexes to C2629 + 33 hexes to D 2629 + 33 hexes to E2629 + zero hexes nor- 
 thwest to E3425 + 8 hexes to E3433 + 9 hexes east to Ismailia. Total distance is 
-149 hexes.
+149 hexes. 
+
 === PAGE 72 ===
 [37.42] LAND DISTANCE CHART 
 | Nofilia (42703) 
@@ -17168,7 +17240,8 @@ Italy to Tobruk
 Nr.=The Axis Convoy Lane’s description number. Sicily, Italy, Crete= Airplanes flying from any of those boxes. 
 Malta = Airplanes flying from any hex on Malta. Values represent distance in hexes from that location to the Shipping Lane. 
 Note that in order for a plane to fly a Mission to a Shipping Lane from North Africa it must possess a Range at least equal to 
-the number of hexes from its Air Facility to a Rally Point and from that Rally Point to the Shipping Lane.
+the number of hexes from its Air Facility to a Rally Point and from that Rally Point to the Shipping Lane. 
+
 === PAGE 73 ===
 SUMMARY OF IMPORTANT LOCATIONS 
 Major 
@@ -17209,7 +17282,8 @@ G002/3801
 ~ 
 x oa. 
 Pao 
-Solum
+Solum 
+
 === PAGE 74 ===
 feontinued from page 22] 
 hex may attempt to blow a particular dump per 
@@ -17456,7 +17530,8 @@ must have an engineer battalion or CW HQ with
 engineer capacity present in the port hex. He then 
 expends 25 Ammunition Points and 10 Stores 
 Points, which must be actually present in the hex, 
-23
+23 
+
 === PAGE 75 ===
 in the Construction Phase. The Efficiency Level of 
 the port is reduced by one (see Case 50.14). 
@@ -17702,7 +17777,8 @@ Convoy Phase, and on/y in that Phase.
 from air or land. They may not enter a port that 
 has been neutralized (Capacity Level of zero). 
 They may also never enter an Enemy-occupied 
-port.
+port. 
+
 === PAGE 76 ===
 [56.34] To use coastal shipping, the Axis Player 
 loads supplies (xo personnel) on his boats at the 
@@ -17936,7 +18012,8 @@ Assigned Subordinate Units Are Detached. These
 are listed under the parent unit after the indicator 
 “‘Det.’’ Of course, they are listed separately in the 
 hex(es) they themselves are in. 
-25
+25 
+
 === PAGE 77 ===
 26 
 Listed Unit Has Entirely New/Different Roster of 
@@ -18220,7 +18297,8 @@ scenario
 group; 
 each may 
 be played 
-separately to a specific conclusion.
+separately to a specific conclusion. 
+
 === PAGE 78 ===
 [69.22] Graziani’s Offensive 
 This scenario starts with Game-Turn 1, OpStage 1; 
@@ -18580,7 +18658,8 @@ Any Air Fac-
 ility 
 30 Medium 
 20 Heavy 
-2/
+2/ 
+
 === PAGE 79 ===
 28 
 [60.44] INITIAL SUPPLY STATUS 
@@ -18931,7 +19010,8 @@ Bardia (C 4321)
 Benghazi (B 4827) 
 1 
 10 
-10
+10 
+
 === PAGE 80 ===
 Derna (B 5925) 
 1 
@@ -19224,7 +19304,8 @@ Player has a Temporary
 Repair Facility in Tobruk and one in Mersa 
 Matruh. Alexandria (either hex) and Cairo have 
 Major Repair Facilities. 
-29
+29 
+
 === PAGE 81 ===
 30 
 Air Supply 
@@ -19484,7 +19565,8 @@ The Commonwealth Player receives one regular
 supply unit with 20 Ammo and 30 Fuel Points in 
 Benghazi (A 4827) and 5 regular supply units, each 
 with 40 Ammo and 15 Fuel Points, in Tobruk (C 
-4807). In addition, he receives 9 regular supply
+4807). In addition, he receives 9 regular supply 
+
 === PAGE 82 ===
 units, each with 40 Ammo and 25 Fuel Points, and 
 4 Dummy supply units to be divided among the 
@@ -19729,7 +19811,8 @@ i.e., both have been reduced to the ability to per-
 form maintenance ona 
 single squadron). 
 SGSU’s: As per Air Game rules. 
-3]
+3] 
+
 === PAGE 83 ===
 32 
 [62.34] Commonwealth Trucks 
@@ -20095,7 +20178,8 @@ Derna
 300 
 2,500 
 100 
-300
+300 
+
 === PAGE 84 ===
 In addition the Axis Player receives dumps at 
 Gazala (B4933) Rotunda Segnali (B 4432) and any 
@@ -20414,7 +20498,8 @@ AA Regt HQ: 4th In Div (Less: 11 In Bde, 31st
 Field Arty, and Central In HOrse R; Det: 5th and 
 7th In Bdes and ist Field Arty). Trucks: 10 Light, 
 25 Medium, 10 Heavy. 
-33
+33 
+
 === PAGE 85 ===
 34 
 E 2601: 7th In Bde (4 In; Less: 4/11 Sikh; Assg: 
@@ -20756,7 +20841,8 @@ The remaining dumps may be placed anywhere on
 Map B, but not within one hex of the front. 
 Front Line Dumps receive (amongst them) 2500 
 Ammo points, 2000 Fuel Points, 1500 Stores, and 
-1500 Water Points. The other dumps split (in any
+1500 Water Points. The other dumps split (in any 
+
 === PAGE 86 ===
 way the Player wishes) the following: 1000 Ammo 
 Points, 3000 Fuel Points, 500 Stores, 2000 Water 
@@ -21100,7 +21186,8 @@ and
 50 
 Water 
 except 
-Tripoli/Tunisia.
+Tripoli/Tunisia. 
+
 === PAGE 87 ===
 36 
 Each Strip, Flying Boat Basin/Alighting Area has 
@@ -21375,7 +21462,8 @@ monwealth air facility not within three hexes of a
 Front Line hex. 
 [63.9] VICTORY CONDITIONS 
 [63.91] ‘‘The Last Chance’’ Scenario 
-A. The Axis Player wins a Strategic Victory if he
+A. The Axis Player wins a Strategic Victory if he 
+
 === PAGE 88 ===
 can occupy at least one hex of Alexandria with at 
 least a Brigade-equivalent unit. Supply doesn’t 
@@ -21667,7 +21755,8 @@ Thus,
 if the 
 Com- 
 monwealth Player had a total of 35 Crusader I 
-37
+37 
+
 === PAGE 89 ===
 38 
 Tank Replacement Points available for the game, 
@@ -21912,7 +22001,8 @@ Persuasion, goes some dubious thanks for assign-
 ing me to this project. An honest vote of thanks to 
 my very good friend Howard Barasch, for spend- 
 ing many hours with his voluminous notes on the 
-campaign. And to my two OB researchers —
+campaign. And to my two OB researchers — 
+
 === PAGE 90 ===
 Rae 
 oe 
@@ -22023,7 +22113,8 @@ Geographical Section, General Staff No 4076.
 1:100,000 
 World (Africa). 1:1,000,000 Series 1301, Edition 
 6AMS, US Army Map Service 
-39
+39 
+
 === PAGE 91 ===
 40 
 The complete countersheets for Campaign for North A frica are 
@@ -22985,6 +23076,7 @@ of playing the garne.
 :
 '
 ;
+
 === PAGE 92 ===
 SGSU 
 SGSU 
@@ -23694,7 +23786,8 @@ a
 a 
 — 
 aoe 
-is
+is 
+
 === PAGE 93 ===
 42 
 Campaign for North Africa Counter Section Nr. 5 (200 pieces) 
@@ -24276,7 +24369,8 @@ Ledbury
 Lenee 
 senis 
 Motewk 
-tabian
+tabian 
+
 === PAGE 94 ===
 Campaign for North Africa Counter Section Nr. 7 (200 pieces) 
 Quantity of Sections of this identical type: 1. Total quantity of Sections (all types) in game: 9, Copyright 
@@ -25300,7 +25394,8 @@ Sas
 9 Aug 
 9 Aus 
 3 Aa =e 
-COMMONWEALTH
+COMMONWEALTH 
+
 === PAGE 95 ===
 Campaign for North Africa Counter Section Nr. 9 (200 pieces): Front 
 Quantity of Sections of this identical type: 1. Total quantity of Sections all types) in game: 9. 
@@ -25739,7 +25834,8 @@ CAMP
 POW 
 3 
 POW 
-13
+13 
+
 === PAGE 96 ===
 eeeviaht © 1979, Simulations Publications, Inc., New York, N.Y., 10010 
 [6.3] CAPABILITY POINT EXPENDITURE SUMMARY 
@@ -25853,7 +25949,8 @@ Capability Point Allowance. *If the final adjusted differential is —4 or worse
 ‘reacquire’ two of the capability points they originally expended in order to defend if the units were 
 not barraged nor engaged in barrage. Note that certain actions, while not requiring the expenditure of 
 capability points, restrict a unit’s ability to expend Capability Points. 
--214P51
+-214P51 
+
 === PAGE 97 ===
 ig 
 ; 
@@ -26065,7 +26162,8 @@ BAa66~ 064: 66) «62.266.
 (62...66 
 Retreat Before Assault, may not participate in Assault. 1 = Infantry* 
 ength Point and Pinned. Guns or Trucks: Lose one TOE Strength 
-ose two points. *If the Infantry is in Trucks, eliminate one Truck”
+ose two points. *If the Infantry is in Trucks, eliminate one Truck” 
+
 === PAGE 98 ===
 14 
 15 6+ 
@@ -26148,7 +26246,8 @@ planes. on the ground in
 : 
 tion. 
 that hex that are ro 
-|
+| 
+
 === PAGE 99 ===
 [15.79] THE CLOSE ASSAULT COMBAT RESULTS TABLE 
 Final Close Assault Differential 
@@ -26298,7 +26397,8 @@ defending Player retreats after tombat this result has no effect. If the defendi
 and the dice sum lies within the ragne of numbers listed the result is an Engaged. 
 If the dice sum-does not lie within the range of numbers listed the result is In Contact. Note: The attacking forces are 
 never required to perform an Involuntary Retreat. 
-xt
+xt 
+
 === PAGE 100 ===
 [17.4] MORALE MODIFIER TABLE 
 | [17.6] TRAINING CHART 
@@ -26471,7 +26571,8 @@ in deter
 : is he number of panes destroyed. Nae 
 As the minimum number of Armor 
 Pr 
-mining results only, to be part of any Bo
+mining results only, to be part of any Bo 
+
 === PAGE 101 ===
 Allied Unit Type 
 Armor Division (GT-1 
@@ -26600,7 +26701,8 @@ and the Aircraft Characteristics Charts 4.6)
 11...35 
 36...54 
 150 
-Weather :
+Weather : 
+
 === PAGE 102 ===
 “sun3 yue}-NUe Jeg OZ/8Z IO WIDg"Z UBUD 10 ZE/Lp uelyer] 
 A[UQ =1Y VE “un oy} surpesgdn ji sardde Tuo sy, *$*QZ WSeD Ul parjioads adAj ay] Jo YURL 
@@ -26915,7 +27017,8 @@ TOL
 jusUZDB/day 
 juswissuldsay 
 su 
-LUVHO NOISUAANOD LINIOd INAWAOVIdaN [¢°07]
+LUVHO NOISUAANOD LINIOd INAWAOVIdaN [¢°07] 
+
 === PAGE 103 ===
 [27.91] DESERT RAIDER 
 RAIDS TABLE 
@@ -27118,7 +27221,8 @@ pend 10 CP’s. The results of ‘‘both’’ raids are
 determined separately with the airfield attack- 
 ed first. No desert raider may perform the 
 same raid in the same hex or attack the same 
-truck convoy more than once per OpStage.
+truck convoy more than once per OpStage. 
+
 === PAGE 104 ===
 dW 
 @ 
@@ -27622,7 +27726,8 @@ NOILONYLSNOD
 I[LT’r7] 
 Foetal 
 Ae 
-eigee.”
+eigee.” 
+
 === PAGE 105 ===
 10 
 (24.18] 
@@ -27738,7 +27843,8 @@ Game-Turn has
 . surviving pilot 
 idron until one 
 all. 
-that plane.
+that plane. 
+
 === PAGE 106 ===
 11 . 
 40.4] SCRAMBLE TABLE 
@@ -27924,7 +28030,8 @@ those two planes. Kill: A dice roll, read sequentially, equal to or less than
 TacAir Rating from the total of the attacker’s (modified) TacAir Rating 
 that number results in the elimination of the defending plane. na=The 
 plus the Manuever Adjustment (which may be a negative number) for 
-defending plane may never be eliminated.
+defending plane may never be eliminated. 
+
 === PAGE 107 ===
 99°99 = = 
 . 
@@ -28198,7 +28305,8 @@ GNV
 INTNGUVAWNO" 
 NIV 
 [s'Tp] 
-12
+12 
+
 === PAGE 108 ===
 18 
 eee 
@@ -28972,7 +29080,8 @@ puv
 juawpavquiog 
 ip 
 03 
-day
+day 
+
 === PAGE 109 ===
 14 
 _ [52.7] WATE 
@@ -29097,7 +29206,8 @@ Inf = Infantry. Arty = Artillery. AA = Anti-aircraft. BAR = Breakdown Adjustment
 of the Truck Point when transporting (motorizing) the item listed. ma = Not allowed. *Applies only to Trucks in Convoy carrying Supplies. *Requires two Light 
 Truck Points to motorize one Infantry TOE Strength Point. tLight Trucks, if not being moved along a Road, garner one break down point in addition to those 
 acquired by entering the hex or crossing the hexside. e.g., moving along a track one hex across a wadi into a rough hex accumulates 18 BP’s (4 x 8 for.the wadi 
-+ % x 8 for the rough + 1 each for the wadi hexside and the rough hex).
++ % x 8 for the rough + 1 each for the wadi hexside and the rough hex). 
+
 === PAGE 110 ===
 [54.5] EQUIVA 
 ee ‘Equivalent 
@@ -29235,7 +29345,8 @@ ona
 Points may be shipped in. 
 SA 
 OER ee 
-ee
+ee 
+
 === PAGE 111 ===
 Index to Common Charts & Tables 
 6.3 
@@ -29375,7 +29486,8 @@ page 14
 page 14 
 page 15 
 page 15 
-page 13
+page 13 
+
 === PAGE 112 ===
 HE CAMPAIGN FC 
 NORTH AFRICA 
@@ -29466,7 +29578,8 @@ Curtis
 ! 
 Caudron 
 Saulnier 
-214P64
+214P64 
+
 === PAGE 113 ===
 [4.44A] —continued from page one 
 Bombers, Flying Boats, Transports, Reconnaissance 
@@ -29608,7 +29721,8 @@ missions.
 not 
 possess 
 this 
-mission
+mission 
+
 === PAGE 114 ===
 [4.43a] COMMONWEALTH LAND UNIT REINFORCEMENT 
 AND WITHDRAWAL SCHEDULE 
@@ -29862,7 +29976,8 @@ Lancers Bn [R, ] Spt/J); Trucks:
 2/12 Aus Fld Arty Regts, 2/3 Aus 
 LAA Regt and 2/1 Aus Pioneer Bn 
  Q/): 10. L, 30M, 6H. Rin: 150 
-Infantry Bde [50}; -Fpt: See 2/44.
+Infantry Bde [50}; -Fpt: See 2/44. 
+
 === PAGE 115 ===
 60 
 63 
@@ -30124,7 +30239,8 @@ return with a specified number and distribu-
 tion of Trucks (i.e., listed or returns with the 
 same distribution of trucks as it left (i-e., in- 
 dicated by ‘‘Tpt’’ and the dates of the unit’s 
-withdrawal).
+withdrawal). 
+
 === PAGE 116 ===
 ie 443) COMMONWEALTH 
 ORGANIZATION | 
@@ -30321,7 +30437,8 @@ Arrives
 mored brigade, and the Support Brigade Groupis 
 d_ confused. Fhe 22nd Armored Brigade was 
 d for this division, but it became assigned to the 
-vision instead.
+vision instead. 
+
 === PAGE 117 ===
 Conte, ID 
 oo 
@@ -30434,7 +30551,8 @@ d= The Ist Kings Royal Rifle Corps.
 e= The 11th Prince Albert’s Own Hussars. The Nr. 2 Armored Car 
 Company of the Royal Air Force (Rolls Royce Armored cars) serv- 
 ed under this unit during October 1940 to February 1941. 
-|
+| 
+
 === PAGE 118 ===
 8th Armored Division 
 Basic Morale: + 1 (0) 
@@ -30510,7 +30628,8 @@ j
 58th Field Artillery Regt 
 30th Light AA Regt 
 ; 
-6x Light AA
+6x Light AA 
+
 === PAGE 119 ===
 10th Armored Division (a) 
 Basic Morale: + 1(—1) 
@@ -30603,7 +30722,8 @@ a=The tank ‘‘regiments’’ assigned to the Ist Army Tank Brigade
 »=These units were refitted with Scorpion anti-mine tanks for the 
 often saw duty attached to other units, usually infantry divisions 
 battle of El Alamein. 
-and brigades.
+and brigades. 
+
 === PAGE 120 ===
 Sist (Highland) Infantry Division 
 Basic Morale: + 1 
@@ -30855,7 +30975,8 @@ sent to India in February 1942 (3/70).
 f=These battalions were not assigned to the 23rd until June 1941 
 : (G738), going to and returning from Syria with the brigade HO. In 
 Jan 
-Z 1942) fey were detached and sent elsewhere.
+Z 1942) fey were detached and sent elsewhere. 
+
 === PAGE 121 ===
 Ae 
 Weap 
@@ -30942,7 +31063,8 @@ those units will only be able to add Deacons up to the difference bet-
 ween their current anti-tank TOE Strength and their TOE Strength 
 Point limit. Refitting makes it possible to convert the entire unit in 
 one sitting. 
-SS
+SS 
+
 === PAGE 122 ===
 Unassigned Armor-Class Units 
 Basic Morale: +1 
@@ -31075,7 +31197,8 @@ stroops),
 Dragoons were converted 
 to a Motor Battalion 
 ttothedesert. 
-oo
+oo 
+
 === PAGE 123 ===
 ‘Unassigned Artillery Units 
 Basic Morale: +1 
@@ -31264,7 +31387,8 @@ receive Bishops equal to the number it began the refitting with. The
 new. counter may be used as a replacement for the old 1ith RHA 
 upon completion of the refitting. (Actually, it can be used for any 
 RHA that has been refit, as the refit has no effect on the ability of 
-an artillery regiment to contain SPA.)
+an artillery regiment to contain SPA.) 
+
 === PAGE 124 ===
 Unassigned Anti-aircraft Units 
 Basic Morale: + 1 
@@ -31535,7 +31659,8 @@ a= The 6th Australian arrived quite early (albeit in sections), con-
 committed to battle for several months. In addition, as with most 
 sidering the date it was first ‘‘used’’ (mid-December 1940). Itwasin 
 Australian divisions, there was considerable reassignment of units 
-execrable condition in terms of training and equipment and was not (especially support units) at the beginning of the war.
+execrable condition in terms of training and equipment and was not (especially support units) at the beginning of the war. 
+
 === PAGE 125 ===
 = 
 —— 
@@ -32167,7 +32292,8 @@ sstugss
 v= 
 ZAantsemmasoan 
 | 
-L
+L 
+
 === PAGE 126 ===
 INDIAN 
 This group includes all of the units colored and specified on the counter sheet as Indian. Historically, each Indian infantry 
@@ -32245,7 +32371,8 @@ aoa
 - 
 sh 
 th i 
-PAVO Ca
+PAVO Ca 
+
 === PAGE 127 ===
 c 
 5th Indian Division (a) 
@@ -32467,7 +32594,8 @@ sheet.
 b=The 13th Duke of Connaught’s Own Lancers did serve with In- 
 dian units during the campaign. It arrived attached to the 18th In- 
 dian Brigade. 
-\
+\ 
+
 === PAGE 128 ===
 10th Indian Division (a) 
 Basic Morale: +1 
@@ -32636,7 +32764,8 @@ a=This was originally a ‘British brigade doing garrison duty on
 Cyprus. It was converted to a motor brigade and assigned to the 
 Western Desert. Upon its arrival in August it came under 
 the com- = 
-mand of the Sth Indian Division.
+mand of the Sth Indian Division. 
+
 === PAGE 129 ===
 NEW ZEALAND 
 This group includes all of the units colored and specified on the counter sheet as New Zealand. 
@@ -32697,7 +32826,8 @@ actually arrived in March 1941. However, they were shipped im-
 mediately to Greece. They started service in North Africa in August 
 1941. 
 4th SA Armored Car Regt 
-Ist SA Road Construction Bn
+Ist SA Road Construction Bn 
+
 === PAGE 130 ===
 HAFRICAN 
 iam 
@@ -32764,7 +32894,8 @@ a
 Notes: 
 RR stands for Railroad. These units are restricted as to their 
 engineering capabilities. 
-a=
+a= 
+
 === PAGE 131 ===
 2nd South African Infantry Division 
 Basic Morale: 0(—1) 
@@ -32977,7 +33108,8 @@ g= This ‘‘ad hoc’’ unit is not truly an armored car unit. It consisted
 of the Ist Free French Tank Company (Stuarts, in all probability); 
 Armoured C Squadron, Ist Morroco Spahis; Portee Troop, Ist 
 Morroco Spahis; and an anti-aircraft troop of-the Ist Foreign 
-Legion,
+Legion, 
+
 === PAGE 132 ===
 2nd Free French Brigade (a) Notes: 
 Basic Morale: + 1 
@@ -33160,7 +33292,8 @@ Notes:
 a=A company of the Ist Free French Motor Marine Battalion. 
 : 
 b= Served as fortress. troops) in Tobruk with the 70th 
-Balenuy Divi-
+Balenuy Divi- 
+
 === PAGE 133 ===
 [4.464] COMMONWEALTH UNIT CHARACTERISTICS CHART 
 Close 
@@ -33299,7 +33432,8 @@ and three artillery TOE Strength Points
 ll. 
 may assign up to four anti-tank TOE Strength Points 
 and two Light Anti-Aircraft TOE Strength Points 
-6
+6 
+
 === PAGE 134 ===
 ID 
 Anti- 
@@ -33386,7 +33520,8 @@ motorized by assigning Truck Points and the SAS may be
 motorized by a Commonwealth LDG, Case 27.88), regardless 
 of all references inthe game-rules to leg infantry giving only 
 CPA’s of 8 & 10. 
-Maximum
+Maximum 
+
 === PAGE 135 ===
 [19.31] COMMONWEALTH FORMATION ORGANIZATION CHART 
 Unit Type 
@@ -33582,7 +33717,8 @@ regiment + (fey Oran armored reconnaissance battalion is
 Tan ora 
 tank battalion comprised solely of Scorpion tanks. 
 = Unit. Any unit, other than a tank battalion, whose counter bears 
-a stacking point value of one or zero.
+a stacking point value of one or zero. 
+
 === PAGE 136 ===
 @ 
 VvV8 
@@ -33706,7 +33842,8 @@ LYUVHO
 SOLLSIMALOVAVHD 
 LIND 
 NVIIVIT 
-[q9P°p]
+[q9P°p] 
+
 === PAGE 137 ===
 [4.46c] GERMAN UNIT CHARACTERISTICS CHART 
 Close 
@@ -33852,7 +33989,8 @@ naissance units may be upgraded (see Case 20.5). 2) Beginning with
 the 1/75 Game-Turn, all German battle groups and certain head- 
 quarters may be augmented by anti-tank TOE Strength Points (see 
 Case 19.8). 3. Jnits with ID Codes of ‘“‘ee’’ and ‘“‘ff’’ have 
-Breakdown Adjustment Rating of 1 Left.
+Breakdown Adjustment Rating of 1 Left. 
+
 === PAGE 138 ===
 ‘Fuel 
 Off/Def Rate 
@@ -33926,7 +34064,8 @@ by a Commonwealth
 ‘= [hese are mineclearing tanks based 
 the hex that possess Ammo and ‘non-pe 
 S$ 10F 
-_ chassis. They are treated as engineer un
+_ chassis. They are treated as engineer un 
+
 === PAGE 139 ===
 ( PA — AA 
 Barrage 
@@ -34009,7 +34148,8 @@ at may be airdropped.. ****These 0+.CPA anti-aircraft TOE Strength. Points were 
 g encased in cement bunkers. They may be moved if sufficient truck. points are assigned to 
 er, that those assigned to the Tobruk Ist thru Sth CD Artillery Groups are part of immobile units 
 he | artillery TOE Strength Points-are entirely eliminated. The only 04+-CAP TOE. Strength Points 
-tially deployed at Tobruk, Benghazi and Benina.
+tially deployed at Tobruk, Benghazi and Benina. 
+
 === PAGE 140 ===
 Fuel 
 Off/Det Rate 
@@ -34090,7 +34230,8 @@ Anti-Tank (Gun). Weapon Systems
 3.7cm Pak 35/36 
 21cm (mrs18) Howi 
 Se PAR GS! 
-'7,62cm Pak(R)***
+'7,62cm Pak(R)*** 
+
 === PAGE 141 ===
 [20.78] COMMONWEALTH PRODUCTION SYSTE 
 [20.78A] Commonwealth 
@@ -34193,7 +34334,8 @@ arriving during
 “samecity. 
 : 
 ive four Game- 
-ylacement Points
+ylacement Points 
+
 === PAGE 142 ===
 tod 
 Til 
@@ -34265,7 +34407,8 @@ once
 a month 
 for the months 
 of 
-November, 1940 through October, 1942 inclusive..
+November, 1940 through October, 1942 inclusive.. 
+
 === PAGE 143 ===
 [34.84] COMMONWEALTH AIRPLANE REINFORCEMENT 
 Ads Blenheim: 1ix Well 
@@ -34371,7 +34514,8 @@ squadrons must each consist of at least 12 planes with
 a possible Bombload Capacity of at least 
 9 Bomb 
 Points (any combination of planes with 9 or more 
-Bomb Points).
+Bomb Points). 
+
 === PAGE 144 ===
 NORTH AFRICA 
 Copyright © 1979, Simulations Publications, Inc., New York, N.Y¥., 10010 
@@ -34408,7 +34552,8 @@ or
 57 
 M88 ito 
 continued on next page © 
-214P63
+214P63 
+
 === PAGE 145 ===
 [4.44b] German Aircraft Characteristics Chart (cont.) 
 Bombers, Flying Boats, Transports, Reconnaissance 
@@ -34539,7 +34684,8 @@ _ It: Four arty Bn
 ) Ragiuppamento. 
 Gm: 4th Coy of 300 Oasis Bn. 
 2 
-Gm: HQ 200 Schutzen Regt
+Gm: HQ 200 Schutzen Regt 
+
 === PAGE 146 ===
 29 
 a2 
@@ -34712,7 +34858,8 @@ Player may treat these as unattached trucks (2nd-
 Bn. It: 16 Pistoia Div [Less: 57 
 Gm: 382 Panzergrenadier 
 2 
-1) Gm: Trucks: ag KE, 10 H ce
+1) Gm: Trucks: ag KE, 10 H ce 
+
 === PAGE 147 ===
 : those of 
 | 
@@ -34940,7 +35087,8 @@ stripped fromthe Littorio.
 e= The two Light Tank battal 
 are listed here as they arrived wit! 
 amount of combat while controll 
-a considerable
+a considerable 
+
 === PAGE 148 ===
 ione 
 Co 
@@ -35061,7 +35209,8 @@ IX(L)
 IX(L) Tank Bn 
 _ 
 a=IX(L)is officially 
-part of the Lib
+part of the Lib 
+
 === PAGE 149 ===
 nd 
 (Babini Gruppo Corazzato) (a) 
@@ -35216,7 +35365,8 @@ bbb
 60Brs 
 = 
 aaa 
-1D
+1D 
+
 === PAGE 150 ===
 Gruppo Maletti (a) 
 Basic Morale: —2 
@@ -35262,7 +35412,8 @@ mand. It begins the campaign attached to the Maletti.
 Arrives : 
 p72 
 or 
-2/22
+2/22 
+
 === PAGE 151 ===
 _ Counter — 
 Abbreviation 
@@ -35397,7 +35548,8 @@ ia
 1/24 
 2 
 ‘1/24 
-Arrives
+Arrives 
+
 === PAGE 152 ===
 55th ‘Savona’ Division Gemi- 
 Basic Morale: — -1 
@@ -35453,7 +35605,8 @@ a= The 33rd CCNN and 56th CCNN (Blackshirts) are officially in-
 dependent battalion-level units. They arrive attached to the Brescia. 
 Arrives 
 2/21 
-2/21
+2/21 
+
 === PAGE 153 ===
 - Counter 
 64 Cat 
@@ -35560,7 +35713,8 @@ Ai
 “1721 
 1/21 
 ed 
-1/21
+1/21 
+
 === PAGE 154 ===
 _ 136th “Giovani Fascisti’’ Div 
 _ 
@@ -35712,7 +35866,8 @@ Mhrsti
 yy 
 U@2 
 D 
-Cavalry
+Cavalry 
+
 === PAGE 155 ===
 _ Counter” 
 : Abbreviation 
@@ -35812,7 +35967,8 @@ sunk in Tobruk harbor. It partially blocks the harbor, but may free-
 ly fire at Commonwealth warships (it is ‘‘forward’’) and airplanes 
 using its barrage and anti-air ratings respectively. It may not bar- 
 rage land targets nor may it ever be attacked by land units. It may 
-not be refloated, although it may be destroyed.
+not be refloated, although it may be destroyed. 
+
 === PAGE 156 ===
 ardia Garrison (Hex: C4321) 
 Basic Morale: -3 
@@ -35910,7 +36066,8 @@ b= the two artillery units possess the fo
 1 All of the artillery TOE Strength 
 Poin 
 - meyer bemoved 
-2 All of the artillery TOE Strengt
+2 All of the artillery TOE Strengt 
+
 === PAGE 157 ===
 . Counter” a ID Lo 
 . 
@@ -35994,7 +36151,8 @@ ad
 hoc’ unit entitled Brigata Cor- 
 uy 
 10) to replace units stripped and 
-e) at one time or another during :
+e) at one time or another during : 
+
 === PAGE 158 ===
 (2) XXXV Libyan Bn. 
 Assigned Units without a Parent Formation (a) 
@@ -36081,7 +36239,8 @@ h dquarters reuiment for the roth Army
 ot included in CNA), It may be a ‘‘phan- 
 n included on the premise that the Italians _ 
 can get. Note thatitisa single formation and 
-of a oe ad “Maneuver: Pattalion Le
+of a oe ad “Maneuver: Pattalion Le 
+
 === PAGE 159 ===
 AB 
 AB 
@@ -36698,7 +36857,8 @@ ioe
 S 
 ee 
 °s 
-ee
+ee 
+
 === PAGE 160 ===
 Se 
 miei 
@@ -36767,7 +36927,8 @@ x
 2 
 eer 
 SURAT 
-——
+—— 
+
 === PAGE 161 ===
 Arrives 
 TOE & Weapon System(s) 
@@ -36890,7 +37051,8 @@ s0th CCNN Legion (and its bat.
 1VeS 
 Arr 
 talions 
-e
+e 
+
 === PAGE 162 ===
 [4.45c] GERMAN ORGANIZATION AT ARRIVAL CHART 
 This chart divides the German units into groupings termed 
@@ -37025,7 +37187,8 @@ its formation for a good deal of its stay in Aft
  edasa specific unit. [i was renamed the Panze 
 _ Afrika late in October, 1942 G 102). 
 _b A 
-motorized mountain infantry: unit!
+motorized mountain infantry: unit! 
+
 === PAGE 163 ===
 ‘Counter 
 — 
@@ -37088,7 +37251,8 @@ The 300th Oasis Battalion was an administrative
 a= 
 The companies are independent company- 
 tional headquarters. 
-level units.
+level units. 
+
 === PAGE 164 ===
 a 
 SS 
@@ -37202,7 +37366,8 @@ SP
 SS 
 SSS SS 
 SS 
-SEI
+SEI 
+
 === PAGE 165 ===
 Kampfgruppen HQ’s (a) 
 Basic Morale: That of the attached units 
@@ -37285,7 +37450,8 @@ the 155th Artillery Regt b
 €which occurred in Novel 
 1/75 counter isremoved fro 
 f= Formerly the 91th Hea 
-*The counter abe reviation
+*The counter abe reviation 
+
 === PAGE 166 ===
 20th Anti-Aircraft Division. As t 
 ene Anti-Air Units (a) 
@@ -37419,7 +37585,8 @@ N
 essentially assigned units without their owning formation (i.e., 
 would normally bear an ‘‘*’’). However, the Germans were so flexi- 
 ble they have been placed with the forces they started the campaign 
-with. They later became part of the 200th Panzergrenadier Regt.
+with. They later became part of the 200th Panzergrenadier Regt. 
+
 === PAGE 167 ===
 [4.464] COMMONWEALTH UNIT CHARACTERISTICS CHART 
 Close 
@@ -37565,7 +37732,8 @@ fy)
 may assign up to eight anti-tank TO 
 four anti-tank TOE Strength Points 
 and two Light Anti-Aircraft TOE Strength Points 
-may assign up to
+may assign up to 
+
 === PAGE 168 ===
 ID 
 Anti- 
@@ -37658,7 +37826,8 @@ ID Codes ‘h’ and ‘j’ are non-motorized (although they may be
 motorized by assigning Truck Points and the SAS may be 
 motorized by a Commonwealth LDG, Case 27.88), regardless 
 of all references in the game-rules to leg infantry giving only 
-CPA’s of 8 & 10.
+CPA’s of 8 & 10. 
+
 === PAGE 169 ===
 Maximum 
 Close 
@@ -37701,7 +37870,8 @@ p to nine tan
 15 
 dd 
 Eq 
-Infantry Bde
+Infantry Bde 
+
 === PAGE 170 ===
 Close 
 ID 
@@ -37897,7 +38067,8 @@ anti-aircraft guns (see Italian Tank & Gun Characteristics Chart).
 5) ‘‘t”? ID Code units only possess and Armor Protection Rating if 
 they are being transported by truck/motorization points, the unit 
 then being considered to be mounted in halftracks (see Case 
-14.88).
+14.88). 
+
 === PAGE 171 ===
 (4.46c] GERMAN UNIT CHARACTERISTICS CHART 
 Close 
@@ -38067,7 +38238,8 @@ naissance units may be upgraded (see Case 20.5). 2) Beginning with
 the 1/75 Game-Turn, all German battle groups and certain head- 
 quarters may be augmented by anti-tank TOE Strength Points (see 
 Case 19.8). 3 Units with ID Codes of ‘‘ee’’? and ‘‘ff’’? have 
-Breakdown Adjustment Rating of 1 Left.
+Breakdown Adjustment Rating of 1 Left. 
+
 === PAGE 172 ===
 65/17 Gun 
 75/ 18 Gun-Howitzer. 
@@ -38095,7 +38267,8 @@ aya)
 a 
 a 
 he! 
-Te
+Te 
+
 === PAGE 173 ===
 [4.49] 
 Tank We 
@@ -38195,7 +38368,8 @@ nthesized numbers for this rating. Note that replacement points do
 S possess a BAR of 1R until thee beginning of the 1/31 Game-Turn. 
 til the first Operations Stage in Jan of 1942 (Game-Turn 63). eee 
 German Pz! tank chassis with the Czech 47mm gun mounting. 
-em Light nfantry Gun and 2.8em Anti-tank gun are air transportable and ¢
+em Light nfantry Gun and 2.8em Anti-tank gun are air transportable and ¢ 
+
 === PAGE 174 ===
 [ 
 [19.32] 
@@ -38395,7 +38569,8 @@ u)
 « 
 oA = Anti-tank company. 
 7fm) 
-= Engineer battalion.
+= Engineer battalion. 
+
 === PAGE 175 ===
 aa 
 it. 
@@ -38615,7 +38790,8 @@ oO
 ee 
 <a 
 J 
-‘a
+‘a 
+
 === PAGE 176 ===
 [20.66] AXIS REPLACEMENT POOL 
 (20.66a] Axis Truck Production Chart 
@@ -38816,7 +38992,8 @@ in ue 4
 are available on Game-Turn 30, there being no two. SS 
 and nd/or Axis Coastal Shipping. They do not require any. 
 A ‘proper (/€,, the hexfield). Note that only two points of 
-oe a Note. that tele are no M (13739 tank :
+oe a Note. that tele are no M (13739 tank : 
+
 === PAGE 177 ===
 [30.46] CHA 
 Roll dice = Roll that number of dice. The total is 
@@ -39054,7 +39231,8 @@ particular Game-Turn is specified.
 The planes must be divided as even- 
 ly amongst the four weeks as possi- 
 ble. 
-41. 80 Lo
+41. 80 Lo 
+
 === PAGE 178 ===
 [44.5] MALTESE AIR FACILITY 
 CONSTRUCTION TABLE 
@@ -39122,7 +39300,8 @@ if
 100/200 
 10/30 
 100/200 
-100/100
+100/100 
+
 === PAGE 179 ===
 (56.4) AXIS NAVAL CONVOY LEVEL CHART 
 Wear 
@@ -39248,7 +39427,8 @@ Be
 - 
 ()/d) 
 1 
--
+- 
+
 === PAGE 180 ===
 OLOOL AN 4OA MAN "OU; ‘SUONedNGng suoNeMUIS ‘E26 ( WBuAdog 
 syuto gf AluUByUT 
@@ -39484,7 +39664,8 @@ et Set
 er ee et comet stm st mt tel mn cm) 
 Se 
 ne ee 
-t
+t 
+
 === PAGE 181 ===
 CP’s 
 Expended 
@@ -39849,7 +40030,8 @@ New
 York, 
 xh 
 opyright 
-c
+c 
+
 === PAGE 182 ===
 Gua for North Africa Counter Section Nr. 1 (200 pieces) 
 |
@@ -40839,7 +41021,8 @@ Tobruk
 20 
 20 
 . 
-20
+20 
+
 === PAGE 183 ===
 Se 
 | 
@@ -41563,7 +41746,8 @@ a
 EAEIE) 
 FALE 
 AGES 
-neo
+neo 
+
 === PAGE 184 ===
 Copyright © 1978, Simulations Publications, Inc., New York, N.Y., 10010 
 Short of | Short of 
@@ -41700,7 +41884,8 @@ J
 lity 
 | 
 yj 
-1 FFX
+1 FFX 
+
 === PAGE 185 ===
 Campaign for North Africa Counter Section Nr. 7 (200 pieces) 
 Quantity of Sections of this identical type: 1. Total quantity of Sections (all types) in game: 9. Copyright © 1978, Simulations Publications, 
@@ -42374,7 +42559,8 @@ Toca) opal opal op |
 | (5) | (2a | (2) <1 | (2)>c1 
 E[O/OTO/O1O 
 11 
-COMMONWEALTH
+COMMONWEALTH 
+
 === PAGE 186 ===
 Copyright 
 © 
@@ -42425,7 +42611,8 @@ AV ‘i
 E | a 
 | pow | POW 
 | | 
-a
+a 
+
 === PAGE 187 ===
 © 
 C) 
@@ -42557,7 +42744,8 @@ POW
 | 
 POW! POW. 
 14 
-13
+13 
+
 === PAGE 188 ===
 Pt 
 xOg 
@@ -43397,7 +43585,8 @@ f
 ; 
 a 
 4 
-AN MOA MAK “Sul SUOHeIGnY SUONeINWIS ‘EZ6L o 1YyBUAdOD
+AN MOA MAK “Sul SUOHeIGnY SUONeINWIS ‘EZ6L o 1YyBUAdOD 
+
 === PAGE 189 ===
 4 
 PPR
@@ -43508,7 +43697,8 @@ e0ze
 b 
 ile 
 LOZL 
-LOEE
+LOEE 
+
 === PAGE 190 ===
 ECdvLC 
 *ue’T] duiddiys ay) 01 UO Ajjey yey) WOIy pup juIoOd Ajjey BO} AUplOvy ALY S}1 WO saxay JO Jaquinu ay} 
@@ -44343,7 +44533,8 @@ ae
 ao 
 60rE 
 6082 
-\ 809
+\ 809 
+
 === PAGE 191 ===
 AXIS GAME-TURN/} 
 1. Sep 
@@ -44753,7 +44944,8 @@ i
 €), 
 ~ 
 “90 
-lal
+lal 
+
 === PAGE 192 ===
 3301 
 (QVNO/(E)x04 
@@ -45301,4 +45493,4 @@ hexes
 ABU 
 SEIER 
 7 
-hexes
+hexes 

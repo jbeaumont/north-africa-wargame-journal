@@ -37,7 +37,8 @@ its experience managing two vast desert armies — not a playable game UI.
 │              └────────────────┬───────────────┘                     │
 │                               │                                     │
 │              ┌────────────────▼───────────────┐                     │
-│              │     BOARD STATE AGENT          │                     │
+│              │  BOARD STATE + ENGINE          │                     │
+│              │  (deterministic Python, no LLM)│                     │
 │              │                                │                     │
 │              │  Single source of truth        │                     │
 │              │  Sourced from REAL board data  │                     │
@@ -62,6 +63,29 @@ its experience managing two vast desert armies — not a playable game UI.
                     │  Generates narrative   │
                     └────────────────────────┘
 ```
+
+---
+
+## What Is (and Isn't) an Agent
+
+Not everything labelled here is an LLM call. The distinction matters for cost,
+reliability, and reproducibility:
+
+| Component | LLM? | Reason |
+|---|---|---|
+| `player_allied.py` | Yes — Claude API | Strategy requires judgment |
+| `player_axis.py` | Yes — Claude API | Strategy requires judgment |
+| `rules_arbiter.py` | Yes — Claude API | Rule interpretation requires reasoning |
+| `journal.py` | Yes — Claude API | Prose generation requires language |
+| `board_state.py` | **No** — deterministic Python | Applying rules has one correct answer |
+| `engine/hex_map.py` | **No** | Geometry and lookup tables |
+| `engine/supply.py` | **No** | BFS graph traversal |
+| `engine/movement.py` | **No** | Cost accounting |
+| `engine/combat.py` | **No** | Dice + table lookup |
+
+The engine and board state are the **ground truth** layer. LLM agents propose
+and narrate; the engine enforces and records. An LLM call is never used where
+a deterministic answer exists.
 
 ---
 

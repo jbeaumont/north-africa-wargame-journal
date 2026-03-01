@@ -95,3 +95,4 @@ Transcribe the Crusader scenario starting positions from PDF pages 80–85 (alre
 ## Open Questions
 
 - **Fog of war implementation:** Does the Allied agent get told *that* enemy units exist in a hex (but not what type), or does it only learn from adjacency/combat contact? CNA has explicit reconnaissance rules (16.0). Decide when we build `player_allied.py`.
+- **Agent personality:** Should each player agent have a distinct personality that affects both decisions and journal voice? Options: (a) historical commanders (Rommel vs. Cunningham/Ritchie, with Cunningham possibly replaced mid-game), (b) archetypes (e.g. "The Gambler" vs. "The Methodical"), (c) personality only affects journal narration, not move selection. Decide before building `player_allied.py` / `player_axis.py`.

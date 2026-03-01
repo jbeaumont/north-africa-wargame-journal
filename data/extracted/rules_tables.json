@@ -1,0 +1,374 @@
+{
+  "_meta": {
+    "source_pdf": "The Campaign for North Africa (SPI, 1979)",
+    "extraction_method": "PyMuPDF text layer + manual image reading of scanned pages",
+    "extraction_date": "2026-03-01",
+    "notes": [
+      "TEC values read from scanned image (page 70 of PDF) - verify against physical rulebook",
+      "CART (Anti-Armor Fire) read from scanned image (page 15)",
+      "Prose rules extracted from OCR text layer (34MB PDF)",
+      "Section index sourced from TOC on page 2 - actual page numbers may differ by ~1"
+    ]
+  },
+
+  "terrain_effects_chart": {
+    "_rule": "8.37",
+    "_source_page": 70,
+    "_note": "Values read from scanned image. L = column shift left (defender advantage). + = add to base terrain cost.",
+    "columns": {
+      "cp_non_mot": "CP cost for non-motorized units to enter or cross",
+      "cp_mot": "CP cost for motorized units to enter or cross",
+      "breakdown_value": "Breakdown Points acquired on entry",
+      "combat_barrage": "Column shift on Barrage Combat Results Table",
+      "combat_anti_armor": "Column shift on Anti-Armor Fire Results Table",
+      "combat_close_assault": "Column shift on Close Assault Results Table",
+      "stacking_limit": "Maximum Stacking Points allowed in hex"
+    },
+    "terrain_types": {
+      "Clear":            { "cp_non_mot": 1,    "cp_mot": 1,    "bd": 0,  "barrage": 0,   "aa": 0,   "ca": 0,   "stack": 6 },
+      "Gravel":           { "cp_non_mot": 1,    "cp_mot": 1,    "bd": 0,  "barrage": 0,   "aa": 0,   "ca": 0,   "stack": 6 },
+      "Salt Marsh":       { "cp_non_mot": 5,    "cp_mot": "P",  "bd": 4,  "barrage": 0,   "aa": 0,   "ca": 0,   "stack": 6, "notes": ["note2: most vehicles prohibited, only via track", "note3: light trucks/recce/motorcycle may not enter"] },
+      "Heavy Vegetation": { "cp_non_mot": 4,    "cp_mot": 4,    "bd": 0,  "barrage": 0,   "aa": 0,   "ca": 0,   "stack": 6 },
+      "Rough":            { "cp_non_mot": 2,    "cp_mot": 2,    "bd": 0,  "barrage": 0,   "aa": 0,   "ca": 0,   "stack": 6 },
+      "Mountain":         { "cp_non_mot": 4,    "cp_mot": 3,    "bd": 4,  "barrage": "L2","aa": "L1","ca": "L1","stack": 6 },
+      "Delta":            { "cp_non_mot": 3,    "cp_mot": 3,    "bd": 0,  "barrage": 0,   "aa": 0,   "ca": 0,   "stack": 6 },
+      "Desert":           { "cp_non_mot": 1,    "cp_mot": 1,    "bd": 0,  "barrage": 0,   "aa": 0,   "ca": 0,   "stack": 6 },
+      "Major City":       { "cp_non_mot": "same_as_terrain", "cp_mot": "same_as_terrain", "bd": 0, "barrage": "L1*", "aa": "L1", "ca": "L1", "stack": 6, "notes": ["note1: garrison units 0 stacking space, unlimited AA units at 0 space", "note4: Alexandria and Cairo are Level 3 Fortifications", "note12: armor defensive benefit only in Major City hex"] },
+      "Swamp":            { "cp_non_mot": "P",  "cp_mot": "P",  "bd": 0,  "barrage": 0,   "aa": 0,   "ca": 0,   "stack": 6 },
+      "Village/Bir/Oasis":{ "cp_non_mot": "same_as_terrain", "cp_mot": "same_as_terrain", "bd": 0, "barrage": 0, "aa": 0, "ca": 0, "stack": 6 },
+      "Railroad":         { "cp_non_mot": "same_as_terrain", "cp_mot": "same_as_terrain", "bd": "10*", "barrage": 0, "aa": 0, "ca": 0, "stack": 6, "notes": ["note5: Commonwealth Player may use Rail Movement (8.7)", "note10*: BD value of 10 applies only when leaving the rail line"] },
+      "Road":             { "cp_non_mot": -1,   "cp_mot": -1,   "bd": 0,  "barrage": 0,   "aa": 0,   "ca": 0,   "stack": null, "notes": ["note6: negates all hexside terrain entry costs and BD point values", "Cost reduces base terrain cost by 1"] },
+      "Track":            { "cp_non_mot": "same_as_terrain", "cp_mot": "same_as_terrain", "bd": 0, "barrage": 0, "aa": 0, "ca": 0, "stack": null, "notes": ["note7: halves all terrain feature entry costs and hex/hexside BD values except CP expended and BD from moving vehicle down escarpment", "note8: vehicles may use track to cross escarpment downward only"] },
+      "Ridge_hexside":    { "cp_non_mot": "+1", "cp_mot": "+1", "bd": 4,  "barrage": "L2","aa": 0,   "ca": "L1","stack": null, "notes": ["Hexside feature — adds to base terrain cost"] },
+      "Up_Slope_hexside": { "cp_non_mot": "+1", "cp_mot": "+1", "bd": 4,  "barrage": 0,   "aa": 0,   "ca": 0,   "stack": null },
+      "Down_Slope_hexside":{ "cp_non_mot": "-1","cp_mot": "-1", "bd": 0,  "barrage": 0,   "aa": 0,   "ca": 0,   "stack": null },
+      "Up_Escarpment_hexside":  { "cp_non_mot": "P_vehicles", "cp_mot": "P", "bd": 8, "barrage": "L2", "aa": 0, "ca": 0, "stack": null, "notes": ["note: no vehicle may ever move UP an escarpment (8.42)", "Via Track down only: +8 CP, 6 BD Points (8.42)"] },
+      "Down_Escarpment_hexside":{ "cp_non_mot": "+6","cp_mot": "+3","bd": 4, "barrage": 0, "aa": 0, "ca": 0, "stack": null, "notes": ["Via Track: +8 CP, 6 BD (8.42)"] },
+      "Wadi_hexside":     { "cp_non_mot": "+2", "cp_mot": "+2", "bd": 4,  "barrage": 0,   "aa": "L1","ca": "L1","stack": null, "notes": ["note10: motorized may only cross on a track during rainstorm unless road/railroad present"] },
+      "Major_River_hexside":{ "cp_non_mot": "P","cp_mot": "P",  "bd": 0,  "barrage": "L2","aa": 0,   "ca": 0,   "stack": null, "notes": ["note11: may only be crossed if hexside crossed by road or railroad"] },
+      "Minor_River_hexside":{ "cp_non_mot": "+2","cp_mot": "+2","bd": 0,  "barrage": 0,   "aa": 0,   "ca": 0,   "stack": null, "notes": ["note10: may only be crossed during Rainstorm if road/railroad present (2 additional CP)"] },
+      "Fortification_Level_1":{ "cp_non_mot": "same_as_terrain", "cp_mot": "same_as_terrain", "bd": 0, "barrage": "L1*", "aa": "L1", "ca": 0, "stack": 6, "notes": ["note12: armor targets defensive benefit only in Major City hex"] },
+      "Fortification_Level_2":{ "cp_non_mot": "same_as_terrain", "cp_mot": "same_as_terrain", "bd": 0, "barrage": "L1*", "aa": "L1", "ca": "L1", "stack": 6 },
+      "Fortification_Level_3":{ "cp_non_mot": "same_as_terrain", "cp_mot": "same_as_terrain", "bd": 0, "barrage": "L1*", "aa": "L2", "ca": "L2", "stack": 6, "notes": ["Alexandria and Cairo are Level 3 by default (note4)"] },
+      "Friendly_Minefield": { "cp_non_mot": "+2","cp_mot": "+2", "bd": -1, "barrage": -1,  "aa": -1,  "ca": 0,   "stack": null, "notes": ["note13: engineer units reduce cost to enter (26.2)"] },
+      "Enemy_Minefield":  { "cp_non_mot": "+2", "cp_mot": "+2", "bd": 0,  "barrage": 0,   "aa": 0,   "ca": 0,   "stack": null, "notes": ["note13: if assaulting forces are in enemy minefield, non-phasing forces receive L1 for AA and CA if not already receiving for friendly minefield"] }
+    }
+  },
+
+  "combat_system": {
+    "_rule": "11.0-15.0",
+    "_note": "CNA uses a percentage-based combat system, NOT a traditional odds-ratio CRT.",
+    "overview": "Combat strength is expressed in Raw Points. A percentage of loss is determined from the relevant results table (based on dice roll and column shifts). That percentage is applied to total Raw Points to get actual casualties.",
+    "combat_types": {
+      "barrage": {
+        "rule": "12.0",
+        "description": "Indirect fire by artillery. Attacker determines Actual Barrage Points, selects targets. Resolves on Barrage Combat Results Table. Subtracts ammunition.",
+        "die": "2d6",
+        "modifiers": "Column shifts from terrain (TEC), supply status, cohesion"
+      },
+      "anti_armor_fire": {
+        "rule": "14.0",
+        "description": "Anti-tank fire against armor. Resolves on Anti-Armor Fire Combat Results Table.",
+        "die": "d66 (two d6 read as tens/ones giving 11-66)",
+        "result_type": "% of Anti-Armor Points lost by target",
+        "table_structure": "Row = d66 result (11-66, skipping 7/8/9), Column = Anti-Armor Points (0* to 16+)"
+      },
+      "close_assault": {
+        "rule": "15.0",
+        "description": "Direct combat between adjacent units. Both sides compute Raw Points. Phasing Player may announce Close Assault or Overrun.",
+        "die": "See Close Assault Results Table",
+        "modifiers": [
+          "Organizational size difference (15.53): +1 to +8 column shifts based on size disparity",
+          "Morale Level adjustment (17.0)",
+          "Terrain (TEC column shifts)",
+          "Supply status",
+          "Cohesion Level"
+        ],
+        "organizational_size_adjustments": {
+          "_rule": "15.53",
+          "Division_vs_Brigade_3pt": 1,
+          "Brigade_vs_Division_2pt": 2,
+          "Brigade_vs_Division_Battalion": 4,
+          "Division_vs_Company": 8,
+          "Brigade_vs_Battalion": 2,
+          "Brigade_vs_Company": 4,
+          "Battalion_vs_Company": 2,
+          "note": "Adjustments always in favor of larger unit size"
+        },
+        "sequence": [
+          "1. Phasing Player announces hexes being assaulted",
+          "2. Both Players compute Raw Points (TOE Strength x Combat Rating)",
+          "3. Anti-Armor Fire phase (if applicable)",
+          "4. Both Players determine Morale Levels (17.0)",
+          "5. Apply column adjustments",
+          "6. Resolve on Close Assault Results Table",
+          "7. Apply losses (attacker rounds up, defender rounds down — 15.53c)",
+          "8. Check for retreats"
+        ]
+      }
+    },
+    "anti_armor_results_table": {
+      "_rule": "14.6",
+      "_source_page": 15,
+      "_note": "Read from scanned image. Row = d66 die roll. Column = Anti-Armor Points. Cell = % of TOE lost.",
+      "columns": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, "16+"],
+      "rows": {
+        "11": ["-", "-", "-", 1,  3,  4,  5,  6,  8,  10, 11, 12, 14, 16, 18, 20, 22],
+        "12": ["-", "-", "-", 1,  2,  3,  4,  5,  6,  8,  10, 11, 13, 15, 17, 19, 20],
+        "13": ["-", "-", "-", "-",1,  3,  4,  5,  7,  9,  10, 12, 13, 15, 17, 19, 21],
+        "14": ["-", "-", "-", "-",1,  2,  3,  4,  5,  6,  8,  10, 11, 13, 15, 17, 19],
+        "15": ["-", "-", "-", "-","-",1,  3,  4,  5,  7,  9,  10, 12, 13, 15, 17, 19],
+        "16": ["-", "-", "-", "-","-",1,  2,  3,  4,  5,  7,  9,  10, 12, 13, 15, 17],
+        "21": ["-", "-", 1,  2,  4,  5,  6,  7,  8,  10, 11, 13, 14, 16, 18, 20, 21],
+        "22": ["-", "-", 1,  2,  3,  4,  5,  6,  8,  10, 11, 13, 14, 16, 18, 20, 21],
+        "23": ["-", "-", 1,  2,  4,  5,  6,  7,  8,  9,  10, 12, 13, 15, 17, 19, 20],
+        "24": ["-", "-", 1,  2,  3,  4,  5,  6,  7,  9,  11, 12, 13, 14, 16, 18, 20],
+        "25": ["-", "-", 1,  2,  4,  5,  6,  7,  8,  10, 12, 13, 15, 16, 18, 20, 22],
+        "26": ["-", "-", 1,  2,  3,  4,  5,  6,  8,  9,  10, 12, 13, 15, 16, 17, 20],
+        "31": ["-", 1,  2,  3,  4,  5,  6,  7,  8,  10, 11, 13, 15, 17, 19, 20, 22],
+        "32": ["-", 1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 13, 15, 17, 19, 21],
+        "33": ["-", 1,  2,  3,  4,  5,  6,  7,  8,  10, 11, 13, 14, 16, 18, 20, 21],
+        "34": ["-", 1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 13, 15, 16, 18, 20],
+        "35": ["-", 1,  3,  4,  5,  7,  9,  10, 12, 13, 15, 16, 18, 20, 22, 24, 26],
+        "36": ["-", 1,  2,  3,  4,  5,  6,  7,  8,  10, 11, 13, 15, 17, 19, 21, 23],
+        "41": ["-", 2,  3,  4,  5,  6,  7,  9,  11, 12, 14, 15, 17, 19, 21, 22, 24],
+        "42": ["-", 2,  3,  4,  5,  6,  7,  8,  9,  11, 12, 14, 15, 17, 19, 21, 24],
+        "43": [1,  2,  4,  5,  6,  7,  8,  9,  10, 11, 13, 15, 16, 18, 19, 20, 23],
+        "44": [1,  2,  3,  4,  5,  6,  7,  8,  9,  11, 12, 14, 15, 16, 18, 20, 23],
+        "45": [2,  2,  4,  5,  7,  8,  10, 12, 13, 15, 16, 18, 20, 22, 23, 25, 27],
+        "46": [2,  2,  3,  4,  5,  6,  7,  8,  10, 12, 13, 15, 16, 18, 20, 22, 25],
+        "51": [1,  3,  4,  5,  6,  7,  9,  11, 12, 14, 15, 17, 19, 20, 22, 24, 26],
+        "52": [1,  2,  3,  4,  5,  6,  7,  8,  10, 11, 13, 14, 15, 17, 19, 21, 24],
+        "53": [1,  2,  3,  5,  7,  8,  10, 11, 12, 13, 15, 16, 17, 19, 20, 22, 24],
+        "54": [1,  2,  3,  4,  5,  6,  7,  8,  9,  11, 13, 15, 16, 17, 18, 20, 22],
+        "55": [1,  3,  5,  7,  8,  10, 12, 13, 15, 16, 19, 21, 22, 24, 26, 28, 30],
+        "56": [1,  2,  3,  4,  5,  6,  7,  8,  10, 12, 13, 15, 16, 18, 20, 22, 26],
+        "61": [1,  4,  5,  7,  9,  10, 12, 14, 15, 17, 19, 22, 23, 25, 27, 29, 31],
+        "62": [1,  3,  4,  5,  6,  7,  8,  10, 11, 13, 15, 17, 19, 21, 23, 25, 29],
+        "63": [2,  3,  5,  6,  8,  9,  11, 12, 14, 15, 17, 19, 20, 22, 24, 26, 27],
+        "64": [2,  3,  4,  5,  6,  7,  8,  9,  10, 12, 14, 16, 17, 18, 20, 22, 25],
+        "65": [2,  4,  6,  8,  9,  11, 13, 15, 17, 19, 21, 23, 24, 26, 28, 30, 32],
+        "66": [2,  3,  4,  5,  6,  7,  8,  9,  11, 13, 15, 17, 18, 20, 22, 24, 28]
+      }
+    }
+  },
+
+  "capability_point_system": {
+    "_rule": "6.0",
+    "description": "All actions in CNA cost Capability Points (CPs). Each unit has a Capability Point Allowance (CPA) per Operations Stage. Moving costs CPs per hex (per TEC). Combat costs CPs. Exceeding CPA earns Disorganization Points.",
+    "cohesion": {
+      "rule": "6.2",
+      "description": "Cohesion Level (CL) represents exhaustion/elation. CL=0 is normal. Negative CL = Disorganization. Positive CL = Reorganization.",
+      "disorganization_threshold": "When a unit exceeds its CPA, it earns Disorganization Points (DPs)",
+      "effect_on_combat": "Cohesion Level affects Morale Level at instant of combat"
+    }
+  },
+
+  "stacking_rules": {
+    "_rule": "9.0",
+    "general": "Each hex has a maximum Stacking Point limit. Units have Stacking Point values based on their organizational size.",
+    "stacking_point_values": {
+      "_source_page": 97,
+      "_note": "Read from scanned image (partially OCR'd). Values are per unit equivalent.",
+      "Division": 5,
+      "Super_Brigade": 3,
+      "Standard_Brigade": 2,
+      "Battle_Group": 2,
+      "Battalion": 1,
+      "Company": 0.5,
+      "HQ_with_units": "printed_number",
+      "HQ_without_units": 0,
+      "Truck_Points": "0.5 per 5 points (fraction rounds)"
+    },
+    "special_cases": {
+      "garrison_units": "Garrison unit in assigned hex occupies 0 stacking space (TEC note 1)",
+      "aa_units_in_city": "Unlimited AA units in Major City hex at 0 stacking space (TEC note 1)",
+      "aa_units_airfield": "3 AA units at Airfield hex at 0 stacking space (TEC note 1)",
+      "informational_markers": "No Stacking Point value (9.15)",
+      "air_units": "No Stacking Point value (9.15)"
+    },
+    "hex_limit_by_terrain": "See TEC (8.37) — generally 6 Stacking Points per hex",
+    "initiative_ratings": {
+      "_rule": "7.2",
+      "_source_page": 97,
+      "_note": "Read from image — game-turn ranges",
+      "Commonwealth": {
+        "turns_1_thru_42": 3,
+        "turns_43_thru_90": 4,
+        "turns_91_thru_111": 5
+      },
+      "Axis_German_without_Rommel": 3,
+      "Axis_with_Rommel": "higher — see Initiative Ratings Chart"
+    }
+  },
+
+  "zoc_rules": {
+    "_rule": "10.0",
+    "general": "Units with Assault Points exert a Zone of Control (ZOC) into all 6 adjacent hexes, with exceptions.",
+    "exceptions": [
+      "ZOCs do not extend through All-Sea hexsides (10.21a)",
+      "ZOCs do not extend through Major River hexsides (10.21a)",
+      "ZOCs do not extend through Lake hexsides (10.21a)",
+      "ZOCs do not extend through Escarpment hexsides (10.21b)",
+      "ZOCs do not extend into hexes the unit could not enter from its present location (10.21c)"
+    ],
+    "anti_armor_exception": "Units assigned to Anti-Armor role do NOT exert a ZOC (10.15)",
+    "entry_cost": "No CP cost to enter an enemy ZOC (10.22)",
+    "stopping": "Unit must cease movement upon entering an enemy-controlled hex (10.23)",
+    "exit_cost": {
+      "from_Contact": "2 CPs to exit (8.15.2)",
+      "from_Engaged": "4 CPs to exit (8.15.3)"
+    },
+    "mutual_disclosure": "Non-Phasing Player must inform Phasing Player whether a unit exerts ZOC into a hex the Phasing Player enters or begins in (10.16)"
+  },
+
+  "movement_rules": {
+    "_rule": "8.0",
+    "general": "Units move hex by hex paying CP costs per TEC. Movement must be consecutive; units may not skip hexes.",
+    "involuntary_movement": "Retreats also require CP expenditure and Breakdown checks (8.12)",
+    "prohibition": "A unit may never enter a hex containing an enemy unit (8.13, except 27.4)",
+    "breakdown": {
+      "rule": "8.4",
+      "description": "Moving vehicles accumulate Breakdown Points (BPs). When BPs equal or exceed unit's Breakdown Rating, unit becomes broken down.",
+      "escarpment_special": "No vehicle may ever move UP an escarpment. Via Track downward: +8 CP, 6 BD Points (8.42)"
+    },
+    "road_movement": "Road reduces terrain entry cost by 1 CP and negates hexside feature costs and BD (TEC note 6)",
+    "track_movement": "Track halves terrain feature costs and BD values; vehicles may use to cross escarpment downward only (TEC note 7/8)",
+    "railroad_movement": {
+      "rule": "8.7",
+      "available_to": "Commonwealth Player only",
+      "direction": "Each player may use rail lines once per direction per game-turn",
+      "limit": "One unit or stack per direction, any distance"
+    }
+  },
+
+  "supply_system": {
+    "_rule": "49.0-52.0",
+
+    "fuel": {
+      "rule": "49.0",
+      "general": "Almost every vehicle consumes fuel when moving. Players track fuel on Convoy Sheets.",
+      "consumption": "Fuel consumed equals CPs expended by motorized units",
+      "evaporation": {
+        "rule": "49.3",
+        "british_drums_pct": 7,
+        "other_jerry_cans_pct": 3,
+        "source": "Per-OpStage loss from fuel stored in drums (British) vs jerry cans (all others)"
+      },
+      "transport": "Rule 49.2 covers transportation of fuel by truck"
+    },
+
+    "ammunition": {
+      "rule": "50.0",
+      "general": "Combat units carry enough ammo to fire once without resupply (50.1)",
+      "consumption_chart": "See Ammunition Consumption Rates Chart (Charts and Tables section)",
+      "note": "Combat units may carry enough ammo to fire once before needing resupply from dumps"
+    },
+
+    "stores": {
+      "rule": "51.0",
+      "definition": "Everything that isn't fuel, ammunition, or water — food, paper, uniforms, etc.",
+      "distribution": "Distributed at beginning of Game-Turn (not each OpStage)",
+      "consumption_rate": "4 Stores Points per TOE Strength Point per Game-Turn (51.11)",
+      "prisoner_rate": "1 Stores Point per 5 Prisoner Points per OpStage (51.12). Prisoners supplied before all other units.",
+      "hq_engineer_rate": "See 51.13"
+    },
+
+    "water": {
+      "rule": "52.0",
+      "without_water_penalty": "Each infantry unit loses 1 TOE Point for every consecutive OpStage after the first without water (52.53)"
+    },
+
+    "italian_pasta_rule": {
+      "rule": "52.6",
+      "full_text": "One of the biggest mistakes the Italians made during the entire Desert Campaign was to provide their troops with a diet which was composed, in large part, of spaghetti and macaroni. Aside from providing insufficient protein (this wasn't Buitoni Brand), pasta has one serious drawback in the desert: you need water to cook it! Therefore, each Italian battalion, when it receives its Stores, must receive an additional 1 Point of Water when Stores are distributed. Any battalion-sized unit that does not receive their Pasta Point (one Water point) may not voluntarily exceed their CPA that Turn. Furthermore, Italian battalions not receiving their Pasta Point that have a Cohesion Level of -10 or worse immediately become Disorganized, as if they had reached -26. As soon as such units get their Pasta Point, they regain the original Cohesion Level (i.e., the level they had before they disintegrated).",
+      "effect_no_pasta": [
+        "Cannot voluntarily exceed CPA that Turn",
+        "If Cohesion Level <= -10: immediately become Disorganized as if at -26"
+      ],
+      "recovery": "Unit regains pre-disorganization Cohesion Level as soon as it receives its Pasta Point"
+    }
+  },
+
+  "sequence_of_play": {
+    "_rule": "5.2 (Land), 33.0 (Air), 48.0 (Logistics)",
+
+    "logistics_game_sequence": {
+      "_source_page": 66,
+      "_rule": "48.0",
+      "phases": [
+        "I. Initiative Determination Phase (7.0)",
+        "II. Strategic Air Planning Stage (Air Game Only)",
+        "  A. Designation Phase: assign planes to Land Support or Strategic missions",
+        "  B. Axis Malta Availability Determination Phase",
+        "  C. Strategic Mission Assignment Phase",
+        "  D. Naval Convoy Schedule Phase",
+        "  E. Naval Convoy Resolution Phase (Air Game Only) [Segments 1 & 2]",
+        "III. Naval Convoy Arrival Phase: all convoy cargo placed at port of arrival",
+        "IV. Axis/Commonwealth Reinforcement & Replacement Phase",
+        "V. Stores/Expenditure Stage",
+        "  A. Water Distribution Phase",
+        "  B. Stores Distribution Phase",
+        "  C. Organization Phase (any order):",
+        "    1. Reorganization Segment",
+        "    2. Replacement Segment",
+        "    3. Construction Segment",
+        "    4. Construction Initiation / Continuation Segment",
+        "    5. Training Segment",
+        "    6. Supply Distribution Segment: distribute supplies in each Supply Zone",
+        "    7. Tactical Shipping Segment: transport units/supply by sea",
+        "    8. Naval Convoy Arrival Phase",
+        "    9. Commonwealth Fleet Phase",
+        "    10. Reserve Designation Phase",
+        "VI. Strategic Air Recovery Stage (Air Game Only)",
+        "  A. Return to Base Phase",
+        "  B. Aircraft Maintenance Phase",
+        "VII-IX. First, Second, Third Operations Stages (each identical):",
+        "  A. Initiative Declaration Phase",
+        "  B. Weather Determination Phase",
+        "  C. Organization Phase:",
+        "    a. Air Availability Phase (Air Game Only)",
+        "    b. Ground-to-Air Transfer Phase",
+        "    c. Air Resupply Phase",
+        "    d. Convoy Unloading Phase",
+        "    e. Refueling / Rearming Phase (Air Game Only)",
+        "  D. Operations Stage execution:",
+        "    i. Player A's Phase (Movement then Combat in any order)",
+        "    ii. Player B's Phase (same)",
+        "    iii. Breakdown / Recovery Phases",
+        "    iv. Fuel Evaporation Phase: adjust fuel levels for evaporation",
+        "    v. Patrol Phase (if no combat this OpStage)",
+        "X. End of Game-Turn"
+      ]
+    },
+
+    "land_game_sequence": {
+      "_rule": "5.2",
+      "operations_stages_per_turn": 3,
+      "each_operations_stage": [
+        "Initiative Declaration",
+        "Player A's Movement Segment",
+        "Player A's Combat Segment",
+        "Player B's Movement Segment",
+        "Player B's Combat Segment",
+        "Breakdown/Recovery Phase",
+        "Patrol Phase (if no combat)"
+      ]
+    }
+  },
+
+  "key_section_page_map": {
+    "_note": "Verified page numbers from PDF text search. Section index TOC entries all appear on p2 of text PDF (the TOC page). Actual content pages listed here.",
+    "8.37_TEC": 70,
+    "14.6_anti_armor_table": 15,
+    "48.0_logistics_sequence": 66,
+    "49.0_fuel": 67,
+    "49.3_evaporation": 67,
+    "51.0_stores": 68,
+    "52.6_pasta_rule": 69,
+    "9.4_stacking_point_values": 97,
+    "7.2_initiative_chart": 97,
+    "36.53_allied_off_map_air": 71,
+    "37.4_air_distance_chart": 71
+  }
+}

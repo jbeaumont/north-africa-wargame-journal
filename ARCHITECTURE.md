@@ -230,7 +230,7 @@ Turn 1 = 18 November 1941 (the actual historical date of the Crusader offensive)
 ## Key Rules to Implement (in priority order)
 
 1. **Supply** — trace path ≤N hexes through friendly hexes to depot to port
-2. **Fuel evaporation** — 7% British (50-gal drums), 3% all others (jerry cans)
+2. **Fuel evaporation** — 6% all players per turn; 9% Commonwealth only Sept 1940–Aug 1941; +5% hot weather (rule 49.3)
 3. **Movement** — CPA per terrain type, road bonus, fuel consumption
 4. **Stacking** — limits per hex per side
 5. **ZOC** — zones of control, movement restrictions

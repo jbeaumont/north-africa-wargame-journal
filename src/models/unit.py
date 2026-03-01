@@ -121,8 +121,15 @@ class Unit:
     stores: float = 0.0
 
     # ── Special rules ────────────────────────────────────────────────────────
-    # True for Italian infantry battalions: needs water_ration + 1 each OpStage.
-    # Missing ration halves CPA; repeated failure triggers disorganization (52.6).
+    # True for Italian infantry battalions (rule 52.6).
+    # Each battalion must receive 1 extra Water Point when Stores are distributed.
+    # Missing Pasta Point → unit may NOT voluntarily exceed its CPA that Turn
+    #   (it can still spend up to its full CPA; it just cannot go over it in
+    #    special circumstances where exceeding CPA would normally be allowed).
+    # If cohesion is already ≤ -10 AND no Pasta Point → immediately Disorganized
+    #   as if cohesion reached -26.
+    # Recovery: as soon as unit receives its Pasta Point, cohesion reverts to
+    #   the level it had before disorganization.
     pasta_rule: bool = False
 
     # ── Derived helpers ──────────────────────────────────────────────────────

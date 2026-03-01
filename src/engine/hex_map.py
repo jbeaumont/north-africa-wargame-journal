@@ -49,7 +49,7 @@ from __future__ import annotations
 from typing import Dict, Iterable, List, Optional, Union
 
 from src.models.hex import Hex, HexsideFeature, Terrain
-from src.models.unit import Unit, Side, UnitType
+from src.models.unit import Unit, Side, UnitType, UnitSize
 
 
 # ── Grid constants ────────────────────────────────────────────────────────────
@@ -73,16 +73,23 @@ _OPPOSITE: Dict[str, str] = {
 
 
 # ── ZOC ───────────────────────────────────────────────────────────────────────
+# Rule 10.11: ZOC is based on STACKING POINTS, not unit type.
+#   - A unit with >1 SP (above battalion-equivalent) always exerts ZOC.
+#   - Multiple units in a hex whose SP total >1 collectively exert ZOC.
+# Unit types that NEVER exert ZOC regardless of SP:
+_ZOC_NEVER_TYPES = frozenset({UnitType.TRUCK, UnitType.SUPPLY})
+# (HQ without attached combat units also never exerts ZOC per 10.11, but we
+#  can't easily check "attached units" here without formation data; HQ units
+#  almost always have attached combat units in CNA.  Treat HQ as ZOC-capable
+#  and add formation-context check when board_state builds the ZOC map.)
 
-# Unit types that project Zone of Control into adjacent hexes.
-_ZOC_TYPES = frozenset({
-    UnitType.INFANTRY,
-    UnitType.ARMOR,
-    UnitType.ARTILLERY,
-    UnitType.ANTI_TANK,
-    UnitType.ANTI_AIRCRAFT,
-    UnitType.RECONNAISSANCE,
-    UnitType.GARRISON,
+# Hexside features through which ZOC does NOT extend (rule 10.21):
+#   a. All-Sea, Major River, Lake hexsides
+#   b. Escarpment hexsides
+_ZOC_BLOCKED_HEXSIDES = frozenset({
+    HexsideFeature.MAJOR_RIVER,
+    HexsideFeature.ESCARPMENT_UP,
+    HexsideFeature.ESCARPMENT_DOWN,
 })
 
 
@@ -516,28 +523,95 @@ class HexMap:
     # ── ZOC (Zone of Control) ─────────────────────────────────────────────────
 
     @staticmethod
-    def projects_zoc(unit: Unit) -> bool:
+    def unit_stacking_points(unit: Unit) -> int:
         """
-        True if this unit projects ZOC into its 6 adjacent hexes.
+        Return the unit's Stacking Point value for ZOC and stacking purposes.
 
-        ZOC-projecting types: infantry, armor, artillery, anti-tank,
-        anti-aircraft, reconnaissance, garrison.  HQ, supply, and truck
-        counters do NOT project ZOC.
+        Rule 10.11: units with >1 SP are "above battalion-equivalent" and
+        individually exert ZOC.  We use UnitSize as a proxy because per-counter
+        SP values are not yet loaded from counter data.
+
+        TODO: override from counter data once the counter loader is built.
         """
-        return unit.type in _ZOC_TYPES and not unit.is_eliminated()
+        if unit.type in (UnitType.HQ, UnitType.SUPPLY, UnitType.TRUCK):
+            return 0
+        size_sp = {
+            UnitSize.COMPANY:   1,
+            UnitSize.BATTALION: 1,
+            UnitSize.REGIMENT:  2,
+            UnitSize.BRIGADE:   2,
+            UnitSize.DIVISION:  4,
+            UnitSize.CORPS:     0,   # HQ-like
+            UnitSize.ARMY:      0,
+        }
+        return size_sp.get(unit.size, 1)
 
     def zoc_hexes(self, side: Side, units: Iterable[Unit]) -> set:
         """
-        Set of hex_ids under ZOC of units belonging to side.
+        Set of hex_ids under ZOC of the given side's units.
 
-        A ZOC-projecting unit covers all 6 adjacent hexes (not its own hex).
-        ZOC extends across all terrain and hexside features — terrain does not
-        limit ZOC projection.
+        Rules applied (10.11, 10.14/16.14, 10.15, 10.21):
+
+        Which units project ZOC:
+          10.11  — unit with >1 SP individually, OR total SP in hex >1
+                   (Truck Convoys never; SUPPLY counters never)
+          10.14  — cohesion ≤ -26: no ZOC  (OCR rendered as rule 16.14)
+          10.15  — <10 raw defensive Close Assault Points: no ZOC
+                   (TODO: raw points not yet tracked; skipped until combat
+                    engine is added)
+
+        Where ZOC does NOT extend (10.21):
+          a. Not through Major River or Lake hexsides
+          b. Not through Escarpment hexsides (up or down)
+          c. Not into a hex the projecting unit could not enter from its
+             current position (e.g. tank in desert ≠ ZOC into Salt Marsh)
         """
+        units_list = list(units)
+
+        # Phase 1: compute total SP per hex for the stacking-based ZOC check
+        hex_sp: Dict[str, int] = {}
+        for u in units_list:
+            if u.side == side and u.hex_id and not u.is_eliminated():
+                sp = self.unit_stacking_points(u)
+                hex_sp[u.hex_id] = hex_sp.get(u.hex_id, 0) + sp
+
         zoc: set = set()
-        for u in units:
-            if u.side == side and u.hex_id and self.projects_zoc(u):
-                zoc.update(self.neighbors(u.hex_id))
+
+        for u in units_list:
+            if u.side != side or not u.hex_id or u.is_eliminated():
+                continue
+            if u.type in _ZOC_NEVER_TYPES:
+                continue
+            if u.cohesion <= -26:           # rule 10.14 (OCR: 16.14)
+                continue
+
+            sp = self.unit_stacking_points(u)
+            total_sp = hex_sp.get(u.hex_id, 0)
+
+            # Projects ZOC if unit is above battalion-equivalent (>1 SP)
+            # OR the hex as a whole totals >1 SP (rule 10.11)
+            if sp <= 1 and total_sp <= 1:
+                continue
+
+            # Project ZOC into each neighbor, respecting hexside and entry rules
+            from_hex = self.get(u.hex_id)
+            for direction, nbr_id in self.neighbors_by_direction(u.hex_id).items():
+                if nbr_id is None:
+                    continue
+
+                # 10.21b: ZOC does not extend through escarpment hexsides
+                # 10.21a: ZOC does not extend through major river hexsides
+                crossing = self._crossing_feature(from_hex, self.get(nbr_id), direction)
+                if crossing in _ZOC_BLOCKED_HEXSIDES:
+                    continue
+
+                # 10.21c: ZOC does not extend into a hex this unit cannot enter
+                cost = self.entry_cost(u, u.hex_id, nbr_id)
+                if cost == "P":
+                    continue
+
+                zoc.add(nbr_id)
+
         return zoc
 
     def in_enemy_zoc(
@@ -559,11 +633,11 @@ class HexMap:
         units: Iterable[Unit],
     ) -> bool:
         """
-        True if hex_id is in enemy ZOC but a friendly unit occupies it —
-        which allows a supply line to pass through (ZOC is 'contested').
+        True if hex_id is in enemy ZOC but a friendly unit occupies it.
 
-        Callers can use this to decide whether to include hex_id in a supply
-        BFS even though it's under enemy ZOC.
+        Rule 32.16: supply line may not be traced through enemy ZOC's
+        "unoccupied by Friendly units" — a friendly unit in the ZOC hex
+        lets a supply line pass through.
         """
         units_list = list(units)
         if not self.in_enemy_zoc(hex_id, friendly_side, units_list):

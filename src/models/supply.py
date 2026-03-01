@@ -2,10 +2,19 @@
 SupplyDump model — a supply depot on the map.
 
 CNA logistics tracks four resources separately:
-  Fuel    (gallons; evaporates 7% / turn for British drums, 3% for jerry cans)
+  Fuel    (gallons; rule 49.3 evaporation applies each game-turn)
   Ammo    (ammunition points)
   Stores  (general supplies; also consumed by prisoners at 1:5 ratio)
-  Water   (water points; Italian pasta rule adds +1 demand per battalion)
+  Water   (water points; rule 52.6 pasta rule adds +1 demand per Italian battalion)
+
+Fuel evaporation (rule 49.3) — applied during Stores Expenditure Stage each turn:
+  All players:           6% per game-turn, rounded down
+  Commonwealth only      9% per game-turn, Sept 1940 through end of Aug 1941
+    (poor British fuel containers; reduced after they adopted the German jerry can)
+  Hot weather (29.3):  +5% additional, taken immediately when declared
+
+There is no "drums vs jerry cans" split in the rule.  The 9% Commonwealth rate
+covers the entire early-war period regardless of container type.
 
 Dumps can be:
   - Fixed (placed at setup on a specific hex)
@@ -13,8 +22,10 @@ Dumps can be:
   - Dummy (Axis player can bluff Commonwealth with empty decoys)
   - Port (can receive convoy resupply; limited by port_efficiency per turn)
 
-The SupplyDump is the engine's unit of account.  The engine's supply tracer
-(BFS from unit → dump → port) uses dump hex_id and side to check reachability.
+The SupplyDump is the engine's unit of account.  Supply availability is checked
+by rule 32.16: a unit is in supply if a friendly Supply Unit is within ½ of
+its CPA, traced as medium-truck movement (or infantry movement for non-mot units),
+not passing through impassable terrain or uncontested enemy ZOC.
 """
 
 from __future__ import annotations
@@ -73,7 +84,13 @@ class SupplyDump:
 
     def apply_fuel_evaporation(self, rate: float) -> float:
         """
-        Apply per-turn fuel evaporation.  rate = 0.03 (3%) or 0.07 (7%).
+        Apply per-turn fuel evaporation (rule 49.3).
+
+        rate values:
+          0.06  — standard rate for all players
+          0.09  — Commonwealth rate, Sept 1940 through end Aug 1941
+          0.05  — additional hot-weather reduction (add to base rate before calling)
+
         Returns gallons lost (for event log).
         """
         if self.is_unlimited or self.is_dummy:

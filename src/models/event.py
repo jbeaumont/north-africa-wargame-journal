@@ -11,7 +11,7 @@ Event types (event.type values)
   supply          — supply status change (in → OOS, or OOS → in)
   breakdown       — vehicle breakdown roll triggered (unit loses step or is halted)
   fuel_evaporation — periodic fuel loss applied to a dump
-  pasta_rule      — Italian battalion missed water ration, CPA halved
+  pasta_rule      — Italian battalion missed water ration; may not voluntarily exceed CPA (rule 52.6)
   reinforcement   — new unit arrives on map
   elimination     — unit eliminated (steps reached 0)
   disorganization — unit became Disorganized (cohesion ≤ -10)

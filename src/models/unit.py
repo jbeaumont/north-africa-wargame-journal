@@ -131,6 +131,10 @@ class Unit:
     # Recovery: as soon as unit receives its Pasta Point, cohesion reverts to
     #   the level it had before disorganization.
     pasta_rule: bool = False
+    # Set by the supply engine each OpStage when pasta_rule=True and the unit
+    # did NOT receive its Pasta Point.  Cleared when the Pasta Point arrives.
+    # The movement engine checks this flag to block voluntary CPA excess (52.6).
+    pasta_restricted: bool = False
 
     # ── Derived helpers ──────────────────────────────────────────────────────
 
@@ -183,6 +187,7 @@ class Unit:
             "ammo": self.ammo,
             "stores": self.stores,
             "pasta_rule": self.pasta_rule,
+            "pasta_restricted": self.pasta_restricted,
         }
 
     @classmethod
@@ -213,4 +218,5 @@ class Unit:
             ammo=d.get("ammo", 0.0),
             stores=d.get("stores", 0.0),
             pasta_rule=d.get("pasta_rule", False),
+            pasta_restricted=d.get("pasta_restricted", False),
         )

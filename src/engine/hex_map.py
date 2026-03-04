@@ -26,9 +26,9 @@ Design notes
 Entry cost algorithm (rule 8.37):
   1. Base terrain CP cost for the hex being ENTERED.
   2. Add hexside feature CP modifier for the hexside crossed.
-  3. ROAD modifier: base cost –1, hexside costs zeroed (note 6).
+  3. ROAD modifier: fixed ½ CP for motorized (rule 8.31); base −1 for non-mot.
   4. TRACK modifier: CP unchanged; only BD is halved (note 7).
-  5. Minimum final cost = 1.0 CP.
+  5. Minimum final cost = 1.0 CP (non-road cases).
 
 Return values from entry_cost():
   float         — CP cost (≥ 1.0)
@@ -325,9 +325,11 @@ class HexMap:
         Algorithm (rule 8.37):
           1. Base terrain CP cost of the hex being entered.
           2. Add hexside feature CP modifier.
-          3. ROAD on hexside: base cost − 1; hexside delta = 0 (note 6).
+          3. ROAD on hexside (rule 8.31):
+               motorized   → fixed ½ CP per hex (return immediately)
+               non-motorized → base − 1 CP, minimum 0 (no universal min stated)
           4. TRACK on hexside: CP unchanged; only BD is halved (note 7).
-          5. Total ≥ 1.0.
+          5. Total ≥ 1.0 CP (non-road cases).
 
         Weather modifier (partial — rainstorm rules 4.0):
           Wadi/Minor River crossing is prohibited for motorized without
@@ -409,17 +411,26 @@ class HexMap:
         delta = float(delta)
 
         # ── Road modifier (note 6) ────────────────────────────────────────────
-        # Road reduces base terrain by 1 and negates all hexside feature costs.
+        # rule 8.31: "costs range from ½ CP for roads (for motorized units)"
+        # Motorized on road: fixed ½ CP per hex (overrides terrain base).
+        # Non-motorized on road: TEC -1 delta applies; minimum not stated in rules
+        #   (8.31 names ½ CP only for motorized; we keep the computed result).
 
         if road_on_hexside:
+            if mot:
+                return 0.5  # rule 8.31: fixed ½ CP for motorized on road
             base_cp = max(0.0, base_cp - 1.0)
             delta   = 0.0
+            return base_cp + delta  # no universal minimum for non-mot on road
 
         # ── Track modifier (note 7) ───────────────────────────────────────────
-        # Track: CP is unchanged ("same_as_terrain" for the Track hexside).
-        # Only BD is halved — no CP change here.
+        # rule 8.46: "Movement along tracks is at 1 CP per hex and halves most
+        # hexside crossing CP costs." Track = fixed 1 CP base; hexside costs halved.
+        # TODO: for non-desert terrain + track the base should be clamped to 1 CP
+        # (rule 8.46 prose); this fires only for rough/mountain + track where
+        # terrain_base > 1 CP. For now the minimum-1 below covers desert (1 CP).
 
-        # (no action needed for CP)
+        # (no action needed for CP — see entry_bd for BD halving)
 
         # ── Total, minimum 1 CP ───────────────────────────────────────────────
 
@@ -540,7 +551,7 @@ class HexMap:
             UnitSize.BATTALION: 1,
             UnitSize.REGIMENT:  2,
             UnitSize.BRIGADE:   2,
-            UnitSize.DIVISION:  4,
+            UnitSize.DIVISION:  5,   # rule 9.4 (rules_tables.json stacking_rules): Division = 5 SP
             UnitSize.CORPS:     0,   # HQ-like
             UnitSize.ARMY:      0,
         }

@@ -1,0 +1,316 @@
+{
+  "rule": "10.11 + 10.21",
+  "description": "Zone of Control projection cases. Rule 10.11: All combat units above battalion-equivalent (i.e. with more than one Stacking Point) exert a ZOC. If there is more than one Stacking Point in a hex even if no larger-than-battalion unit is present, the units in that hex also exert a ZOC. Truck Convoys never exert a ZOC, nor do HQ units that have no attached combat units. Rule 16.14 (OCR renders as [16.14] but content refers to rule 10.14 equivalent): Units with a Cohesion Level of -26 or worse do not exert a ZOC. Rule 10.21: ZOC extends into all hexes except through All-Sea, Major River, Lake hexsides (10.21a); Escarpment hexsides (10.21b); or hexes the unit could not enter from its present location (10.21c). Stacking Point values from rules_tables.json (9.4 section, scanned image): Division=5 SP, Super_Brigade=3 SP, Standard_Brigade=2 SP, Battalion=1 SP, Company=0.5 SP.",
+  "cases": [
+    {
+      "id": "infantry_division_cohesion_0_projects_zoc",
+      "description": "Infantry division (5 SP), cohesion=0: projects ZOC because unit is above battalion-equivalent (more than 1 SP)",
+      "rule_clause": "All combat units above battalion-equivalent (i.e. with more than one Stacking Point) exert a Zone of Control [rule 10.11].",
+      "inputs": {
+        "unit_type": "infantry",
+        "unit_size": "division",
+        "unit_cohesion": 0,
+        "hex_total_sp": 5,
+        "crossing_hexside": "None"
+      },
+      "expected": {
+        "projects_zoc": true,
+        "zoc_extends_through_hexside": true,
+        "reasoning": "Division has 5 Stacking Points (rules_tables.json 9.4). 5 > 1, so it is above battalion-equivalent. Cohesion=0 is above the -26 threshold. No blocking hexside. ZOC projects and extends."
+      }
+    },
+    {
+      "id": "infantry_battalion_alone_hex_sp_1_no_zoc",
+      "description": "Infantry battalion (1 SP) as the only unit in hex (hex_total_sp=1): does NOT project ZOC — exactly 1 SP, not more than 1",
+      "rule_clause": "All combat units above battalion-equivalent (i.e. with more than one Stacking Point) exert a Zone of Control. In addition, if there is more than one Stacking Point in a hex even if no larger-than-battalion unit is present, the units in that hex also exert a ZOC [rule 10.11].",
+      "inputs": {
+        "unit_type": "infantry",
+        "unit_size": "battalion",
+        "unit_cohesion": 0,
+        "hex_total_sp": 1,
+        "crossing_hexside": "None"
+      },
+      "expected": {
+        "projects_zoc": false,
+        "zoc_extends_through_hexside": false,
+        "reasoning": "Battalion = 1 SP. A single battalion is NOT above battalion-equivalent (it IS the battalion equivalent). Hex total SP = 1, which is not MORE than 1. Neither 10.11 condition is met. No ZOC projected. Rule 10.11: 'more than one Stacking Point' is the threshold."
+      }
+    },
+    {
+      "id": "infantry_battalion_hex_sp_3_projects_zoc",
+      "description": "Infantry battalion (1 SP) in a hex with other units totaling 3 SP: projects ZOC because hex total SP > 1",
+      "rule_clause": "If there is more than one Stacking Point in a hex even if no larger-than-battalion unit is present, the units in that hex also exert a ZOC [rule 10.11].",
+      "inputs": {
+        "unit_type": "infantry",
+        "unit_size": "battalion",
+        "unit_cohesion": 0,
+        "hex_total_sp": 3,
+        "crossing_hexside": "None"
+      },
+      "expected": {
+        "projects_zoc": true,
+        "zoc_extends_through_hexside": true,
+        "reasoning": "Hex total SP = 3 > 1. The second clause of rule 10.11 applies: even with no larger-than-battalion unit, if hex total SP > 1, all units in the hex exert a ZOC. Cohesion=0 is above -26 threshold. No blocking hexside. ZOC extends."
+      }
+    },
+    {
+      "id": "truck_unit_never_exerts_zoc",
+      "description": "Truck Convoy unit: never exerts a ZOC regardless of hex SP total or cohesion",
+      "rule_clause": "Truck Convoys never exert a ZOC, nor do HQ units that have no attached combat units [rule 10.11].",
+      "inputs": {
+        "unit_type": "truck",
+        "unit_size": "regiment",
+        "unit_cohesion": 0,
+        "hex_total_sp": 5,
+        "crossing_hexside": "None"
+      },
+      "expected": {
+        "projects_zoc": false,
+        "zoc_extends_through_hexside": false,
+        "reasoning": "Rule 10.11 explicitly states 'Truck Convoys never exert a ZOC.' This is an unconditional exception — regardless of hex SP, cohesion, or size. Even if hex_total_sp=5 from other units, the Truck Convoy itself does not project a ZOC."
+      }
+    },
+    {
+      "id": "supply_unit_no_zoc",
+      "description": "Supply unit: no combat capabilities, therefore no ZOC",
+      "rule_clause": "A Supply Unit has no combat capabilities [rule 32.13]. Rule 10.11 grants ZOC only to combat units. Rule 10.12: Aircraft, Squadron Ground Support units, and warships exert no ZOC. Rule 10.13: Informational markers do not exert a ZOC.",
+      "inputs": {
+        "unit_type": "supply",
+        "unit_size": "regiment",
+        "unit_cohesion": 0,
+        "hex_total_sp": 4,
+        "crossing_hexside": "None"
+      },
+      "expected": {
+        "projects_zoc": false,
+        "zoc_extends_through_hexside": false,
+        "reasoning": "Rule 32.13: 'A Supply Unit has no combat capabilities.' Rule 10.11 grants ZOC to 'combat units above battalion-equivalent'. A Supply Unit is a non-combat unit (like HQ without attached units) and does not exert a ZOC. Rule 10.13 covers informational markers; Supply Units are non-combat and by extension excluded from ZOC projection."
+      }
+    },
+    {
+      "id": "hq_no_attached_units_no_zoc",
+      "description": "HQ unit with no attached combat units: never exerts a ZOC",
+      "rule_clause": "Truck Convoys never exert a ZOC, nor do HQ units that have no attached combat units [rule 10.11]. OCR reads 'fo attached' — inferred as 'no attached'.",
+      "inputs": {
+        "unit_type": "hq",
+        "unit_size": "division",
+        "unit_cohesion": 0,
+        "hex_total_sp": 0,
+        "crossing_hexside": "None"
+      },
+      "expected": {
+        "projects_zoc": false,
+        "zoc_extends_through_hexside": false,
+        "reasoning": "Rule 10.11 explicitly excludes HQ units that have no attached combat units from ZOC projection. When an HQ has no attached combat units its Stacking Point value is 0 (rule 9.12). Even if the HQ has a parenthesized SP value, without attached units it does not exert a ZOC. OCR artifact: '10.11' text reads 'HQ units that have fo attached combat units' — 'fo' is OCR for 'no'.",
+        "ocr_note": "cna_rules.txt line 3828 reads 'nor do HQ units that have fo attach- / ed combat units' — 'fo' is an OCR artifact for 'no'."
+      }
+    },
+    {
+      "id": "infantry_regiment_cohesion_0_sp_check",
+      "description": "Infantry regiment: regiment-level units may be 1 SP (artillery rgt) or 2 SP (brigade-equivalent regiment). If regiment = 1 SP and alone, no ZOC. If regiment = 2 SP (brigade-equivalent), ZOC projects.",
+      "rule_clause": "All combat units above battalion-equivalent (i.e. with more than one Stacking Point) exert a Zone of Control [rule 10.11]. Rule 9.22: Italian Regiments are Brigade-equivalents. Rule 9.24: Every artillery unit has a Stacking Point value of 1.",
+      "inputs": {
+        "unit_type": "infantry",
+        "unit_size": "regiment",
+        "unit_cohesion": 0,
+        "hex_total_sp": 2,
+        "crossing_hexside": "None"
+      },
+      "expected": {
+        "projects_zoc": true,
+        "zoc_extends_through_hexside": true,
+        "reasoning": "Hex total SP = 2 > 1, so the second clause of rule 10.11 applies regardless of whether the regiment itself is 1 SP or 2 SP. A Brigade-equivalent Italian regiment is 2 SP (rules_tables.json, 9.4: Standard_Brigade=2 SP) and would independently project ZOC. An artillery regiment with SP=1 alone would NOT project ZOC (1 SP, not more than 1), but in this case hex_total_sp=2 so at least one other unit is present, making hex total >1 SP and triggering ZOC.",
+        "note": "Regiment unit size is ambiguous in CNA — it may be battalion-equivalent (1 SP) or brigade-equivalent (2 SP) depending on nationality and unit. Rule 9.22 says Italian regiments are brigade-equivalents. Rule 9.24 says artillery regiments are 1 SP. Always check the Stacking Point value printed on the counter, not the name."
+      }
+    },
+    {
+      "id": "infantry_division_cohesion_minus_26_no_zoc",
+      "description": "Infantry division, cohesion=-26: does NOT project ZOC (Cohesion Level at or below -26 threshold)",
+      "rule_clause": "Units with a Cohesion Level of -26 or worse do not exert a ZOC [rule 16.14 in OCR — note: OCR shows '[16.14]' but text content is the ZOC-cohesion rule; contextually corresponds to rule 10.14].",
+      "inputs": {
+        "unit_type": "infantry",
+        "unit_size": "division",
+        "unit_cohesion": -26,
+        "hex_total_sp": 5,
+        "crossing_hexside": "None"
+      },
+      "expected": {
+        "projects_zoc": false,
+        "zoc_extends_through_hexside": false,
+        "reasoning": "Rule text at cna_rules.txt line 3837: '[16.14] Units with a Cohesion Level of -26 or worse do not exert a ZOC.' Cohesion=-26 meets the threshold 'of -26 or worse'. Division (5 SP) would otherwise project ZOC per 10.11, but cohesion overrides.",
+        "ocr_note": "cna_rules.txt line 3837 shows '[16.14]' as the rule number, which appears to be an OCR error for '[10.14]'. The content clearly belongs in the Section 10.0 (Zones of Control) context between rules 10.13 and 10.15."
+      }
+    },
+    {
+      "id": "infantry_division_cohesion_minus_25_projects_zoc",
+      "description": "Infantry division, cohesion=-25: still projects ZOC (just above -26 threshold)",
+      "rule_clause": "Units with a Cohesion Level of -26 or worse do not exert a ZOC [rule 10.14/16.14 OCR]. Cohesion of -25 is NOT -26 or worse, so rule does not apply.",
+      "inputs": {
+        "unit_type": "infantry",
+        "unit_size": "division",
+        "unit_cohesion": -25,
+        "hex_total_sp": 5,
+        "crossing_hexside": "None"
+      },
+      "expected": {
+        "projects_zoc": true,
+        "zoc_extends_through_hexside": true,
+        "reasoning": "Cohesion=-25 is above the -26 threshold (i.e., -25 is BETTER than -26 on the cohesion scale). The rule says '-26 or WORSE' (more negative) do not exert ZOC. -25 is not -26 or worse. Division (5 SP) > 1 SP threshold from 10.11. ZOC is projected. No blocking hexside. ZOC extends."
+      }
+    },
+    {
+      "id": "projecting_unit_no_hexside_zoc_extends",
+      "description": "Projecting unit (division, cohesion=0), crossing_hexside=None: ZOC always extends when no blocking hexside",
+      "rule_clause": "ZOC's extend into all hexes on the game-map, with the following exceptions [rule 10.21]. No exception applies when crossing_hexside is None.",
+      "inputs": {
+        "unit_type": "infantry",
+        "unit_size": "division",
+        "unit_cohesion": 0,
+        "hex_total_sp": 5,
+        "crossing_hexside": "None"
+      },
+      "expected": {
+        "projects_zoc": true,
+        "zoc_extends_through_hexside": true,
+        "reasoning": "Rule 10.21: ZOC extends into all hexes with listed exceptions. No hexside feature = no blocking. The unit projects ZOC (10.11 met: 5 SP > 1 SP, cohesion 0 > -26). ZOC extends freely."
+      }
+    },
+    {
+      "id": "projecting_unit_major_river_zoc_blocked",
+      "description": "Projecting unit (division, cohesion=0), crossing_hexside=Major_River: ZOC does NOT extend through Major River hexside",
+      "rule_clause": "ZOC's do not extend through All-Sea hexsides, Major River hexsides, or Lake hexsides [rule 10.21a].",
+      "inputs": {
+        "unit_type": "infantry",
+        "unit_size": "division",
+        "unit_cohesion": 0,
+        "hex_total_sp": 5,
+        "crossing_hexside": "Major_River"
+      },
+      "expected": {
+        "projects_zoc": true,
+        "zoc_extends_through_hexside": false,
+        "reasoning": "Rule 10.21a explicitly lists Major River hexsides as blocking ZOC projection. The unit itself projects a ZOC (5 SP, cohesion 0), but that ZOC does NOT extend through the Major River hexside into the adjacent hex on the other side."
+      }
+    },
+    {
+      "id": "projecting_unit_escarpment_up_zoc_blocked",
+      "description": "Projecting unit (division, cohesion=0), crossing_hexside=Escarpment_Up: ZOC does NOT extend through Escarpment hexsides",
+      "rule_clause": "ZOC's do not extend through Escarpment hexsides [rule 10.21b].",
+      "inputs": {
+        "unit_type": "infantry",
+        "unit_size": "division",
+        "unit_cohesion": 0,
+        "hex_total_sp": 5,
+        "crossing_hexside": "Escarpment_Up"
+      },
+      "expected": {
+        "projects_zoc": true,
+        "zoc_extends_through_hexside": false,
+        "reasoning": "Rule 10.21b: 'ZOC's do not extend through Escarpment hexsides.' An escarpment hexside (whether approached from the up or down side) blocks ZOC. The unit projects ZOC (5 SP, cohesion 0) but it does not extend through any escarpment hexside in either direction."
+      }
+    },
+    {
+      "id": "projecting_unit_escarpment_down_zoc_blocked",
+      "description": "Projecting unit (division, cohesion=0), crossing_hexside=Escarpment_Down: ZOC does NOT extend through Escarpment hexsides (both directions blocked)",
+      "rule_clause": "ZOC's do not extend through Escarpment hexsides [rule 10.21b].",
+      "inputs": {
+        "unit_type": "infantry",
+        "unit_size": "division",
+        "unit_cohesion": 0,
+        "hex_total_sp": 5,
+        "crossing_hexside": "Escarpment_Down"
+      },
+      "expected": {
+        "projects_zoc": true,
+        "zoc_extends_through_hexside": false,
+        "reasoning": "Rule 10.21b does not distinguish between the up-side and down-side of escarpments for ZOC purposes — escarpment hexsides block ZOC in both directions. A unit on the high side of an escarpment cannot project ZOC down through the escarpment hexside, and a unit on the low side cannot project ZOC up through it."
+      }
+    },
+    {
+      "id": "projecting_unit_ridge_zoc_extends",
+      "description": "Projecting unit (division, cohesion=0), crossing_hexside=Ridge: ZOC DOES extend through Ridge hexsides (ridges not listed as exception in 10.21)",
+      "rule_clause": "ZOC's extend into all hexes on the game-map, with the following exceptions: a. [Major River/All-Sea/Lake]; b. [Escarpment]; c. [hexes unit cannot enter] [rule 10.21]. Ridge is not listed as an exception.",
+      "inputs": {
+        "unit_type": "infantry",
+        "unit_size": "division",
+        "unit_cohesion": 0,
+        "hex_total_sp": 5,
+        "crossing_hexside": "Ridge"
+      },
+      "expected": {
+        "projects_zoc": true,
+        "zoc_extends_through_hexside": true,
+        "reasoning": "Rule 10.21 lists only three categories of exceptions (All-Sea/Major River/Lake; Escarpment; hexes unit cannot enter). Ridge hexsides are NOT listed among the ZOC-blocking exceptions. Therefore ZOC extends through Ridge hexsides. A Ridge is two-sided slope (rule 8.35) — treated as a movement cost hexside feature but not a ZOC blocker."
+      }
+    },
+    {
+      "id": "projecting_unit_wadi_zoc_extends",
+      "description": "Projecting unit (division, cohesion=0), crossing_hexside=Wadi: ZOC DOES extend through Wadi hexsides (wadis not listed as exception in 10.21)",
+      "rule_clause": "ZOC's extend into all hexes on the game-map, with the following exceptions [rule 10.21]. Wadi is not listed as an exception.",
+      "inputs": {
+        "unit_type": "infantry",
+        "unit_size": "division",
+        "unit_cohesion": 0,
+        "hex_total_sp": 5,
+        "crossing_hexside": "Wadi"
+      },
+      "expected": {
+        "projects_zoc": true,
+        "zoc_extends_through_hexside": true,
+        "reasoning": "Wadi hexsides impose movement costs (rule 8.41) but are NOT listed among the exceptions in rule 10.21 (10.21a lists Major River/All-Sea/Lake; 10.21b lists Escarpment; 10.21c lists hexes unit cannot enter). Wadis affect movement costs, not ZOC blocking. ZOC extends through Wadi hexsides."
+      }
+    },
+    {
+      "id": "projecting_unit_road_hexside_zoc_extends",
+      "description": "Projecting unit (division, cohesion=0), crossing_hexside=Road: ZOC DOES extend through Road hexsides (not listed as exception in 10.21)",
+      "rule_clause": "ZOC's extend into all hexes on the game-map, with the following exceptions [rule 10.21]. Road is not listed as an exception.",
+      "inputs": {
+        "unit_type": "infantry",
+        "unit_size": "division",
+        "unit_cohesion": 0,
+        "hex_total_sp": 5,
+        "crossing_hexside": "Road"
+      },
+      "expected": {
+        "projects_zoc": true,
+        "zoc_extends_through_hexside": true,
+        "reasoning": "Road hexsides (movement along roads) are not among the rule 10.21 ZOC-blocking exceptions. Roads affect movement costs and breakdown, not ZOC. ZOC extends through road hexsides."
+      }
+    },
+    {
+      "id": "projecting_unit_minor_river_zoc_extends",
+      "description": "Projecting unit (division, cohesion=0), crossing_hexside=Minor_River: ZOC DOES extend through Minor River hexsides (10.21a lists only Major River, not Minor River)",
+      "rule_clause": "ZOC's do not extend through All-Sea hexsides, Major River hexsides, or Lake hexsides [rule 10.21a]. Minor River is NOT listed — only Major River is explicitly blocked.",
+      "inputs": {
+        "unit_type": "infantry",
+        "unit_size": "division",
+        "unit_cohesion": 0,
+        "hex_total_sp": 5,
+        "crossing_hexside": "Minor_River"
+      },
+      "expected": {
+        "projects_zoc": true,
+        "zoc_extends_through_hexside": true,
+        "reasoning": "Rule 10.21a explicitly names 'Major River hexsides' as blocking ZOC. Minor River hexsides are NOT named in 10.21a or anywhere else in rule 10.21. The distinction between Major and Minor Rivers is intentional — only Major Rivers block ZOC. ZOC extends through Minor River hexsides. This is confirmed by reading the full text of rule 10.21 (lines 3859-3871 of cna_rules.txt) which lists no exception for Minor Rivers."
+      }
+    },
+    {
+      "id": "tank_battalion_salt_marsh_no_track_zoc_blocked_by_10_21c",
+      "description": "Tank battalion (1 SP) in hex adjacent to Salt Marsh hex (no road/track connecting them): ZOC does NOT extend into Salt Marsh per rule 10.21c — unit cannot enter that hex",
+      "rule_clause": "ZOC's do not extend into any adjacent hex into which the unit wishing to exert the ZOC could not enter from its present location. (Example: a Tank Battalion could not exert a ZOC into a Salt Marsh hex unless there was a Track or Road connecting the two hexes.) [rule 10.21c].",
+      "inputs": {
+        "unit_type": "armor",
+        "unit_size": "battalion",
+        "unit_cohesion": 0,
+        "hex_total_sp": 3,
+        "crossing_hexside": "None"
+      },
+      "expected": {
+        "projects_zoc": true,
+        "zoc_extends_through_hexside": false,
+        "reasoning": "Rule 10.21c is cited with the explicit example of a tank battalion and Salt Marsh. hex_total_sp=3 > 1, so the unit projects ZOC. However, because the target adjacent hex is a Salt Marsh and there is no Track or Road connecting the two hexes, the tank battalion cannot enter that hex (it would be prohibited per TEC/rule 8.44) and therefore cannot project ZOC into it. The zoc_extends_through_hexside=false here represents the 10.21c restriction specifically.",
+        "note": "This case models rule 10.21c using the exact example from the rulebook. The 'crossing_hexside=None' means no road or track; the target hex is Salt Marsh. The engine must evaluate whether the projecting unit TYPE could enter the target hex; if not, ZOC does not extend there per 10.21c."
+      }
+    }
+  ]
+}

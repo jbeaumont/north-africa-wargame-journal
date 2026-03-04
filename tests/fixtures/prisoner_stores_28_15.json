@@ -1,0 +1,139 @@
+{
+  "rule": "28.15",
+  "description": "Prisoner store consumption. For every five Prisoner Points in a hex, the capturing player must expend one Store Point per Operations Stage (NOT per Game-Turn). These stores are expended before any other stores may be allocated. The stores need not be physically present; they are subtracted from the nearest supply dump.",
+  "cases": [
+    {
+      "id": "five_prisoners_one_store",
+      "description": "Exactly 5 prisoner points: consumes 1 store (5 // 5 = 1)",
+      "rule_clause": "For every five Prisoner Points in a hex, the capturing Player must expend one Store Point per Operations Stage (not Game-Turn)",
+      "inputs": {
+        "prisoner_points": 5,
+        "stores_available": 10.0
+      },
+      "expected": {
+        "stores_consumed": 1.0,
+        "stores_after": 9.0
+      }
+    },
+    {
+      "id": "four_prisoners_zero_stores",
+      "description": "4 prisoner points: below threshold of 5, no stores consumed (4 // 5 = 0)",
+      "rule_clause": "For every five Prisoner Points in a hex, the capturing Player must expend one Store Point per Operations Stage (not Game-Turn)",
+      "inputs": {
+        "prisoner_points": 4,
+        "stores_available": 10.0
+      },
+      "expected": {
+        "stores_consumed": 0.0,
+        "stores_after": 10.0
+      }
+    },
+    {
+      "id": "ten_prisoners_two_stores",
+      "description": "Exactly 10 prisoner points: consumes 2 stores (10 // 5 = 2)",
+      "rule_clause": "For every five Prisoner Points in a hex, the capturing Player must expend one Store Point per Operations Stage (not Game-Turn)",
+      "inputs": {
+        "prisoner_points": 10,
+        "stores_available": 10.0
+      },
+      "expected": {
+        "stores_consumed": 2.0,
+        "stores_after": 8.0
+      }
+    },
+    {
+      "id": "twelve_prisoners_floor_division",
+      "description": "12 prisoner points: floor division gives 2 stores (12 // 5 = 2, not 2.4)",
+      "rule_clause": "For every five Prisoner Points in a hex, the capturing Player must expend one Store Point per Operations Stage (not Game-Turn)",
+      "inputs": {
+        "prisoner_points": 12,
+        "stores_available": 10.0
+      },
+      "expected": {
+        "stores_consumed": 2.0,
+        "stores_after": 8.0
+      }
+    },
+    {
+      "id": "fourteen_prisoners_floor_division",
+      "description": "14 prisoner points: floor division gives 2 stores (14 // 5 = 2)",
+      "rule_clause": "For every five Prisoner Points in a hex, the capturing Player must expend one Store Point per Operations Stage (not Game-Turn)",
+      "inputs": {
+        "prisoner_points": 14,
+        "stores_available": 10.0
+      },
+      "expected": {
+        "stores_consumed": 2.0,
+        "stores_after": 8.0
+      }
+    },
+    {
+      "id": "fifteen_prisoners_three_stores",
+      "description": "Exactly 15 prisoner points: consumes 3 stores (15 // 5 = 3)",
+      "rule_clause": "For every five Prisoner Points in a hex, the capturing Player must expend one Store Point per Operations Stage (not Game-Turn)",
+      "inputs": {
+        "prisoner_points": 15,
+        "stores_available": 10.0
+      },
+      "expected": {
+        "stores_consumed": 3.0,
+        "stores_after": 7.0
+      }
+    },
+    {
+      "id": "zero_prisoners_zero_stores",
+      "description": "Zero prisoner points: no stores consumed",
+      "rule_clause": "For every five Prisoner Points in a hex, the capturing Player must expend one Store Point per Operations Stage (not Game-Turn)",
+      "inputs": {
+        "prisoner_points": 0,
+        "stores_available": 10.0
+      },
+      "expected": {
+        "stores_consumed": 0.0,
+        "stores_after": 10.0
+      }
+    },
+    {
+      "id": "five_prisoners_insufficient_stores",
+      "description": "5 prisoner points, only 0.5 stores available: 1 store owed but only 0.5 present; stores drawn down to 0 (partial draw)",
+      "rule_clause": "They need not be present; they are subtracted from the nearest supply dump, etc.",
+      "inputs": {
+        "prisoner_points": 5,
+        "stores_available": 0.5
+      },
+      "expected": {
+        "stores_consumed": 1.0,
+        "stores_after": 0.0
+      },
+      "note": "The rule says stores 'need not be present'; they are subtracted from the nearest supply dump. stores_after is clamped to 0 when the dump cannot cover the full owed amount."
+    },
+    {
+      "id": "one_hundred_prisoners_twenty_stores",
+      "description": "100 prisoner points: consumes 20 stores (100 // 5 = 20)",
+      "rule_clause": "For every five Prisoner Points in a hex, the capturing Player must expend one Store Point per Operations Stage (not Game-Turn)",
+      "inputs": {
+        "prisoner_points": 100,
+        "stores_available": 50.0
+      },
+      "expected": {
+        "stores_consumed": 20.0,
+        "stores_after": 30.0
+      }
+    },
+    {
+      "id": "frequency_is_per_opstage_not_game_turn",
+      "description": "Semantic marker: rule explicitly states per Operations Stage, not per Game-Turn. Two Operations Stages per game-turn means prisoners cost twice per turn. This case documents the correct frequency.",
+      "rule_clause": "the capturing Player must expend one Store Point per Operations Stage (not Game-Turn). These Stores are expended before any other stores may be allocated.",
+      "inputs": {
+        "prisoner_points": 5,
+        "stores_available": 5.0,
+        "opstages_this_game_turn": 2
+      },
+      "expected": {
+        "stores_consumed": 2.0,
+        "stores_after": 3.0
+      },
+      "note": "This case illustrates that if there are 2 Operations Stages in a game-turn, the 1-store-per-5-prisoners cost applies twice, for a total of 2 stores consumed over the full game-turn. The 'not Game-Turn' parenthetical in the rule is explicit."
+    }
+  ]
+}

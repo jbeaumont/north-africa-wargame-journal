@@ -1,0 +1,280 @@
+{
+  "rule": "32.16",
+  "description": "Supply line check. A Supply Unit may be drawn upon by any friendly combat unit within one-half (1/2) of that unit's CPA. Distance is measured as though traversed by a medium truck, unless the unit is non-motorized infantry in which case it is traced as infantry movement. The supply line may not be traced through impassable terrain or enemy ZOCs unoccupied by friendly units.",
+  "cases": [
+    {
+      "id": "in_supply_within_half_cpa",
+      "description": "Unit CPA=20, path cost=9 to friendly dump, no blocking: max_range=10, 9 <= 10, in supply",
+      "rule_clause": "A Supply Unit may be drawn upon by any Friendly combat unit if it is within one-half (1/2) of that combat unit's CPA",
+      "inputs": {
+        "unit_cpa": 20,
+        "unit_motorized": true,
+        "side": "commonwealth",
+        "path_cp_cost_to_dump": 9.0,
+        "zoc_blocking_on_path": false,
+        "zoc_cancelled_on_path": false,
+        "impassable_blocking": false,
+        "dump_is_dummy": false,
+        "dump_is_friendly": true
+      },
+      "expected": {
+        "in_supply": true,
+        "max_range": 10.0,
+        "reasoning": "path cost 9 <= max_range 10 (CPA 20 / 2), no blocking, friendly dump; unit is in supply per rule 32.16"
+      }
+    },
+    {
+      "id": "in_supply_exactly_at_half_cpa",
+      "description": "Unit CPA=20, path cost=10 exactly: 10 <= 10, boundary case is in supply",
+      "rule_clause": "A Supply Unit may be drawn upon by any Friendly combat unit if it is within one-half (1/2) of that combat unit's CPA",
+      "inputs": {
+        "unit_cpa": 20,
+        "unit_motorized": true,
+        "side": "commonwealth",
+        "path_cp_cost_to_dump": 10.0,
+        "zoc_blocking_on_path": false,
+        "zoc_cancelled_on_path": false,
+        "impassable_blocking": false,
+        "dump_is_dummy": false,
+        "dump_is_friendly": true
+      },
+      "expected": {
+        "in_supply": true,
+        "max_range": 10.0,
+        "reasoning": "path cost 10 == max_range 10 (CPA 20 / 2); rule says 'within one-half' — exactly at the boundary is still within range"
+      }
+    },
+    {
+      "id": "out_of_supply_exceeds_half_cpa",
+      "description": "Unit CPA=20, path cost=10.5: 10.5 > 10, out of supply",
+      "rule_clause": "A Supply Unit may be drawn upon by any Friendly combat unit if it is within one-half (1/2) of that combat unit's CPA",
+      "inputs": {
+        "unit_cpa": 20,
+        "unit_motorized": true,
+        "side": "commonwealth",
+        "path_cp_cost_to_dump": 10.5,
+        "zoc_blocking_on_path": false,
+        "zoc_cancelled_on_path": false,
+        "impassable_blocking": false,
+        "dump_is_dummy": false,
+        "dump_is_friendly": true
+      },
+      "expected": {
+        "in_supply": false,
+        "max_range": 10.0,
+        "reasoning": "path cost 10.5 > max_range 10.0 (CPA 20 / 2); unit is out of supply range"
+      }
+    },
+    {
+      "id": "zoc_blocking_no_friendly_cancels",
+      "description": "Unit CPA=20, path=9, enemy ZOC on path with no friendly unit to cancel it: supply line blocked",
+      "rule_clause": "The supply line may not be traced thru impassable terrain or enemy ZOC's unoccupied by Friendly units",
+      "inputs": {
+        "unit_cpa": 20,
+        "unit_motorized": true,
+        "side": "commonwealth",
+        "path_cp_cost_to_dump": 9.0,
+        "zoc_blocking_on_path": true,
+        "zoc_cancelled_on_path": false,
+        "impassable_blocking": false,
+        "dump_is_dummy": false,
+        "dump_is_friendly": true
+      },
+      "expected": {
+        "in_supply": false,
+        "max_range": 10.0,
+        "reasoning": "enemy ZOC on path is unoccupied by a friendly unit; supply line may not be traced through it per rule 32.16"
+      }
+    },
+    {
+      "id": "zoc_blocking_cancelled_by_friendly",
+      "description": "Unit CPA=20, path=9, enemy ZOC on path but a friendly unit occupies that hex (ZOC cancelled): in supply",
+      "rule_clause": "The supply line may not be traced thru impassable terrain or enemy ZOC's unoccupied by Friendly units",
+      "inputs": {
+        "unit_cpa": 20,
+        "unit_motorized": true,
+        "side": "commonwealth",
+        "path_cp_cost_to_dump": 9.0,
+        "zoc_blocking_on_path": true,
+        "zoc_cancelled_on_path": true,
+        "impassable_blocking": false,
+        "dump_is_dummy": false,
+        "dump_is_friendly": true
+      },
+      "expected": {
+        "in_supply": true,
+        "max_range": 10.0,
+        "reasoning": "enemy ZOC hex on path is occupied by a friendly unit, which negates the ZOC per rule 10.26; supply line may be traced through; unit is in supply"
+      }
+    },
+    {
+      "id": "impassable_terrain_blocks",
+      "description": "Unit CPA=20, path=9, impassable terrain on the only available path: supply line blocked",
+      "rule_clause": "The supply line may not be traced thru impassable terrain or enemy ZOC's unoccupied by Friendly units",
+      "inputs": {
+        "unit_cpa": 20,
+        "unit_motorized": true,
+        "side": "commonwealth",
+        "path_cp_cost_to_dump": 9.0,
+        "zoc_blocking_on_path": false,
+        "zoc_cancelled_on_path": false,
+        "impassable_blocking": true,
+        "dump_is_dummy": false,
+        "dump_is_friendly": true
+      },
+      "expected": {
+        "in_supply": false,
+        "max_range": 10.0,
+        "reasoning": "impassable terrain on the only path blocks supply line tracing per rule 32.16"
+      }
+    },
+    {
+      "id": "dummy_dump_no_supply",
+      "description": "Unit CPA=20, path=9, dump is a dummy (decoy) counter: in_supply=false, dummy dumps cannot supply units",
+      "rule_clause": "Players may use dummy Supply Units to confuse their opponent(s) [rule 32.18]; removed upon discovery",
+      "inputs": {
+        "unit_cpa": 20,
+        "unit_motorized": true,
+        "side": "commonwealth",
+        "path_cp_cost_to_dump": 9.0,
+        "zoc_blocking_on_path": false,
+        "zoc_cancelled_on_path": false,
+        "impassable_blocking": false,
+        "dump_is_dummy": true,
+        "dump_is_friendly": true
+      },
+      "expected": {
+        "in_supply": false,
+        "max_range": 10.0,
+        "reasoning": "dummy Supply Units carry no actual supply; they cannot be drawn upon; unit is out of supply"
+      }
+    },
+    {
+      "id": "enemy_dump_no_supply",
+      "description": "Unit CPA=20, path=9, dump belongs to the enemy (dump_is_friendly=false): in_supply=false",
+      "rule_clause": "A Supply Unit may be drawn upon by any Friendly combat unit if it is within one-half (1/2) of that combat unit's CPA",
+      "inputs": {
+        "unit_cpa": 20,
+        "unit_motorized": true,
+        "side": "commonwealth",
+        "path_cp_cost_to_dump": 9.0,
+        "zoc_blocking_on_path": false,
+        "zoc_cancelled_on_path": false,
+        "impassable_blocking": false,
+        "dump_is_dummy": false,
+        "dump_is_friendly": false
+      },
+      "expected": {
+        "in_supply": false,
+        "max_range": 10.0,
+        "reasoning": "rule 32.16 specifies 'Friendly' Supply Unit; an enemy dump does not satisfy this requirement"
+      }
+    },
+    {
+      "id": "non_motorized_infantry_within_range",
+      "description": "Non-motorized infantry, CPA=10, path=4 (traced as infantry movement): max_range=5, 4 <= 5, in supply",
+      "rule_clause": "The distance is calculated from the unit to the Supply Unit as though it is being traversed by a medium Truck unless the unit is a non-motorized infantry unit in which case it is traced as infantry movement",
+      "inputs": {
+        "unit_cpa": 10,
+        "unit_motorized": false,
+        "side": "axis",
+        "path_cp_cost_to_dump": 4.0,
+        "zoc_blocking_on_path": false,
+        "zoc_cancelled_on_path": false,
+        "impassable_blocking": false,
+        "dump_is_dummy": false,
+        "dump_is_friendly": true
+      },
+      "expected": {
+        "in_supply": true,
+        "max_range": 5.0,
+        "reasoning": "non-motorized infantry unit traces supply as infantry movement; CPA=10, max_range=5; path 4 <= 5, in supply"
+      }
+    },
+    {
+      "id": "non_motorized_infantry_exactly_at_max_range",
+      "description": "Non-motorized infantry, CPA=10, path=5 exactly: 5 <= 5, at boundary, in supply",
+      "rule_clause": "A Supply Unit may be drawn upon by any Friendly combat unit if it is within one-half (1/2) of that combat unit's CPA",
+      "inputs": {
+        "unit_cpa": 10,
+        "unit_motorized": false,
+        "side": "axis",
+        "path_cp_cost_to_dump": 5.0,
+        "zoc_blocking_on_path": false,
+        "zoc_cancelled_on_path": false,
+        "impassable_blocking": false,
+        "dump_is_dummy": false,
+        "dump_is_friendly": true
+      },
+      "expected": {
+        "in_supply": true,
+        "max_range": 5.0,
+        "reasoning": "path cost 5 == max_range 5 (CPA 10 / 2); exactly at boundary, still in supply"
+      }
+    },
+    {
+      "id": "non_motorized_infantry_out_of_range",
+      "description": "Non-motorized infantry, CPA=10, path=6: 6 > 5, out of supply",
+      "rule_clause": "A Supply Unit may be drawn upon by any Friendly combat unit if it is within one-half (1/2) of that combat unit's CPA",
+      "inputs": {
+        "unit_cpa": 10,
+        "unit_motorized": false,
+        "side": "axis",
+        "path_cp_cost_to_dump": 6.0,
+        "zoc_blocking_on_path": false,
+        "zoc_cancelled_on_path": false,
+        "impassable_blocking": false,
+        "dump_is_dummy": false,
+        "dump_is_friendly": true
+      },
+      "expected": {
+        "in_supply": false,
+        "max_range": 5.0,
+        "reasoning": "path cost 6 > max_range 5 (CPA 10 / 2); unit is out of supply range"
+      }
+    },
+    {
+      "id": "unit_same_hex_as_dump",
+      "description": "Unit in the same hex as the friendly dump (path cost=0): in supply",
+      "rule_clause": "A Supply Unit may be drawn upon by any Friendly combat unit if it is within one-half (1/2) of that combat unit's CPA",
+      "inputs": {
+        "unit_cpa": 20,
+        "unit_motorized": true,
+        "side": "commonwealth",
+        "path_cp_cost_to_dump": 0.0,
+        "zoc_blocking_on_path": false,
+        "zoc_cancelled_on_path": false,
+        "impassable_blocking": false,
+        "dump_is_dummy": false,
+        "dump_is_friendly": true
+      },
+      "expected": {
+        "in_supply": true,
+        "max_range": 10.0,
+        "reasoning": "unit is co-located with the dump (path cost 0); trivially within half CPA range; in supply"
+      }
+    },
+    {
+      "id": "unit_cpa_zero_out_of_supply",
+      "description": "Unit CPA=0: max_range=0, no dump can be reached; unit is out of supply",
+      "rule_clause": "A Supply Unit may be drawn upon by any Friendly combat unit if it is within one-half (1/2) of that combat unit's CPA",
+      "inputs": {
+        "unit_cpa": 0,
+        "unit_motorized": false,
+        "side": "axis",
+        "path_cp_cost_to_dump": 0.0,
+        "zoc_blocking_on_path": false,
+        "zoc_cancelled_on_path": false,
+        "impassable_blocking": false,
+        "dump_is_dummy": false,
+        "dump_is_friendly": true
+      },
+      "expected": {
+        "in_supply": false,
+        "max_range": 0.0,
+        "reasoning": "CPA=0 means half-CPA=0; even a co-located dump cannot be drawn upon because no CPA has been assigned; unit is out of supply"
+      },
+      "note": "The rule derives max_range as CPA/2. With CPA=0, max_range=0. The rule 32.16 example in the text cites 'a non-motorized infantry unit would have to be within 5 CP's' (CPA=10, half=5), confirming the formula."
+    }
+  ]
+}

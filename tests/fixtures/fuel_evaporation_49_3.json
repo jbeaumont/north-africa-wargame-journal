@@ -1,0 +1,201 @@
+{
+  "rule": "49.3",
+  "description": "Fuel evaporation and spillage. Base rate is 6% per game-turn for all fuel on the map (not in convoys at sea), rounded down. Commonwealth rate is 9% from Sept 1940 through the last game-turn of August 1941 (inclusive). Hot weather adds +5% taken immediately when hot weather is determined.",
+  "cases": [
+    {
+      "id": "axis_no_hot_weather",
+      "description": "Axis fuel dump, any date, no hot weather: base 6% applies",
+      "rule_clause": "each Player reduces all fuel levels on the game-map (not in convoys at sea) by six percent (6%), rounded down",
+      "inputs": {
+        "dump_side": "axis",
+        "fuel_before": 100.0,
+        "current_date": "1941-06-15",
+        "hot_weather": false
+      },
+      "expected": {
+        "rate_applied": 0.06,
+        "lost": 6.0,
+        "fuel_after": 94.0
+      }
+    },
+    {
+      "id": "cw_campaign_start_1940_09_09",
+      "description": "Commonwealth fuel dump at campaign start (1940-09-09): 9% rate applies (Sept 1940 is the start of the elevated CW rate)",
+      "rule_clause": "from Sept., 1940 until the last Game-Turn (inclusive) in August, 1941, the Commonwealth spillage and evaporation rate is nine percent (9%) per Game-turn",
+      "inputs": {
+        "dump_side": "commonwealth",
+        "fuel_before": 100.0,
+        "current_date": "1940-09-09",
+        "hot_weather": false
+      },
+      "expected": {
+        "rate_applied": 0.09,
+        "lost": 9.0,
+        "fuel_after": 91.0
+      }
+    },
+    {
+      "id": "cw_last_day_august_1941",
+      "description": "Commonwealth fuel dump on last day of August 1941 (1941-08-31): still 9% (last game-turn inclusive)",
+      "rule_clause": "from Sept., 1940 until the last Game-Turn (inclusive) in August, 1941, the Commonwealth spillage and evaporation rate is nine percent (9%) per Game-turn",
+      "inputs": {
+        "dump_side": "commonwealth",
+        "fuel_before": 100.0,
+        "current_date": "1941-08-31",
+        "hot_weather": false
+      },
+      "expected": {
+        "rate_applied": 0.09,
+        "lost": 9.0,
+        "fuel_after": 91.0
+      }
+    },
+    {
+      "id": "cw_first_day_after_cutoff_1941_09_01",
+      "description": "Commonwealth fuel dump on 1941-09-01 (first day after cutoff): reverts to base 6%",
+      "rule_clause": "from Sept., 1940 until the last Game-Turn (inclusive) in August, 1941, the Commonwealth spillage and evaporation rate is nine percent (9%) per Game-turn",
+      "inputs": {
+        "dump_side": "commonwealth",
+        "fuel_before": 100.0,
+        "current_date": "1941-09-01",
+        "hot_weather": false
+      },
+      "expected": {
+        "rate_applied": 0.06,
+        "lost": 6.0,
+        "fuel_after": 94.0
+      }
+    },
+    {
+      "id": "cw_late_war_1942_01_01",
+      "description": "Commonwealth fuel dump in 1942: 6% base rate applies (well past the Aug 1941 cutoff)",
+      "rule_clause": "from Sept., 1940 until the last Game-Turn (inclusive) in August, 1941, the Commonwealth spillage and evaporation rate is nine percent (9%) per Game-turn",
+      "inputs": {
+        "dump_side": "commonwealth",
+        "fuel_before": 100.0,
+        "current_date": "1942-01-01",
+        "hot_weather": false
+      },
+      "expected": {
+        "rate_applied": 0.06,
+        "lost": 6.0,
+        "fuel_after": 94.0
+      }
+    },
+    {
+      "id": "axis_hot_weather",
+      "description": "Axis fuel dump with hot weather: 6% base + 5% hot weather = 11% total",
+      "rule_clause": "if the weather for an operations stage is 'hot weather', an additional reduction of five per-cent (5%) is taken as soon as the hot weather is determined",
+      "inputs": {
+        "dump_side": "axis",
+        "fuel_before": 100.0,
+        "current_date": "1941-06-15",
+        "hot_weather": true
+      },
+      "expected": {
+        "rate_applied": 0.11,
+        "lost": 11.0,
+        "fuel_after": 89.0
+      },
+      "note": "The rule states the hot weather 5% is taken 'as soon as the hot weather is determined', which is separate from the base 6% in the Stores Expenditure Stage; the fixture combines them into a single net rate for simplicity."
+    },
+    {
+      "id": "cw_early_period_hot_weather",
+      "description": "Commonwealth fuel dump in early period (1940-09 to 1941-08) with hot weather: 9% + 5% = 14% total",
+      "rule_clause": "from Sept., 1940 until the last Game-Turn (inclusive) in August, 1941, the Commonwealth spillage and evaporation rate is nine percent (9%) per Game-turn [plus] an additional reduction of five per-cent (5%) [for hot weather]",
+      "inputs": {
+        "dump_side": "commonwealth",
+        "fuel_before": 100.0,
+        "current_date": "1941-03-15",
+        "hot_weather": true
+      },
+      "expected": {
+        "rate_applied": 0.14,
+        "lost": 14.0,
+        "fuel_after": 86.0
+      }
+    },
+    {
+      "id": "fuel_zero_no_loss",
+      "description": "Fuel level of zero: no loss regardless of rate",
+      "rule_clause": "each Player reduces all fuel levels on the game-map (not in convoys at sea) by six percent (6%), rounded down",
+      "inputs": {
+        "dump_side": "axis",
+        "fuel_before": 0.0,
+        "current_date": "1941-06-15",
+        "hot_weather": false
+      },
+      "expected": {
+        "rate_applied": 0.06,
+        "lost": 0.0,
+        "fuel_after": 0.0
+      }
+    },
+    {
+      "id": "floor_rounding_6pct",
+      "description": "Non-integer result at 6% verifies floor (not round) rounding: 333 * 0.06 = 19.98 → floor = 19",
+      "rule_clause": "each Player reduces all fuel levels on the game-map (not in convoys at sea) by six percent (6%), rounded down",
+      "inputs": {
+        "dump_side": "axis",
+        "fuel_before": 333.0,
+        "current_date": "1941-06-15",
+        "hot_weather": false
+      },
+      "expected": {
+        "rate_applied": 0.06,
+        "lost": 19.0,
+        "fuel_after": 314.0
+      }
+    },
+    {
+      "id": "floor_rounding_9pct",
+      "description": "Non-integer result at 9% verifies floor rounding: 333 * 0.09 = 29.97 → floor = 29",
+      "rule_clause": "the Commonwealth spillage and evaporation rate is nine percent (9%) per Game-turn",
+      "inputs": {
+        "dump_side": "commonwealth",
+        "fuel_before": 333.0,
+        "current_date": "1941-01-15",
+        "hot_weather": false
+      },
+      "expected": {
+        "rate_applied": 0.09,
+        "lost": 29.0,
+        "fuel_after": 304.0
+      }
+    },
+    {
+      "id": "floor_rounding_11pct",
+      "description": "Non-integer result at 11% verifies floor rounding: 333 * 0.11 = 36.63 → floor = 36",
+      "rule_clause": "each Player reduces all fuel levels on the game-map (not in convoys at sea) by six percent (6%), rounded down [plus] an additional reduction of five per-cent (5%)",
+      "inputs": {
+        "dump_side": "axis",
+        "fuel_before": 333.0,
+        "current_date": "1941-06-15",
+        "hot_weather": true
+      },
+      "expected": {
+        "rate_applied": 0.11,
+        "lost": 36.0,
+        "fuel_after": 297.0
+      }
+    },
+    {
+      "id": "fuel_in_convoy_at_sea_exempt",
+      "description": "Fuel in convoys at sea is explicitly exempt from evaporation; lost = 0",
+      "rule_clause": "each Player reduces all fuel levels on the game-map (not in convoys at sea) by six percent (6%), rounded down",
+      "inputs": {
+        "dump_side": "axis",
+        "fuel_before": 200.0,
+        "current_date": "1941-06-15",
+        "hot_weather": false,
+        "in_convoy_at_sea": true
+      },
+      "expected": {
+        "rate_applied": 0.0,
+        "lost": 0.0,
+        "fuel_after": 200.0
+      },
+      "note": "The rule explicitly excludes fuel 'in convoys at sea' from the evaporation reduction. This is stated directly in the rule text, not an implementation detail."
+    }
+  ]
+}

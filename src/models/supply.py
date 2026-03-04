@@ -30,6 +30,7 @@ not passing through impassable terrain or uncontested enemy ZOC.
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 
 
@@ -95,7 +96,7 @@ class SupplyDump:
         """
         if self.is_unlimited or self.is_dummy:
             return 0.0
-        lost = self.fuel * rate
+        lost = math.floor(self.fuel * rate)  # rule 49.3: "rounded down"
         self.fuel -= lost
         return lost
 

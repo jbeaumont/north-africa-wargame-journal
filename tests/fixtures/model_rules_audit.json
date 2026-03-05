@@ -1,0 +1,111 @@
+{
+  "rule": "6.15, 6.26, 10.14 (OCR: 16.14), 48.x, 51.21, 51.22, 8.42",
+  "description": "Audit of rules-touching claims in src/models/ and src/engine/ that had no PDF citations or cited wrong rules. Oracle searched cna_rules.txt without access to src/. Each case records the code claim, the PDF verdict, and the correction. Verdicts: CONFIRMED, WRONG, AMBIGUOUS, NOT_FOUND.",
+  "cases": [
+    {
+      "id": "disorganized_cpa_halved",
+      "description": "Does Disorganized status halve a unit's CPA?",
+      "rule_clause": "[6.26] A unit with a Cohesion Level of -26 (or worse) may not move, attack, or defend. If an enemy combat unit moves adjacent to it it Surrenders, regardless of the size of the enemy unit. Such 'disorganized' units may, however, refuel, and they do consume Stores and Water.",
+      "claim_in_code": "UnitStatus.DISORGANIZED = 'cohesion <= -10; halved CPA, combat penalty'; effective_cpa() returns cpa // 2 when DISORGANIZED",
+      "verdict": "WRONG",
+      "inputs": {
+        "unit_status": "disorganized",
+        "unit_cpa": 20,
+        "cohesion": -26
+      },
+      "expected": {
+        "effective_cpa": 0,
+        "notes": "Rule 6.26 says the unit 'may not move' — CPA is effectively 0, not halved. There is no intermediate 'halved CPA' concept. The informal word 'disorganized' appears in quotes in rule 6.26 to describe units at -26; it is NOT a formal status triggered at -10."
+      }
+    },
+    {
+      "id": "disorganized_threshold_minus_10",
+      "description": "Does cohesion <= -10 trigger a general Disorganized status?",
+      "rule_clause": "Rule 6.26 references -26 for movement/combat prohibition. Rule 52.6 (pasta rule): 'Italian battalions not receiving their Pasta Point that have a Cohesion Level of -10 or worse immediately become Disorganized.' No general -10 status found outside 52.6.",
+      "claim_in_code": "Unit docstring says 'cohesion <= -10; halved CPA, combat penalty' as a general rule for all units",
+      "verdict": "WRONG",
+      "inputs": {
+        "unit_nationality": "british",
+        "unit_pasta_rule": false,
+        "cohesion": -10
+      },
+      "expected": {
+        "general_disorganized_threshold": -26,
+        "pasta_rule_threshold": -10,
+        "notes": "The -10 threshold applies ONLY to Italian battalions under rule 52.6 (the Pasta Rule). For all other units, negative cohesion continuously affects combat morale (Section 17.0) but does NOT trigger a status change until -26 (rule 6.26). The code incorrectly generalizes the -10 threshold to all units."
+      }
+    },
+    {
+      "id": "cohesion_minus_26_immobility",
+      "description": "At cohesion -26 a unit cannot move — what is the correct effective CPA?",
+      "rule_clause": "[6.26] A unit with a Cohesion Level of -26 (or worse) may not move, attack, or defend.",
+      "claim_in_code": "effective_cpa() returns cpa // 2 when DISORGANIZED (not 0)",
+      "verdict": "WRONG",
+      "inputs": {
+        "cohesion": -26,
+        "unit_cpa": 20
+      },
+      "expected": {
+        "effective_cpa": 0,
+        "notes": "Rule 6.26 is explicit: 'may not move.' CPA should be 0, not cpa//2. Additionally, such units may still 'refuel and consume Stores and Water', so supply checks should NOT be blocked by immobility status."
+      }
+    },
+    {
+      "id": "zoc_suppression_threshold_and_rule_number",
+      "description": "Is -26 the ZOC suppression threshold? Is rule 10.14 the correct citation?",
+      "rule_clause": "[16.14] Units with a Cohesion Level of -26 or worse do not exert a ZOC. (OCR reads 16.14 but sequence 10.13 / [16.14] / 10.15 confirms the OCR misread '10' as '16'; actual rule is 10.14.)",
+      "claim_in_code": "hex_map.py: 'rule 10.14 (OCR: 16.14)' — threshold -26",
+      "verdict": "CONFIRMED",
+      "inputs": {
+        "cohesion": -26
+      },
+      "expected": {
+        "zoc_suppressed": true,
+        "notes": "Threshold -26 is CONFIRMED correct. The code comment already notes the OCR renders 16.14 but actual rule sequence places it as 10.14. No code change needed — comment is already accurate."
+      }
+    },
+    {
+      "id": "formation_cpa_inheritance_direction",
+      "description": "Does rule 6.15 support units inheriting CPA from parent formation?",
+      "rule_clause": "[6.15] The CPA of a 'Parent Formation' (e.g., division, brigade, etc.) is that of the lowest CPA of the units comprising that parent formation, regardless of the CPA of any higher-CPA units. If the British 7th Armored Division was to move as an entity it would move with a CPA of '10', or that of its lowest-CPA unit — the 1st KRRC (without trucks).",
+      "claim_in_code": "GameState.formation_cpa(): if unit.cpa == 0, inherit from formation.cpa downward (unit gets parent formation's CPA)",
+      "verdict": "WRONG",
+      "inputs": {
+        "unit_cpa": 0,
+        "formation_cpa": 20
+      },
+      "expected": {
+        "correct_direction": "upward: formation CPA = min(unit CPAs)",
+        "notes": "Rule 6.15 says the FORMATION's CPA equals the LOWEST CPA of its constituent units. CPA flows upward (units define the formation's effective CPA), NOT downward (formation does not grant units a CPA). A unit with printed CPA=0 in the counter data likely means the counter field is blank/missing from the data extraction, not that the unit truly has CPA=0. TODO: load individual unit CPAs from counters.json; formation_cpa() fallback is a placeholder until counter loader is implemented."
+      }
+    },
+    {
+      "id": "supply_critical_status",
+      "description": "Does CNA have a formal 'Critical' supply status triggered by 2 consecutive OOS OpStages?",
+      "rule_clause": "Rule 51.21: 'Any unit (or formation) that goes without its Stores Ration for a complete Game-Turn earns 1 Disorganization Point (DP).' Rule 51.22: 'Any infantry-type unit that goes 2 consecutive Game-Turns without any Stores receives a 2% TOE Strength Point loss...' No 'Critical' supply status concept was found in the OCR of rules 48.x+ or elsewhere.",
+      "claim_in_code": "SupplyStatus.CRITICAL = '2+ consecutive OpStages OOS'; update_supply_status() sets CRITICAL at opstages_out_of_supply >= 2",
+      "verdict": "NOT_FOUND",
+      "inputs": {
+        "consecutive_oos_opstages": 2
+      },
+      "expected": {
+        "notes": "The named 'Critical' status does not exist in the PDF. The actual OOS effects are: (1) 1 DP per game-turn without Stores (rule 51.21); (2) 2% TOE Strength Point loss per 2 consecutive game-turns (rule 51.22, infantry only). The CRITICAL SupplyStatus enum and update_supply_status() logic are placeholders. TODO: replace with rule 51.21 DP accumulation and rule 51.22 strength loss when the combat engine can apply DPs and step losses."
+      }
+    },
+    {
+      "id": "escarpment_up_foot_infantry_cost",
+      "description": "Is 8 CP the correct cost for foot infantry crossing an up-escarpment hexside?",
+      "rule_clause": "[8.42] ...If a Track crosses an escarpment hexside, vehicles may use the Track to move down the escarpment...The cost for moving down via Track would be +8 CP's and six Breakdown Points. No vehicle may ever move 'up' an escarpment.",
+      "claim_in_code": "hex_map.py: _ESCARPMENT_UP_FOOT_CP = 8.0 — citing rule 8.42",
+      "verdict": "WRONG",
+      "inputs": {
+        "hexside": "Escarpment_Up",
+        "motorized": false
+      },
+      "expected": {
+        "correct_cost": "see_tec",
+        "notes": "Rule 8.42 explicitly gives 8 CP as the cost for moving DOWN an escarpment via a Track (with 6 BD points). The '8 CP' figure in the code was incorrectly applied to up-escarpment foot infantry movement. The actual up-escarpment foot infantry cost is in the TEC (rule 8.37 chart) but the OCR of cna_rules.txt did not capture the numeric value for this cell — only 'P_vehicles' is in rules_tables.json. The 8 CP value for up-escarpment foot infantry is NOT established from the OCR. The test for this case is correctly marked pytest.skip('see_tec'). The constant should be renamed/commented to clarify it is a placeholder pending physical TEC verification."
+      }
+    }
+  ]
+}

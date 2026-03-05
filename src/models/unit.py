@@ -6,10 +6,12 @@ Air units are a separate concern deferred to Phase 3.
 
 Key CNA concepts modelled here:
   - Steps (strength levels; unit eliminated when steps_current reaches 0)
-  - Cohesion (penalty track; -10 or worse triggers Disorganized status)
+  - Cohesion (penalty track; affects combat morale via Section 17.0; at -26 the unit
+    cannot move, attack, or defend, rule 6.26). The -10 threshold is ONLY for Italian
+    battalions under the Pasta Rule (rule 52.6) — no general -10 status exists.
   - Capability Points (CPA): movement allowance per OpStage; 0 = use formation pool
   - Breakdown Points: accumulated wear on vehicles; triggers breakdown rolls
-  - Supply tracking: in_supply / out_of_supply / critical
+  - Supply tracking: in_supply / out_of_supply
   - Logistics loads: fuel, water, ammo, stores carried on the unit
   - Pasta rule flag: Italian infantry battalions need +1 water ration
 """
@@ -69,7 +71,9 @@ class UnitSize(str, Enum):
 class UnitStatus(str, Enum):
     ACTIVE = "active"
     BROKEN_DOWN = "broken_down"         # vehicle breakdown; can't move this OpStage
-    DISORGANIZED = "disorganized"       # cohesion ≤ -10; halved CPA, combat penalty
+    DISORGANIZED = "disorganized"       # rule 6.26: at -26, cannot move/attack/defend.
+                                        # Also used by pasta rule (52.6) to flag
+                                        # Italian units treated "as if cohesion = -26".
     ELIMINATED = "eliminated"           # removed from play
     OFF_MAP = "off_map"                 # not yet on map (reinforcement pool)
 
@@ -77,7 +81,12 @@ class UnitStatus(str, Enum):
 class SupplyStatus(str, Enum):
     IN_SUPPLY = "in_supply"
     OUT_OF_SUPPLY = "out_of_supply"
-    CRITICAL = "critical"               # 2+ consecutive OpStages out of supply
+    CRITICAL = "critical"               # PLACEHOLDER: 'Critical' as a named status is NOT
+                                        # found in the CNA PDF. Actual OOS effects:
+                                        # rule 51.21: +1 DP per game-turn without Stores;
+                                        # rule 51.22: 2% TOE SP loss per 2 consecutive
+                                        # game-turns (infantry only).
+                                        # TODO: replace with rule 51.21/51.22 effects.
 
 
 @dataclass
@@ -101,7 +110,9 @@ class Unit:
     steps_current: int = 2
     steps_max: int = 2
     # Cohesion track: starts at 0; combat, OOS, and failed checks reduce it.
-    # At -10 or below the unit is Disorganized (rule 19.0 / 20.0).
+    # Negative cohesion affects combat morale continuously (Section 17.0).
+    # At -26 or worse: cannot move, attack, or defend (rule 6.26).
+    # The -10 threshold is ONLY used in the Italian Pasta Rule (rule 52.6).
     cohesion: int = 0
 
     # ── Capability Points (movement) ─────────────────────────────────────────
@@ -145,11 +156,16 @@ class Unit:
         return self.hex_id is not None and not self.is_eliminated()
 
     def effective_cpa(self) -> int:
-        """CPA after status penalties (disorganized = halved)."""
-        base = self.cpa
+        """CPA for movement purposes.
+
+        Rule 6.26: a unit at cohesion -26 (or pasta-rule forced 'as if -26')
+        'may not move' — effective CPA is 0, not halved.
+        Note: supply-range checks use the natural CPA (rule 32.16); see
+        GameState.formation_cpa_natural().
+        """
         if self.status == UnitStatus.DISORGANIZED:
-            base = base // 2
-        return base
+            return 0  # rule 6.26: may not move, attack, or defend
+        return self.cpa
 
     def stacking_points(self) -> int:
         """Stacking cost in Stacking Points for hex capacity checks."""

@@ -232,20 +232,45 @@ class GameState:
 
     def formation_cpa(self, unit: Unit) -> int:
         """
-        Resolve effective CPA for a unit.
-        If the unit has its own cpa > 0, return that.
-        Otherwise walk up formation tree until a cpa is found.
+        Resolve effective CPA for movement purposes.
+
+        Rule 6.26: a Disorganized unit (cohesion -26 or pasta-rule-forced) cannot
+        move — returns 0 regardless of printed CPA.
+
+        Rule 6.15 audit finding (WRONG direction — TODO fix with counter loader):
+        Rule 6.15 says formation CPA = lowest CPA of its constituent units (flows
+        upward, unit → formation). The current fallback (unit inherits from
+        formation) is backwards but is a placeholder until counter data (counters.json)
+        is loaded into each unit's cpa field at scenario initialisation.
         """
+        from src.models.unit import UnitStatus
+        if unit.status == UnitStatus.DISORGANIZED:
+            return 0  # rule 6.26: may not move, attack, or defend
         if unit.cpa > 0:
-            return unit.effective_cpa()
+            return unit.cpa
         if unit.formation_id and unit.formation_id in self.formations:
             formation = self.formations[unit.formation_id]
-            if formation.cpa > 0:
-                cpa = formation.cpa
-                if unit.status.value == "disorganized":
-                    cpa = cpa // 2
-                return cpa
+            return formation.cpa
         return 0  # detached with no CPA assigned — engine will flag this
+
+    def formation_cpa_natural(self, unit: Unit) -> int:
+        """
+        Resolve the unit's base CPA ignoring movement-status penalties.
+
+        Used by supply-range checks (rule 32.16: a unit is in supply if a
+        friendly dump is within ½ its CPA). Rule 6.26 says even a Disorganized
+        unit 'may refuel and does consume Stores and Water', so an immobile
+        unit at -26 can still have an active supply line.
+
+        TODO (rule 6.15): formation fallback flows in the wrong direction;
+        fix when counter loader populates individual unit CPAs.
+        """
+        if unit.cpa > 0:
+            return unit.cpa
+        if unit.formation_id and unit.formation_id in self.formations:
+            formation = self.formations[unit.formation_id]
+            return formation.cpa
+        return 0
 
     # ── Event logging ────────────────────────────────────────────────────────
 

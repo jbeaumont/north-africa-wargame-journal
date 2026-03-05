@@ -37,8 +37,14 @@ Return values from entry_cost():
 Minefields and fortification levels affect combat column shifts only, not
 movement CP.  The combat engine reads fortification_level from GameState.
 
-Up-escarpment (rule 8.42): no vehicle may ever cross upward.  Non-motorized
-(foot) units may; we approximate at 8 CP (the value given in rule 8.42 note).
+Up-escarpment (rule 8.42 note): no vehicle may ever cross upward.
+Non-motorized (foot) units may climb; cost approximated at 8 CP.
+AUDIT FINDING (2026-03-05): rule 8.42 gives 8 CP only for moving DOWN an
+escarpment via a Track ("+8 CP's and six Breakdown Points").  The up-escarpment
+foot-infantry cost is NOT established from the OCR text.  The TEC column for
+Up_Escarpment_hexside gives cp_non_mot='P_vehicles' (vehicles prohibited) but
+no numeric CP for foot.  _ESCARPMENT_UP_FOOT_CP = 8.0 is a PLACEHOLDER.
+TODO: confirm foot up-escarpment CP from the printed colour TEC chart.
 
 Track note 7: track halves BD but does NOT halve CP.  "except CP expended"
 in the note means the CP itself is unchanged.
@@ -116,11 +122,13 @@ _HEXSIDE_TEC_KEY: Dict[HexsideFeature, Optional[str]] = {
 # Desert/Clear are the most common terrains in North Africa → 1 CP.
 _SAME_AS_TERRAIN_DEFAULT = 1.0
 
-# Non-motorized foot-unit cost to climb an escarpment (rule 8.42).
-# The TEC gives "P_vehicles" in the non-mot column, meaning vehicles are
-# prohibited; true foot infantry may climb.  The rules quote "+8 CP" in a
-# note, which we use as the climb cost.
-_ESCARPMENT_UP_FOOT_CP = 8.0
+# PLACEHOLDER: up-escarpment foot-infantry cost.
+# The TEC gives "P_vehicles" in the non-mot column — vehicles prohibited, foot
+# infantry may climb.  The value 8.0 was incorrectly taken from rule 8.42 which
+# gives 8 CP for moving DOWN an escarpment via a Track.  The actual up-escarpment
+# foot cost is not captured in the OCR of cna_rules.txt.
+# TODO: verify from the printed TEC colour chart before treating this as correct.
+_ESCARPMENT_UP_FOOT_CP = 8.0  # placeholder — see module docstring audit note
 
 
 # ── Parsing helpers ───────────────────────────────────────────────────────────

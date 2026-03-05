@@ -7,12 +7,16 @@ Rules implemented
          using medium-truck movement costs (infantry movement for non-mot units);
          blocked by impassable terrain and enemy ZOC unoccupied by friendly units.
 
-  32.0   Out-of-supply status: unit with no supply line = Out of Supply; two
-         consecutive OpStages OOS → Critical; resupply resets counter.
-         TODO: the agent found that OOS/Critical mechanics live in the full
-         Logistics Game (rules 48.0+); TODO.md cites 32.0 but that section is
-         Abstract Logistics only.  Confirm exact clause in 48.x before auditing
-         the consecutive-OOS threshold.
+  32.16  Supply line range check only (see above).
+         OOS effects live in 48.0+:
+  51.21  1 Disorganization Point per game-turn without Stores.
+  51.22  2% TOE Strength Point loss per 2 consecutive game-turns without Stores
+         (infantry-type units only).
+         NOTE: The 'Critical' supply status label and the two-consecutive-OpStages
+         threshold are PLACEHOLDERS — the named 'Critical' status was NOT FOUND in
+         the CNA PDF (rules audit 2026-03-05). TODO: replace SupplyStatus.CRITICAL
+         with rule 51.21 DP accumulation and rule 51.22 step-loss logic once the
+         combat engine can apply DPs and strength point loss.
 
   49.3   Fuel evaporation (full text confirmed):
            All players:          6% per game-turn, rounded down
@@ -177,7 +181,12 @@ def is_in_supply(
     if unit.hex_id is None or unit.is_eliminated():
         return False
 
-    cpa = game_state.formation_cpa(unit)
+    # Rule 32.16: supply range is based on the unit's natural (printed) CPA.
+    # Rule 6.26: even a Disorganized unit (cohesion -26 / pasta-forced) "may
+    # refuel and does consume Stores and Water" — so supply checks must still
+    # run for immobile units.  Use formation_cpa_natural() which ignores status
+    # penalties, unlike formation_cpa() which returns 0 for DISORGANIZED.
+    cpa = game_state.formation_cpa_natural(unit)
     if cpa <= 0:
         # Unit has no CPA assigned; cannot determine supply range.
         return False
@@ -237,13 +246,13 @@ def update_supply_status(unit: Unit, in_supply: bool) -> None:
     """
     Update unit.supply_status and unit.opstages_out_of_supply.
 
-    Rule 32.0 / 48.x+ (TODO: confirm consecutive-OOS threshold in 48.x+ section;
-    TODO.md cites rule 32.0 but the full Logistics Game OOS mechanics are in the
-    48.0+ rules; the two-consecutive-OpStages → Critical threshold needs a direct
-    rule citation from that section before this is considered audited):
-      - No supply line → Out of Supply.
-      - Two consecutive OpStages OOS → Critical.
-      - Resupply resets the consecutive counter.
+    Actual OOS effects per PDF (rules audit 2026-03-05):
+      - Rule 51.21: 1 DP per game-turn without Stores.
+      - Rule 51.22: 2% TOE SP loss per 2 consecutive game-turns (infantry only).
+    The 'Critical' status label is a PLACEHOLDER — the concept was NOT FOUND in
+    the CNA PDF.  The two-consecutive-OpStages → CRITICAL threshold is a
+    placeholder until rule 51.21/51.22 effects are properly implemented in the
+    combat engine.  TODO: replace with DP accumulation and strength loss.
     """
     if in_supply:
         unit.supply_status = SupplyStatus.IN_SUPPLY

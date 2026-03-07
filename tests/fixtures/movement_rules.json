@@ -1,0 +1,254 @@
+{
+  "_meta": {
+    "generated_by": "oracle-agent",
+    "date": "2026-03-07",
+    "rules_source": "data/rules/cna_rules.txt",
+    "rule_sections": [
+      "6.1", "6.11", "6.13", "6.15", "6.16", "6.17", "6.21",
+      "8.14", "8.15", "8.17",
+      "21.21", "21.23", "21.24", "21.25", "21.26", "21.27", "21.31",
+      "49.13", "49.14"
+    ],
+    "table_status": "Breakdown Table (21.38) not yet extracted. BD accumulation and column detection are fully testable; dice roll is stubbed."
+  },
+
+  "cpa_system": [
+    {
+      "description": "Rule 6.13: CPA is how many CP a unit may use before earning DPs",
+      "rule_ref": "6.13",
+      "note": "A Tank Battalion with CPA 25 can use exactly 25 CP in an OpStage without earning DPs."
+    },
+    {
+      "description": "Rule 6.11: Gun units with CPA '0' are treated as CPA 10 for non-movement purposes",
+      "rule_ref": "6.11",
+      "cpa_printed": 0,
+      "cpa_effective_non_movement": 10,
+      "cpa_effective_movement": 0,
+      "note": "CPA 0 gun units cannot move; they use CPA 10 only for combat/other purposes."
+    },
+    {
+      "description": "Rule 6.15: Formation CPA = lowest CPA of constituent units",
+      "rule_ref": "6.15",
+      "example": "British 7th Armored Division moves at CPA 10 (its lowest-CPA unit, the 1st KRRC without trucks, at CPA 10)",
+      "direction": "UPWARD — units determine formation CPA, not the reverse"
+    },
+    {
+      "description": "Rule 6.16: Unused CPs do not carry over to next OpStage",
+      "rule_ref": "6.16",
+      "note": "CP allowance resets each OpStage. Not transferable between units."
+    }
+  ],
+
+  "dp_from_cpa_excess": [
+    {
+      "description": "Rule 6.21 example: CPA 15, uses 18 CP → 3 DPs",
+      "rule_ref": "6.21",
+      "cpa": 15,
+      "cp_used": 18,
+      "expected_dp": 3
+    },
+    {
+      "description": "Rule 6.21: CPA 8, 1st RNF uses 5+5=10 CP → 2 DPs",
+      "rule_ref": "6.21",
+      "cpa": 8,
+      "cp_used": 10,
+      "expected_dp": 2,
+      "note": "From the 1st RNF example in rule 6.22."
+    },
+    {
+      "description": "Rule 6.21: exactly at CPA → 0 DPs",
+      "rule_ref": "6.21",
+      "cpa": 20,
+      "cp_used": 20,
+      "expected_dp": 0
+    },
+    {
+      "description": "Rule 6.21: 1 CP over → 1 DP",
+      "rule_ref": "6.21",
+      "cpa": 10,
+      "cp_used": 11,
+      "expected_dp": 1
+    }
+  ],
+
+  "non_motorized_cap": [
+    {
+      "description": "Rule 8.17: CPA 8 non-mot may never voluntarily exceed 50% over base = 12 CP",
+      "rule_ref": "8.17",
+      "base_cpa": 8,
+      "max_voluntary_cp": 12,
+      "note": "8 + 50% of 8 = 12. Applies ONLY to voluntary movement in own portion of OpStage."
+    },
+    {
+      "description": "Rule 8.17: CPA 10 non-mot may never voluntarily exceed 15 CP",
+      "rule_ref": "8.17",
+      "base_cpa": 10,
+      "max_voluntary_cp": 15
+    },
+    {
+      "description": "Rule 8.17: non-motorized means CPA <= 10",
+      "rule_ref": "8.17",
+      "condition": "CPA <= 10 identifies non-motorized units for this cap"
+    },
+    {
+      "description": "Rule 8.17: cap does NOT apply to Reaction or Retreat Before Assault",
+      "rule_ref": "8.17",
+      "note": "'Reaction and Retreat Before Assault are not voluntary movement in your own portion of an Operations Stage; they occur in the other player's portion'"
+    }
+  ],
+
+  "zoc_movement": [
+    {
+      "description": "Rule 8.14: unit entering enemy ZOC must stop immediately",
+      "rule_ref": "8.14",
+      "entering_enemy_zoc": true,
+      "must_stop": true,
+      "note": "'If a unit moves into an enemy Zone of Control it must stop immediately. It may move no further in that Movement Segment.'"
+    },
+    {
+      "description": "Rule 10.22: no CP cost to enter enemy ZOC",
+      "rule_ref": "10.22",
+      "entering_enemy_zoc": true,
+      "zoc_entry_cp_cost": 0,
+      "note": "The terrain entry cost still applies; there is no extra ZOC surcharge to enter."
+    },
+    {
+      "description": "Rule 8.15 (2): exiting Contact ZOC costs 2 CP",
+      "rule_ref": "8.15",
+      "contact_status": "contact",
+      "cp_to_exit_zoc": 2
+    },
+    {
+      "description": "Rule 8.15 (3): exiting Engaged ZOC costs 4 CP",
+      "rule_ref": "8.15",
+      "contact_status": "engaged",
+      "cp_to_exit_zoc": 4
+    },
+    {
+      "description": "Rule 8.15 prerequisite: unit must begin segment in enemy ZOC to use this rule",
+      "rule_ref": "8.15",
+      "note": "Rule 8.15 applies when 'a unit begins a Movement Segment in an enemy Zone of Control'"
+    }
+  ],
+
+  "fuel_consumption": [
+    {
+      "description": "Rule 49.13: fuel rate '4', 12 CP moved → 3 groups of 5 → 3 × 4 = 12 fuel",
+      "rule_ref": "49.13",
+      "fuel_rate": 4,
+      "cp_spent_movement": 12,
+      "groups_of_5": 3,
+      "expected_fuel": 12,
+      "note": "'The fuel consumption factor is the number of Fuel Points consumed for every five Capability Points (or fraction thereof) expended for movement.'"
+    },
+    {
+      "description": "Rule 49.13: 'fraction thereof' → 1 CP movement still costs fuel (ceil(1/5)=1 group)",
+      "rule_ref": "49.13",
+      "fuel_rate": 4,
+      "cp_spent_movement": 1,
+      "groups_of_5": 1,
+      "expected_fuel": 4
+    },
+    {
+      "description": "Rule 49.13: 6 CP movement = ceil(6/5) = 2 groups → 2 × rate",
+      "rule_ref": "49.13",
+      "fuel_rate": 3,
+      "cp_spent_movement": 6,
+      "groups_of_5": 2,
+      "expected_fuel": 6
+    },
+    {
+      "description": "Rule 49.13: exactly 5 CP → 1 group (no fraction)",
+      "rule_ref": "49.13",
+      "fuel_rate": 4,
+      "cp_spent_movement": 5,
+      "groups_of_5": 1,
+      "expected_fuel": 4
+    },
+    {
+      "description": "Rule 49.13: fuel NOT consumed for combat CP expenditure",
+      "rule_ref": "49.13",
+      "note": "'Fuel is not consumed when CPs are expended for combat or any other action that does not involve actual movement from one hex to another.'"
+    },
+    {
+      "description": "Rule 49.14: fuel capacity = CPA × (1/5) × fuel_rate",
+      "rule_ref": "49.14",
+      "cpa": 25,
+      "fuel_rate": 4,
+      "expected_fuel_capacity": 20,
+      "note": "25 × (1/5) × 4 = 20. A unit always has exactly enough fuel capacity to expend its full CPA on movement."
+    }
+  ],
+
+  "breakdown_accumulation": [
+    {
+      "description": "Rule 21.21: each hex terrain has a Breakdown Point Value from TEC",
+      "rule_ref": "21.21",
+      "note": "BD values from hex_map.entry_bd(). BD accumulates when moving into the hex."
+    },
+    {
+      "description": "Rule 21.23: all vehicles in a stack accumulate BD for terrain moved through",
+      "rule_ref": "21.23",
+      "note": "BD is per-hex, not per-unit. All units in a formation moving through the same hexes accumulate the same BD."
+    },
+    {
+      "description": "Rule 21.25: BD points are cumulative within an OpStage (across both players' portions)",
+      "rule_ref": "21.25",
+      "note": "BD from Reaction, Retreat, and voluntary movement all accumulate. BD does NOT reset mid-stage."
+    },
+    {
+      "description": "Rule 21.27: no breakdown check until BD > 3",
+      "rule_ref": "21.27",
+      "bd_accumulated": 3,
+      "expected_check_needed": false,
+      "note": "'A unit does not check for Breakdown until it has accumulated more than three Breakdown Points'"
+    },
+    {
+      "description": "Rule 21.27: BD = 4 → check needed (> 3)",
+      "rule_ref": "21.27",
+      "bd_accumulated": 4,
+      "expected_check_needed": true
+    },
+    {
+      "description": "Rule 21.26: once a check is made, next check only needed if BD crosses into next table column",
+      "rule_ref": "21.26",
+      "example": {
+        "bd_at_first_check": 15,
+        "column_at_first_check": "11-20",
+        "bd_after_more_movement": 17,
+        "still_in_same_column": true,
+        "check_needed_again": false,
+        "note": "15 and 17 are both in the 11-20 column → no second check needed."
+      }
+    },
+    {
+      "description": "Rule 21.26: BD crosses into new column → check required",
+      "rule_ref": "21.26",
+      "example": {
+        "bd_at_first_check": 15,
+        "column_at_first_check": "11-20",
+        "bd_after_more_movement": 27,
+        "new_column": "21-30",
+        "check_needed_again": true
+      }
+    }
+  ],
+
+  "breakdown_columns": [
+    {
+      "description": "Rule 21.31: Breakdown Table column ranges",
+      "rule_ref": "21.31",
+      "columns": [
+        {"range": "4-10",  "min_bd": 4,  "max_bd": 10},
+        {"range": "11-20", "min_bd": 11, "max_bd": 20},
+        {"range": "21-30", "min_bd": 21, "max_bd": 30},
+        {"range": "31-40", "min_bd": 31, "max_bd": 40},
+        {"range": "41-50", "min_bd": 41, "max_bd": 50},
+        {"range": "51-60", "min_bd": 51, "max_bd": 60},
+        {"range": "61-70", "min_bd": 61, "max_bd": 70},
+        {"range": "71+",   "min_bd": 71, "max_bd": null}
+      ],
+      "note": "Rule 21.33: units accumulating > 71 BD use the 71+ column. Column 0 = no check (< 4 BD)."
+    }
+  ]
+}

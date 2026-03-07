@@ -1,0 +1,102 @@
+{
+  "_meta": {
+    "generated_by": "oracle-agent",
+    "date": "2026-03-07",
+    "rules_source": "data/rules/cna_rules.txt",
+    "rule_sections": ["14.0", "14.1", "14.2", "14.3", "14.4", "14.6"],
+    "note": "All test cases derived from rules text and CART in rules_tables.json. The CART table gives Damage Points (rule 14.41), NOT percentages."
+  },
+  "cart_lookup_cases": [
+    {
+      "description": "Example from rule 14.43: 5 AA points, roll 35 → 7 damage points",
+      "rule_ref": "14.43",
+      "aa_strength_actual": 5,
+      "d66_roll": "35",
+      "die1_large_tens": 3,
+      "die2_small_ones": 5,
+      "expected_damage_points": 7,
+      "note": "CART row 35, col 5 = 7. Convention: die1 (large/tens die) = 3, die2 (small/ones die) = 5. The 'large die' is the designated tens die regardless of face value (rule 15.73a)."
+    },
+    {
+      "description": "Zero result: 2 AA points, roll 11 → '-' = 0 damage",
+      "rule_ref": "14.6",
+      "aa_strength_actual": 2,
+      "d66_roll": "11",
+      "expected_damage_points": 0,
+      "note": "CART row 11, col 2 = '-'"
+    },
+    {
+      "description": "16+ column: 20 AA points uses 16+ column",
+      "rule_ref": "14.6",
+      "aa_strength_actual": 20,
+      "d66_roll": "41",
+      "expected_damage_points": 24,
+      "note": "CART row 41, col 16+ = 24"
+    },
+    {
+      "description": "Terrain column shift: 9 actual AA points in rough terrain → resolve at column 8",
+      "rule_ref": "14.32",
+      "aa_strength_actual": 9,
+      "terrain_column_shift": 1,
+      "aa_strength_after_shift": 8,
+      "d66_roll": "25",
+      "die1_large_tens": 2,
+      "die2_small_ones": 5,
+      "expected_damage_points": 8,
+      "note": "Rule 14.32 example: 9 AA in rough terrain → column 8. CART row '25' col 8 = 8 DP."
+    },
+    {
+      "description": "Column shift below 0: rule 14.35 says use row 0",
+      "rule_ref": "14.35",
+      "aa_strength_actual": 2,
+      "terrain_column_shift": 5,
+      "aa_strength_after_shift": 0,
+      "d66_roll": "55",
+      "expected_damage_points": 0,
+      "note": "Rule 14.35: if terrain shifts column below 1, use 0 row"
+    }
+  ],
+  "damage_application_cases": [
+    {
+      "description": "Rule 14.43 example: 7 damage points, M/13s (APR 3) and M/11s (APR 2)",
+      "rule_ref": "14.43",
+      "damage_points": 7,
+      "armor_targets": [
+        {"toe_strength": 3, "armor_protection_rating": 3, "unit_name": "M/13"},
+        {"toe_strength": 6, "armor_protection_rating": 2, "unit_name": "M/11"}
+      ],
+      "expected_toe_destroyed_min": 3,
+      "note": "Player must remove ENOUGH TOE to absorb AT LEAST 7 DP. 1×M/13(3DP) + 2×M/11(2×2=4DP) = 7DP using 3 TOE points."
+    },
+    {
+      "description": "Excess damage ignored: 14.45",
+      "rule_ref": "14.45",
+      "damage_points": 20,
+      "armor_targets": [
+        {"toe_strength": 2, "armor_protection_rating": 3, "unit_name": "Tank"}
+      ],
+      "expected_toe_destroyed": 2,
+      "note": "Only 2 TOE available (6 DP capacity). 20 DP > 6 DP — all armor destroyed, excess ignored."
+    }
+  ],
+  "participation_rules": [
+    {
+      "rule_ref": "14.13",
+      "condition": "Artillery in Back position",
+      "result": "may_not_participate",
+      "note": "14.13: artillery in Back position cannot fire anti-armor. Anti-Armor guns are always Forward when firing."
+    },
+    {
+      "rule_ref": "14.12",
+      "condition": "Phasing Player fires",
+      "result": "targets_entire_hex",
+      "note": "14.12: Phasing Player's AA fire targets the whole hex, not specific units."
+    },
+    {
+      "rule_ref": "14.22",
+      "condition": "Multiple firing hexes",
+      "result": "combine_strength",
+      "note": "14.22: units from different hexes combine AA Strength into one total. Hex targeted only once per Combat Segment."
+    }
+  ]
+}

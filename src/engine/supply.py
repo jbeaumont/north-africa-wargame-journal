@@ -178,7 +178,7 @@ def is_in_supply(
     once cost exceeds max_range.  Returns True as soon as a supply-dump hex
     is reached.
     """
-    if unit.hex_id is None or unit.is_eliminated():
+    if not unit.hex_id or unit.is_eliminated():
         return False
 
     # Rule 32.16: supply range is based on the unit's natural (printed) CPA.

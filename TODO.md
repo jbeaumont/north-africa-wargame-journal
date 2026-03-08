@@ -1,6 +1,6 @@
 # CNA Journal — Todo List
 
-Last updated: 2026-03-07 (session 5: board_state.py done; all engine modules complete)
+Last updated: 2026-03-08 (session 6: rules_arbiter.py done; plan revised)
 
 ---
 
@@ -36,31 +36,84 @@ Last updated: 2026-03-07 (session 5: board_state.py done; all engine modules com
 - [x] **`src/engine/combat.py`** — Anti-Armor Fire (d66 CART), Close Assault, Barrage, terrain modifiers, atomic sequence
 - [x] **`src/engine/movement.py`** — CP cost tracking, breakdown points, road/track reduction, escarpment, fuel consumption
 - [x] **`src/agents/board_state.py`** — Deterministic dispatcher; loads scenarios; applies actions; emits turn JSON files
+- [x] **`src/agents/rules_arbiter.py`** — Stateless Claude API call; validates move/combat against rules_tables.json + cna_rules.txt excerpts; prompt-cached system prompt
 
-### 8. `src/agents/rules_arbiter.py`
+---
 
-- Stateless Claude API call
-- Input: proposed action + board state snippet
-- Context: full `cna_rules.txt` + `rules_tables.json`
-- Output: `{"valid": true}` or `{"valid": false, "reason": "...", "rule_ref": "8.37"}`
+## Up Next (in order)
 
-### 9. `src/agents/player_allied.py` + `player_axis.py`
+### 9a. Fix Formation CPA (rule 6.15) — prerequisite for correct simulation
 
-- Claude API call with fog-of-war game state
-- Persistent strategy memory (file-backed between turns)
-- Persistent mastery log (rules learned / been burned by)
-- Output: structured list of proposed actions
+**Problem**: All scenario units have `cpa=0` because no source data contains counter CPAs.
+`formation_cpa()` falls back to the parent formation's CPA (wrong direction — rule 6.15
+says the formation CPA = lowest of its children, flowing upward).
 
-### 10. `src/agents/journal.py`
+**Fix**: Add a `_DEFAULT_CPA` table in `board_state.py` keyed by unit type, backed by
+rule citations from `cna_rules.txt`. Apply defaults during scenario loading. Fix
+`formation_cpa()` to compute `min(child.cpa)` across formation children (correct direction).
+Mark as approximations; proper values require counter-level data extraction from PDF.
 
-- Reads completed turn event logs
-- Claude API call → first-person narrative markdown
-- Output: `journal/turn_NNN_1941-NN-NN.md`
+Rule citations:
+- Non-motorized infantry: CPA 10 (rule 8.17: "units with CPA's of ten or less"; rule 7329)
+- Motorized infantry: CPA 20 (rule 7342–7343)
+- Armor/armored: CPA 30 (rule 3136: "tank battalion with a CPA of 25"; divisions higher)
+- Artillery (guns): CPA 10 for combat (rule 2415: "considered to have a CPA of 10 for combat")
+- Reconnaissance: CPA 35 (rule 10866: "CPA of 35 or more")
+- HQ/support: CPA 25 (motorized; approximation)
 
-### 11. `main.py` + `requirements.txt`
+### 9b. Add `build_action_context()` to `board_state.py`
 
-- Wire up the full turn loop
-- CLI: `python main.py --turns 1` to run one turn
+Pre-computes the `context` dict that `validate_action()` expects. Bridges the gap
+between the game engine and the Rules Arbiter. Without this, nothing can call the
+arbiter with real data.
+
+Fields to compute: unit snapshot, total_cp_cost, zoc_hexes, enemy_occupied_hexes,
+stacking_in_destination, stacking_limit, weather, path_hex_costs.
+
+### 9c. Weather roll in `board_state.py`
+
+One-line fix: roll for weather at the start of each OpStage. Sets `gs.weather`.
+Uses the weather table from `rules_tables.json`. Currently `hot_weather` flag is
+never set, so fuel evaporation is always calculated at the wrong rate.
+
+### 10. `src/agents/player_allied.py` + `player_axis.py`
+
+**Decisions (resolved)**:
+- **Fog of war**: Agent sees own units + hex-level enemy presence for adjacent hexes
+  ("enemy contact reported at B0407") but not type/strength. Matches rule 16 intent.
+  `fog_of_war()` in board_state already hides non-adjacent enemy; add contact-presence
+  field for adjacent hexes.
+- **Personality**: Historical commanders. Rommel for Axis (aggressive, supply-gambling).
+  Cunningham for Allied turns 57–60, Ritchie from turn 61 onward (more methodical).
+  Encoded in system prompt; affects both move selection tone and journal voice.
+
+Implementation:
+- `claude-opus-4-6`, adaptive thinking, one call per OpStage per side
+- Persistent `memory/allied_strategy.md` + `memory/axis_strategy.md` (append-only)
+- Persistent `memory/allied_rules_mastered.md` + `memory/axis_rules_mastered.md`
+- Output: JSON list of action dicts matching board_state's action schema
+
+### 11. `src/agents/journal.py`
+
+- Reads `turns/turn_{NNN}_state.json` + `turns/turn_{NNN}_events.json`
+- `claude-opus-4-6` call → first-person narrative markdown
+- YAML front matter: turn, opstage, date, side
+- ~400 words; include rejected actions (arbiter refusals) for narrative tension
+- Output: `journal/turn_{NNN}_{date}.md`
+
+### 12. `requirements.txt`
+
+Separate task — don't bury in main.py. At minimum: `anthropic`.
+
+### 13. `main.py`
+
+- CLI: `python main.py --scenario crusader --turns 1`
+- `--resume turns/turn_057_state.json` to continue from saved state
+- Turn loop: for each OpStage → roll weather → Allied proposes → validate+apply →
+  Axis proposes → validate+apply → end_opstage
+- After OpStage 3: end_turn → journal
+- Create `memory/` dir if missing
+- On unhandled exception: save `turns/CRASH_turn_NNN.json` + re-raise
 
 ---
 
@@ -85,5 +138,5 @@ Last updated: 2026-03-07 (session 5: board_state.py done; all engine modules com
 
 ## Open Questions
 
-- **Fog of war implementation:** Does the Allied agent get told *that* enemy units exist in a hex (but not what type), or does it only learn from adjacency/combat contact? CNA has explicit reconnaissance rules (16.0). Decide when we build `player_allied.py`.
-- **Agent personality:** Should each player agent have a distinct personality that affects both decisions and journal voice? Options: (a) historical commanders (Rommel vs. Cunningham/Ritchie, with Cunningham possibly replaced mid-game), (b) archetypes (e.g. "The Gambler" vs. "The Methodical"), (c) personality only affects journal narration, not move selection. Decide before building `player_allied.py` / `player_axis.py`.
+- ~~Fog of war~~ — Resolved: hex-level presence for adjacent hexes, not type/strength.
+- ~~Agent personality~~ — Resolved: historical commanders (Rommel; Cunningham → Ritchie).

@@ -232,26 +232,18 @@ class GameState:
 
     def formation_cpa(self, unit: Unit) -> int:
         """
-        Resolve effective CPA for movement purposes.
+        Resolve effective CPA for movement purposes (rule 6.15).
 
-        Rule 6.26: a Disorganized unit (cohesion -26 or pasta-rule-forced) cannot
-        move — returns 0 regardless of printed CPA.
+        Rule 6.15: "the CPA of a Formation is that of the lowest CPA of its
+        constituent units." CPA flows UPWARD: children set the formation's CPA,
+        not the reverse. A unit with its own printed CPA always uses that value.
 
-        Rule 6.15 audit finding (WRONG direction — TODO fix with counter loader):
-        Rule 6.15 says formation CPA = lowest CPA of its constituent units (flows
-        upward, unit → formation). The current fallback (unit inherits from
-        formation) is backwards but is a placeholder until counter data (counters.json)
-        is loaded into each unit's cpa field at scenario initialisation.
+        Rule 6.26: a Disorganized unit cannot move — returns 0.
         """
         from src.models.unit import UnitStatus
         if unit.status == UnitStatus.DISORGANIZED:
             return 0  # rule 6.26: may not move, attack, or defend
-        if unit.cpa > 0:
-            return unit.cpa
-        if unit.formation_id and unit.formation_id in self.formations:
-            formation = self.formations[unit.formation_id]
-            return formation.cpa
-        return 0  # detached with no CPA assigned — engine will flag this
+        return unit.cpa  # unit.cpa is always populated by the scenario loader
 
     def formation_cpa_natural(self, unit: Unit) -> int:
         """
@@ -261,16 +253,25 @@ class GameState:
         friendly dump is within ½ its CPA). Rule 6.26 says even a Disorganized
         unit 'may refuel and does consume Stores and Water', so an immobile
         unit at -26 can still have an active supply line.
-
-        TODO (rule 6.15): formation fallback flows in the wrong direction;
-        fix when counter loader populates individual unit CPAs.
         """
-        if unit.cpa > 0:
-            return unit.cpa
-        if unit.formation_id and unit.formation_id in self.formations:
-            formation = self.formations[unit.formation_id]
-            return formation.cpa
-        return 0
+        return unit.cpa
+
+    def recompute_formation_cpas(self) -> None:
+        """
+        Recompute Formation.cpa as the minimum unit CPA across all children
+        (rule 6.15: formation CPA flows upward from constituent units).
+
+        Call this after any unit CPA change or after initial scenario load.
+        Formations with no loaded child units are left unchanged.
+        """
+        for formation in self.formations.values():
+            child_cpas = [
+                self.units[cid].cpa
+                for cid in formation.child_ids
+                if cid in self.units
+            ]
+            if child_cpas:
+                formation.cpa = min(child_cpas)  # rule 6.15: lowest child CPA
 
     # ── Event logging ────────────────────────────────────────────────────────
 

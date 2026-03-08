@@ -140,6 +140,77 @@ _SIZE_MAP: Dict[str, UnitSize] = {
 }
 
 
+# ── Default CPA by unit type (rule 6.15 approximations) ───────────────────────
+#
+# CPA values are printed on physical counters and vary per counter.  No machine-
+# readable source has been extracted yet, so these defaults are used when the
+# scenario JSON omits "cpa".  All values are confirmed in cna_rules.txt:
+#
+#   Infantry (non-motorized): CPA 10
+#     rule 8.17: "Non-motorized units — those units with CPA's of ten or less"
+#     rule 7329: "motorized infantry battalion (CPA of 10)" [i.e., walking = 10]
+#
+#   Infantry (motorized): CPA 20
+#     rule 7342–7343: "CPA of 10 if the infantry are walking or a CPA of 20 or
+#     25 if the infantry are motorized" — use 20 as the lower motorized bound.
+#
+#   Armor / Armoured: CPA 30
+#     rule 3136: "tank battalion with a CPA of 25"; divisions and corps are
+#     generally higher. 30 is a reasonable divisional default.
+#
+#   Artillery / Anti-Tank / Anti-Aircraft (guns, CPA 0+ class): CPA 10
+#     rule 2415: "these units are considered to have a CPA of 10 for combat
+#     purposes". rule 10808: "Guns with a CPA of 0+" — 10 used here.
+#
+#   Reconnaissance: CPA 35
+#     rule 10866: "CPA of 35 or more" for motorized reconnaissance.
+#
+#   HQ / Support: CPA 25
+#     Motorized headquarters. No explicit rule citation; approximation.
+#     TODO: extract per-counter values from PDF counter sheets.
+#
+# These are approximations only.  Correct values require counter-level data
+# extraction from the PDF.  Track as technical debt.
+
+_DEFAULT_CPA_MOTORIZED: Dict[UnitType, int] = {
+    UnitType.INFANTRY:        20,   # rule 7342–7343
+    UnitType.ARMOR:           30,   # rule 3136 + divisional scale
+    UnitType.ARTILLERY:       10,   # rule 2415
+    UnitType.ANTI_TANK:       10,   # rule 2415 / 10808
+    UnitType.ANTI_AIRCRAFT:   10,   # rule 2415 / 10808
+    UnitType.RECONNAISSANCE:  35,   # rule 10866
+    UnitType.ENGINEER:        20,   # motorized engineer; approximation
+    UnitType.HQ:              25,   # approximation
+    UnitType.GARRISON:        10,   # garrison = non-mobile; approximation
+    UnitType.SUPPLY:          25,   # supply unit with trucks; approximation
+    UnitType.TRUCK:           25,   # rule 16848: trucks use CPA 20 or 25
+}
+
+_DEFAULT_CPA_NON_MOTORIZED: Dict[UnitType, int] = {
+    UnitType.INFANTRY:        10,   # rule 8.17, rule 7329
+    UnitType.ARMOR:           10,   # immobile armor; rare but possible
+    UnitType.ARTILLERY:       10,   # rule 2415
+    UnitType.ANTI_TANK:       10,   # rule 2415 / 10808
+    UnitType.ANTI_AIRCRAFT:   10,   # rule 2415 / 10808
+    UnitType.RECONNAISSANCE:  10,   # non-motorized recce; approximation
+    UnitType.ENGINEER:        10,   # walking engineers; approximation
+    UnitType.HQ:              10,   # foot HQ; approximation
+    UnitType.GARRISON:        10,   # rule 8.17
+    UnitType.SUPPLY:          10,   # foot supply unit; approximation
+    UnitType.TRUCK:           25,   # trucks are always motorized
+}
+
+
+def _default_cpa(unit_type: UnitType, motorized: bool) -> int:
+    """
+    Look up the default CPA for a unit type when no counter-specific value
+    is available.  Returns a rule-backed approximation.
+    See _DEFAULT_CPA_MOTORIZED / _DEFAULT_CPA_NON_MOTORIZED for citations.
+    """
+    table = _DEFAULT_CPA_MOTORIZED if motorized else _DEFAULT_CPA_NON_MOTORIZED
+    return table.get(unit_type, 10)  # fallback: treat as non-motorized infantry
+
+
 # ── Action result ──────────────────────────────────────────────────────────────
 
 @dataclass
@@ -168,7 +239,10 @@ def _load_unit(raw: dict, side: Side, index: int) -> Unit:
     unit_type = _TYPE_MAP.get(raw.get("type", "infantry"), UnitType.INFANTRY)
     size      = _SIZE_MAP.get(raw.get("size", "battalion"), UnitSize.BATTALION)
     motorized = raw.get("motorized", unit_type in (UnitType.ARMOR, UnitType.RECONNAISSANCE))
-    cpa       = raw.get("cpa", 0)
+    # Use counter-specific CPA if provided; otherwise apply type-based default.
+    # The defaults are rule-backed approximations (see _DEFAULT_CPA_MOTORIZED).
+    # TODO: replace with per-counter values extracted from PDF counter sheets.
+    cpa       = raw.get("cpa") or _default_cpa(unit_type, motorized)
     steps     = raw.get("steps", 2)
     pasta     = raw.get("pasta_rule", False)
     org_flags = raw.get("org_flags", "")
@@ -278,6 +352,10 @@ def load_scenario(scenario_name: str) -> GameState:
                 dump = _load_supply_dump(dump_raw, side, dump_index)
                 gs.supply_dumps[dump.id] = dump
                 dump_index += 1
+
+    # Recompute formation CPAs upward from children (rule 6.15).
+    # Must run after all units are loaded.
+    gs.recompute_formation_cpas()
 
     return gs
 

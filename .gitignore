@@ -12,3 +12,8 @@ venv/
 .pytest_cache/
 .coverage
 htmlcov/
+
+# Generated turn output (written by tests and the turn loop)
+turns/
+journal/
+memory/

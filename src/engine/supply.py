@@ -197,6 +197,17 @@ def is_in_supply(
     tracer = _truck_proxy(unit.side) if unit.motorized else _infantry_proxy(unit.side)
     all_units = list(game_state.units.values())
 
+    # Precompute ZOC once — calling zoc_hexes() inside the BFS loop is O(N)
+    # per expansion, making the overall BFS O(N * radius²).  Precomputing
+    # reduces the inner loop to O(1) set membership tests.
+    enemy_side = Side.AXIS if unit.side == Side.COMMONWEALTH else Side.COMMONWEALTH
+    enemy_zoc: set = hex_map.zoc_hexes(enemy_side, all_units)
+    # rule 32.16: a friendly unit in the ZOC hex cancels the block
+    friendly_occupants: set = {
+        u.hex_id for u in all_units
+        if u.side == unit.side and u.hex_id and not u.is_eliminated()
+    }
+
     # Dijkstra from unit's hex
     dist: Dict[str, float] = {unit.hex_id: 0.0}
     pq: list = [(0.0, unit.hex_id)]
@@ -222,10 +233,9 @@ def is_in_supply(
         # Expand to neighbours
         for nbr in hex_map.neighbors(hex_id):
             # rule 32.16: supply line blocked by enemy ZOC unless a friendly
-            # unit occupies the ZOC hex (zoc_cancelled returns True in that case)
-            if hex_map.in_enemy_zoc(nbr, unit.side, all_units):
-                if not hex_map.zoc_cancelled(nbr, unit.side, all_units):
-                    continue
+            # unit occupies the ZOC hex
+            if nbr in enemy_zoc and nbr not in friendly_occupants:
+                continue
 
             # Impassable terrain blocks supply line
             move_cost = hex_map.entry_cost(tracer, hex_id, nbr)

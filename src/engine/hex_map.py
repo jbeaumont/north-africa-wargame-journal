@@ -206,6 +206,8 @@ class HexMap:
         All 6 cardinal neighbours keyed by direction string.
         Off-map neighbours (edge of map or invalid section) map to None.
         """
+        if not hex_id:
+            return {d: None for d in _DIRECTIONS}
         h = self.get(hex_id)
         deltas = _ODD_COL_DELTAS if h.col % 2 == 1 else _EVEN_COL_DELTAS
         sec_idx = _SECTION_ORDER.index(h.section)

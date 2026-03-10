@@ -153,7 +153,7 @@ class Unit:
         return self.status == UnitStatus.ELIMINATED or self.steps_current <= 0
 
     def is_active(self) -> bool:
-        return self.hex_id is not None and not self.is_eliminated()
+        return bool(self.hex_id) and not self.is_eliminated()
 
     def effective_cpa(self) -> int:
         """CPA for movement purposes.

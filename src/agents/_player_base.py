@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import anthropic
+from src.agents._client import make_client
 
 from src.models.game_state import GameState, Side
 
@@ -80,7 +81,7 @@ class PlayerAgent:
     def __init__(self, side: Side, memory_dir: Optional[Path] = None) -> None:
         self.side = side
         self.memory_dir = memory_dir or _MEMORY_DIR
-        self._client = anthropic.Anthropic()
+        self._client = make_client()
 
     # ── Public interface ───────────────────────────────────────────────────────
 

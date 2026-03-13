@@ -21,6 +21,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import anthropic
+from src.agents._client import make_client
 
 # ── Paths ──────────────────────────────────────────────────────────────────────
 
@@ -89,7 +90,7 @@ class JournalAgent:
     ) -> None:
         self.journal_dir = journal_dir or _JOURNAL_DIR
         self.turns_dir   = turns_dir   or _TURNS_DIR
-        self._client     = anthropic.Anthropic()
+        self._client     = make_client()
 
     # ── Public interface ───────────────────────────────────────────────────────
 

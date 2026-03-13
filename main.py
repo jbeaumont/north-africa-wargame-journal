@@ -36,6 +36,7 @@ from src.agents.rules_arbiter import validate_action
 from src.agents.player_allied import AlliedPlayerAgent
 from src.agents.player_axis import AxisPlayerAgent
 from src.agents.journal import JournalAgent
+from src.agents._client import make_client
 from src.models.unit import Side
 
 # ── Logging ───────────────────────────────────────────────────────────────────
@@ -255,7 +256,7 @@ def main() -> None:
         board = BoardStateAgent.from_scenario(args.scenario)
         log.info("Loaded scenario '%s' (turn %d)", args.scenario, board.gs.turn)
 
-    client = anthropic.Anthropic()
+    client = make_client()
 
     allied = AlliedPlayerAgent()
     axis = AxisPlayerAgent()

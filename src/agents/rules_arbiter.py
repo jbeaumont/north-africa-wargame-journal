@@ -71,6 +71,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 
 import anthropic
+from src.agents._client import make_client
 
 # ── Paths ─────────────────────────────────────────────────────────────────────
 
@@ -313,7 +314,7 @@ def validate_action(
     {"valid": False, "reason": "...", "rule_ref": "8.14"}
     """
     if client is None:
-        client = anthropic.Anthropic()
+        client = make_client()
 
     action_type = action.get("action", "")
     if action_type not in ("move", "combat"):

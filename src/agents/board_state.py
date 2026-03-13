@@ -298,6 +298,12 @@ def _load_unit(raw: dict, side: Side, index: int) -> Unit:
     )
 
 
+def _is_real_hex_id(hex_id: str) -> bool:
+    """Return True if hex_id looks like a valid grid reference (e.g. 'C4807')."""
+    # Valid format: one letter section + 4 digits (col 2-digit + row 2-digit)
+    return bool(hex_id and len(hex_id) == 5 and hex_id[0].isalpha() and hex_id[1:].isdigit())
+
+
 def _load_supply_dump(raw: dict, side: Side, index: int) -> SupplyDump:
     """Build a SupplyDump from a scenario supply dump dict."""
     dump_id = raw.get("id") or f"{side.value}-dump-{index:03d}"
@@ -372,19 +378,49 @@ def load_scenario(scenario_name: str) -> GameState:
 
         # ── Supply dumps ──────────────────────────────────────────────────────
         dumps_data = side_data.get("supply_dumps", {})
-        dump_lists = (
-            list(dumps_data.values()) if isinstance(dumps_data, dict) else [dumps_data]
-        )
         dump_index = 0
-        for dump_list in dump_lists:
-            if not isinstance(dump_list, list):
-                continue  # skip non-list values (notes, counts, nested dicts)
-            for dump_raw in dump_list:
-                if not isinstance(dump_raw, dict):
-                    continue  # skip non-dict entries within a list
+
+        # Fixed dumps — placed at stated locations
+        for dump_raw in dumps_data.get("fixed", []):
+            if not isinstance(dump_raw, dict):
+                continue
+            dump = _load_supply_dump(dump_raw, side, dump_index)
+            gs.supply_dumps[dump.id] = dump
+            dump_index += 1
+
+        # Flexible dumps — player-placed forward supply units (rule 62.35).
+        # The scenario lists candidate hexes; we default to the first N
+        # candidates with valid hex IDs and split supply evenly.
+        # Remaining candidates up to (active + dummy) count become dummies.
+        flex = dumps_data.get("flexible")
+        if isinstance(flex, dict):
+            total = flex.get("total_available", {})
+            n_active = int(flex.get("active_dumps", 0))
+            candidates = flex.get("candidate_locations", [])
+            # Collect only candidates with parseable hex IDs
+            real_candidates = [
+                c for c in candidates
+                if isinstance(c, dict) and _is_real_hex_id(c.get("hex", ""))
+            ]
+            placed = 0
+            for cand in real_candidates:
+                if placed >= n_active:
+                    break
+                share: dict = {}
+                for resource in ("ammo", "fuel", "stores", "water"):
+                    v = total.get(resource)
+                    if v:
+                        share[resource] = round(v / n_active, 1)
+                dump_raw = {
+                    "id": f"{side.value}-flex-dump-{dump_index:03d}",
+                    "name": cand.get("name", f"Flex Dump {dump_index}"),
+                    "location": cand["hex"],
+                    **share,
+                }
                 dump = _load_supply_dump(dump_raw, side, dump_index)
                 gs.supply_dumps[dump.id] = dump
                 dump_index += 1
+                placed += 1
 
     # Recompute formation CPAs upward from children (rule 6.15).
     # Must run after all units are loaded.
@@ -917,8 +953,14 @@ class BoardStateAgent:
 
     # ── End Turn ──────────────────────────────────────────────────────────────
 
+    # CNA campaign: GT1 (1940-09-09) to GT111 (1943-05-13) = ~977 days / 110
+    # intervals ≈ 8.88 days per turn.  9 days is a close enough approximation
+    # for the journal narrative; week-exact calendaring would need a per-scenario
+    # turn-date table that is not yet extracted from the PDF.
+    _DAYS_PER_TURN = 9
+
     def _action_end_turn(self) -> ActionResult:
-        """Write end-of-turn output files and advance the turn counter."""
+        """Write end-of-turn output files, advance the turn counter and date."""
         state_path, events_path = write_turn_output(self.gs, self._turn_events)
 
         summary = {
@@ -930,9 +972,10 @@ class BoardStateAgent:
 
         self._turn_events = []
 
-        # Advance turn and reset to OpStage 1
+        # Advance turn, date, and reset to OpStage 1
         self.gs.turn += 1
         self.gs.opstage = 1
+        self.gs.advance_date(self._DAYS_PER_TURN)
 
         return ActionResult(
             action="end_turn",

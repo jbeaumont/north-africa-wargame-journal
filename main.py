@@ -113,17 +113,63 @@ def _apply_validated(
 def _run_opstage_bookkeeping(board: BoardStateAgent) -> None:
     """
     Engine-internal actions that run at the end of every OpStage.
-    These are not player proposals — the engine always runs them.
+
+    Supply checks run each OpStage (rule 32.16 — OOS determined per OpStage).
+    Pasta rule fires per OpStage for each Italian infantry battalion.
+    Prisoner stores cost is per OpStage (rule 28.15 explicit).
+
+    Fuel evaporation is NOT here — it runs once per game-turn (rule 49.3).
     """
-    for action_type in (
-        "run_supply_checks",
-        "apply_fuel_evaporation",
-        "apply_pasta_rule",
-        "apply_prisoner_stores",
-    ):
-        result = board.apply_action({"action": action_type})
+    # Supply checks — all active combat units
+    result = board.apply_action({"action": "run_supply_checks"})
+    if not result.success:
+        log.warning("Bookkeeping action run_supply_checks failed: %s", result.reason)
+
+    # Pasta rule — each Italian infantry battalion individually (rule 52.6)
+    # Without a stores-distribution engine, treat all Italian battalions as
+    # not receiving their Pasta Point (worst-case; TODO: wire to stores engine).
+    from src.models.unit import UnitType, Nationality
+    for unit in board.gs.units.values():
+        if not unit.is_active():
+            continue
+        if not unit.pasta_rule:
+            continue
+        # Determine if this unit has access to water from the nearest dump.
+        # Simplified heuristic: in_supply units receive their Pasta Point.
+        received = (unit.supply_status.value == "in_supply")
+        result = board.apply_action({
+            "action": "apply_pasta_rule",
+            "unit_id": unit.id,
+            "received_pasta_point": received,
+        })
         if not result.success:
-            log.warning("Bookkeeping action %s failed: %s", action_type, result.reason)
+            log.warning("Pasta rule failed for %s: %s", unit.id, result.reason)
+
+    # Prisoner stores — pass current prisoner map (empty until combat engine
+    # tracks prisoners; rule 28.15 has no effect until captures occur).
+    result = board.apply_action({
+        "action": "apply_prisoner_stores",
+        "prisoner_points_by_hex": board.gs.__dict__.get("prisoner_points", {}),
+    })
+    if not result.success:
+        log.warning("Prisoner stores failed: %s", result.reason)
+
+
+def _run_end_of_turn_bookkeeping(board: BoardStateAgent) -> None:
+    """
+    Engine-internal actions that run once at the end of each game-turn
+    (after all three OpStages complete).
+
+    Fuel evaporation: rule 49.3 says "per game-turn" — not per OpStage.
+    Running it three times per turn would drain dumps 3× too fast.
+    """
+    hot_weather = board.gs.weather == "hot"
+    result = board.apply_action({
+        "action": "apply_fuel_evaporation",
+        "hot_weather": hot_weather,
+    })
+    if not result.success:
+        log.warning("Fuel evaporation failed: %s", result.reason)
 
 
 # ── Crash save ────────────────────────────────────────────────────────────────
@@ -185,7 +231,10 @@ def run_turn(
                 result.data.get("events_count", 0),
             )
 
-    # 6. End-of-turn (writes turn_NNN_state.json + turn_NNN_events.json)
+    # 6. End-of-turn bookkeeping: fuel evaporation (rule 49.3 — once per turn)
+    _run_end_of_turn_bookkeeping(board)
+
+    # 7. End-of-turn (writes turn_NNN_state.json + turn_NNN_events.json)
     result = board.apply_action({"action": "end_turn"})
     if result.success:
         log.info(
@@ -194,7 +243,7 @@ def run_turn(
             result.data.get("events_count", 0),
         )
 
-    # 7. Journal
+    # 8. Journal
     if write_journal:
         log.info("[Journal] Writing narrative for turn %d…", turn)
         journal_path = journal.write_turn_journal(turn)

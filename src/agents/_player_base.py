@@ -187,6 +187,7 @@ No text outside the JSON block. If you have nothing to do, use `"actions": []`.
         fow    = gs.fog_of_war(self.side)
         units  = fow.get("units", {})
         contacts = fow.get("contact_hexes", [])
+        dumps  = fow.get("supply_dumps", {})
 
         # ── Own units table ────────────────────────────────────────────────────
         rows = []
@@ -208,6 +209,17 @@ No text outside the JSON block. If you have nothing to do, use `"actions": []`.
             + "\n".join(rows) if rows else "(no active units)"
         )
 
+        # ── Supply dumps table ────────────────────────────────────────────────
+        dump_rows = []
+        for d in sorted(dumps.values(), key=lambda x: x.get("label", "")):
+            if d.get("is_dummy"):
+                continue
+            fuel  = "unlimited" if d.get("is_unlimited") else f"{d.get('fuel',0):.0f}"
+            dump_rows.append(
+                f"  {d.get('label') or d.get('id','?'):<22} hex {d.get('hex_id','?'):<6}  fuel:{fuel}"
+            )
+        dump_str = "\n".join(dump_rows) if dump_rows else "  (none)"
+
         # ── Memory files ───────────────────────────────────────────────────────
         strategy_path = self.memory_dir / f"{self.side.value}_strategy.md"
         rules_path    = self.memory_dir / f"{self.side.value}_rules_mastered.md"
@@ -219,13 +231,31 @@ No text outside the JSON block. If you have nothing to do, use `"actions": []`.
 
         contact_str = ", ".join(contacts) if contacts else "(none)"
 
+        # ── OOS guidance ──────────────────────────────────────────────────────
+        own_active = [u for u in units.values() if u.get("side") == self.side.value]
+        n_oos = sum(1 for u in own_active if u.get("supply_status") != "in_supply")
+        oos_note = ""
+        if n_oos > 0:
+            oos_note = f"""
+## IMPORTANT: Out-of-Supply Guidance ({n_oos}/{len(own_active)} units OOS)
+Out-of-supply units are NOT immobile — you MUST still propose actions:
+- Move OOS units TOWARD your nearest supply dump (listed above) to restore supply.
+- OOS units may still ATTACK enemy units, especially other OOS enemies (equal footing).
+- Staying stationary accomplishes nothing. Every OpStage you fail to move is wasted.
+- Do NOT return an empty actions list just because units are out of supply.
+Supply dumps you can move toward are listed in "Your Supply Dumps" above.
+"""
+
         return f"""## Situation Report — {gs.historical_date_str()}
 Turn {gs.turn} / OpStage {gs.opstage} / Weather: {gs.weather}
 
 {narrative}
-
+{oos_note}
 ## Your Units
 {unit_table}
+
+## Your Supply Dumps (move units toward these)
+{dump_str}
 
 ## Enemy Contact
 Enemy presence confirmed at hexes: {contact_str}
@@ -239,8 +269,10 @@ Enemy presence confirmed at hexes: {contact_str}
 {rules_text}
 
 ---
-Propose your actions for this OpStage. Remember: conserve supply, respect ZOC,
-and do not enter enemy-occupied hexes without attacking.
+Propose your actions for this OpStage.
+- Respect ZOC and do not enter enemy-occupied hexes without a combat action.
+- If no contacts are visible yet, advance toward known enemy territory or supply dumps.
+- ALWAYS propose at least some moves — a commander who orders nothing loses.
 """
 
     # ── Response parsing ───────────────────────────────────────────────────────

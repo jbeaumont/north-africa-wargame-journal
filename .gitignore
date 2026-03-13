@@ -15,5 +15,7 @@ htmlcov/
 
 # Generated turn output (written by tests and the turn loop)
 turns/
-journal/
 memory/
+
+# Journal entries are committed — they're the deliverable
+# journal/ is NOT ignored

@@ -91,18 +91,31 @@ class PlayerAgent:
 
         Each action dict matches the BoardStateAgent dispatcher schema.
         Actions will be validated by the Rules Arbiter before execution.
+        Retries up to 3 times on transient network errors.
         """
+        import time
         system = self._system_prompt(gs)
         user   = self._user_message(gs)
 
-        with self._client.messages.stream(
-            model="claude-opus-4-6",
-            max_tokens=4096,
-            thinking={"type": "adaptive"},
-            system=system,
-            messages=[{"role": "user", "content": user}],
-        ) as stream:
-            msg = stream.get_final_message()
+        last_exc: Exception = RuntimeError("no attempts made")
+        for attempt in range(3):
+            if attempt:
+                time.sleep(2 ** attempt)
+            try:
+                with self._client.messages.stream(
+                    model="claude-opus-4-6",
+                    max_tokens=4096,
+                    thinking={"type": "adaptive"},
+                    system=system,
+                    messages=[{"role": "user", "content": user}],
+                ) as stream:
+                    msg = stream.get_final_message()
+                break  # success
+            except Exception as exc:
+                last_exc = exc
+                continue
+        else:
+            raise last_exc
 
         result = self._parse_response(msg)
         strategy_note = result.get("strategy_note", "")

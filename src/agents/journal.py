@@ -240,21 +240,34 @@ class JournalAgent:
         Stream a claude-opus-4-6 response with adaptive thinking.
 
         Returns the text content of the final message.
+        Retries up to 3 times on transient network errors.
         """
-        with self._client.messages.stream(
-            model="claude-opus-4-6",
-            max_tokens=1024,
-            thinking={"type": "adaptive"},
-            system=[
-                {
-                    "type": "text",
-                    "text": _SYSTEM_PROMPT,
-                    "cache_control": {"type": "ephemeral"},
-                }
-            ],
-            messages=[{"role": "user", "content": user_message}],
-        ) as stream:
-            msg = stream.get_final_message()
+        import time
+        last_exc: Exception = RuntimeError("no attempts made")
+        for attempt in range(3):
+            if attempt:
+                time.sleep(2 ** attempt)
+            try:
+                with self._client.messages.stream(
+                    model="claude-opus-4-6",
+                    max_tokens=1024,
+                    thinking={"type": "adaptive"},
+                    system=[
+                        {
+                            "type": "text",
+                            "text": _SYSTEM_PROMPT,
+                            "cache_control": {"type": "ephemeral"},
+                        }
+                    ],
+                    messages=[{"role": "user", "content": user_message}],
+                ) as stream:
+                    msg = stream.get_final_message()
+                break
+            except Exception as exc:
+                last_exc = exc
+                continue
+        else:
+            raise last_exc
 
         return next(
             (b.text for b in msg.content if b.type == "text"),

@@ -48,6 +48,9 @@ Each action is a dict with an "action" key.  Supported actions:
   {"action": "apply_pasta_rule",
    "unit_id": "...", "received_pasta_point": true}
 
+  {"action": "roll_weather"}
+    — rolls 2d6 per rule 29.1, sets gs.weather for this OpStage
+
   {"action": "end_opstage"}
     — writes OpStage output files and resets per-OpStage tracking
 
@@ -62,6 +65,7 @@ from __future__ import annotations
 
 import json
 import os
+import random
 from dataclasses import dataclass, field
 from datetime import date, timedelta
 from pathlib import Path
@@ -209,6 +213,35 @@ def _default_cpa(unit_type: UnitType, motorized: bool) -> int:
     """
     table = _DEFAULT_CPA_MOTORIZED if motorized else _DEFAULT_CPA_NON_MOTORIZED
     return table.get(unit_type, 10)  # fallback: treat as non-motorized infantry
+
+
+# ── Season helper (rule 29.1) ─────────────────────────────────────────────────
+
+def _season_from_date(d: Optional[date]) -> str:
+    """
+    Return the current season name from a game date (rule 29.1).
+
+    Rule 29.1 defines seasons by week:
+      Spring   March III – June I
+      Summer   June III  – September II
+      Fall     September III – December II
+      Winter   December III  – March II
+
+    We approximate to month level (week-exact would need turn number).
+    This is accurate for full months but may be off by ~1 week at season
+    boundaries (e.g. early March = Winter, but this returns "spring").
+    Approximation noted in rules_tables.json weather_system entry.
+    """
+    if d is None:
+        return "fall"  # Crusader scenario default: November 1941 = Fall
+    m = d.month
+    if m in (3, 4, 5):
+        return "spring"
+    if m in (6, 7, 8):
+        return "summer"
+    if m in (9, 10, 11):
+        return "fall"
+    return "winter"  # December, January, February
 
 
 # ── Action result ──────────────────────────────────────────────────────────────
@@ -440,6 +473,7 @@ class BoardStateAgent:
     def __init__(self, game_state: GameState) -> None:
         self.gs = game_state
         self._hex_map: Optional[HexMap] = None
+        self._rules_tables: Optional[Dict[str, Any]] = None
         self._opstage_events: List[Event] = []
         self._turn_events: List[Event] = []
         # BD check tracking: {unit_id → had_check_this_opstage}
@@ -459,14 +493,20 @@ class BoardStateAgent:
         gs = GameState.from_dict(d)
         return cls(gs)
 
-    # ── HexMap ────────────────────────────────────────────────────────────────
+    # ── Tables + HexMap ────────────────────────────────────────────────────────
+
+    @property
+    def tables(self) -> Dict[str, Any]:
+        """Lazily load and cache rules_tables.json."""
+        if self._rules_tables is None:
+            with open(_TABLES) as f:
+                self._rules_tables = json.load(f)
+        return self._rules_tables
 
     @property
     def hex_map(self) -> HexMap:
         if self._hex_map is None:
-            with open(_TABLES) as f:
-                tables = json.load(f)
-            tec = tables["terrain_effects_chart"]["terrain_types"]
+            tec = self.tables["terrain_effects_chart"]["terrain_types"]
             self._hex_map = HexMap(self.gs.hexes, tec)
         return self._hex_map
 
@@ -483,6 +523,8 @@ class BoardStateAgent:
 
         if action_type == "move":
             return self._action_move(action)
+        if action_type == "roll_weather":
+            return self._action_roll_weather()
         if action_type == "run_supply_checks":
             return self._action_supply_checks()
         if action_type == "apply_fuel_evaporation":
@@ -572,7 +614,9 @@ class BoardStateAgent:
     # ── Fuel evaporation action ────────────────────────────────────────────────
 
     def _action_fuel_evaporation(self, action: Dict[str, Any]) -> ActionResult:
-        hot_weather = bool(action.get("hot_weather", self.gs.weather == "khamsin"))
+        # rule 29.3: hot weather triggers the +5% fuel/water evaporation bonus (rule 49.3).
+        # Use explicit flag if provided; otherwise derive from gs.weather set by roll_weather.
+        hot_weather = bool(action.get("hot_weather", self.gs.weather == "hot"))
         events = apply_fuel_evaporation(self.gs, hot_weather=hot_weather)
         self._opstage_events.extend(events)
         return ActionResult(
@@ -613,6 +657,225 @@ class BoardStateAgent:
             events=events,
             data={"hexes": len(prisoner_points)},
         )
+
+    # ── Weather roll ───────────────────────────────────────────────────────────
+
+    def _action_roll_weather(self) -> ActionResult:
+        """
+        Roll for weather at the start of each OpStage (rule 29.1).
+
+        Rolls 2d6 sequentially (d1*10 + d2), looks up outcome in the season
+        row of the weather table (rules_tables.json weather_system.weather_table),
+        and sets gs.weather to "normal" | "hot" | "sandstorm" | "rainstorm".
+
+        NOTE: The actual Weather Table (rule 29.6) is not in the OCR text
+        (the booklet says "see Charts and Tables"). The probabilities in
+        rules_tables.json are approximations; see the _note field there.
+        Only confirmed data point: rule 29.1 example "53 during summer = Hot Weather".
+        """
+        d1 = random.randint(1, 6)
+        d2 = random.randint(1, 6)
+        outcome = d1 * 10 + d2
+
+        season = _season_from_date(self.gs.current_date)
+        season_row = (
+            self.tables
+            .get("weather_system", {})
+            .get("weather_table", {})
+            .get(season, {})
+        )
+
+        weather = "normal"  # rule 29.2: normal weather is the default
+        for weather_type in ("hot", "sandstorm", "rainstorm"):
+            if outcome in season_row.get(weather_type, []):
+                weather = weather_type
+                break
+
+        old_weather = self.gs.weather
+        self.gs.weather = weather
+
+        event = Event(
+            type="weather_roll",
+            turn=self.gs.turn,
+            opstage=self.gs.opstage,
+            description=f"Weather roll {d1}{d2} ({season}): {weather}",
+            data={
+                "d1": d1,
+                "d2": d2,
+                "outcome": outcome,
+                "season": season,
+                "weather": weather,
+                "previous_weather": old_weather,
+            },
+        )
+        self._opstage_events.append(event)
+
+        return ActionResult(
+            action="roll_weather",
+            success=True,
+            events=[event],
+            data={"weather": weather, "d1": d1, "d2": d2, "season": season},
+        )
+
+    # ── Action context builder (for Rules Arbiter) ─────────────────────────────
+
+    def build_action_context(
+        self,
+        action: Dict[str, Any],
+        context_type: str = "voluntary",
+    ) -> Dict[str, Any]:
+        """
+        Pre-compute the context dict the Rules Arbiter expects (ARCHITECTURE.md).
+
+        The arbiter must never calculate context itself; all engine values
+        (CP costs, ZOC status, stacking counts, supply status) are injected
+        here.  Returns the context dict ready to pass to validate_action().
+
+        Supported action types: "move", "combat".
+        Returns {} for unknown action types.
+        """
+        action_type = action.get("action", "")
+        if action_type == "move":
+            return self._build_move_context(action, context_type)
+        if action_type == "combat":
+            return self._build_combat_context(action)
+        return {}
+
+    def _unit_snapshot(self, unit: Unit, zoc_set: Optional[set] = None) -> Dict[str, Any]:
+        """
+        Compact unit snapshot matching the Rules Arbiter context spec.
+        zoc_set: set of hex_ids under enemy ZOC (to populate zoc_status field).
+        """
+        zoc_status = "none"
+        if zoc_set and unit.hex_id and unit.hex_id in zoc_set:
+            zoc_status = "contact"
+        return {
+            "id": unit.id,
+            "name": unit.name,
+            "cpa": unit.cpa,
+            "cp_remaining": unit.cp_remaining,
+            "side": unit.side.value,
+            "hex_id": unit.hex_id,
+            "supply_status": unit.supply_status.value,
+            "breakdown_points": unit.breakdown_points,
+            "is_motorized": unit.motorized,
+            "zoc_status": zoc_status,
+        }
+
+    def _build_move_context(
+        self, action: Dict[str, Any], context_type: str
+    ) -> Dict[str, Any]:
+        """
+        Build the 'move' context dict for the Rules Arbiter.
+
+        Computes: unit snapshot, path_hex_costs, total_cp_cost, zoc_hexes,
+        enemy_occupied_hexes, stacking_in_destination, stacking_limit, weather.
+        """
+        unit_id = action.get("unit_id", "")
+        unit = self.gs.units.get(unit_id)
+        if unit is None:
+            return {}
+        path = action.get("path", [])
+        if len(path) < 2:
+            return {}
+
+        enemy_side = Side.AXIS if unit.side == Side.COMMONWEALTH else Side.COMMONWEALTH
+        enemy_units = [u for u in self.gs.units.values() if u.side == enemy_side and u.is_active()]
+
+        # ZOC hexes under enemy control
+        zoc_set = self.hex_map.zoc_hexes(enemy_side, enemy_units)
+
+        # CP cost for each hex entered along the path (excluding origin)
+        path_hex_costs: Dict[str, float] = {}
+        total_cp_cost = 0.0
+        for i in range(1, len(path)):
+            cost = self.hex_map.entry_cost(unit, path[i - 1], path[i], self.gs.weather)
+            numeric_cost = 999.0 if cost == "P" else float(cost)
+            path_hex_costs[path[i]] = numeric_cost
+            total_cp_cost += numeric_cost
+
+        # ZOC exit cost: leaving a Contact hex costs 2 CP, Engaged costs 4 CP
+        # (rule 8.15.2/8.15.3, from rules_tables.json zoc_rules.exit_cost).
+        # We add it if the unit starts in enemy ZOC and action context reflects it.
+        # The arbiter receives zoc_status from the action and checks independently.
+
+        # Enemy occupied hexes
+        enemy_occupied = sorted({u.hex_id for u in enemy_units if u.hex_id})
+
+        # Stacking at destination (friendly units already there, excluding mover)
+        dest_hex_id = path[-1]
+        friendly_in_dest = [
+            u for u in self.gs.units.values()
+            if u.hex_id == dest_hex_id
+            and u.is_active()
+            and u.id != unit_id
+            and u.side == unit.side
+        ]
+        stacking_sp = sum(self.hex_map.unit_stacking_points(u) for u in friendly_in_dest)
+
+        # Stacking limit from TEC (rule 9.4: generally 6 SP; see rules_tables.json)
+        dest_hex_obj = self.gs.hexes.get(dest_hex_id)
+        terrain_key = dest_hex_obj.terrain.value if dest_hex_obj else "Clear"
+        tec = self.tables.get("terrain_effects_chart", {}).get("terrain_types", {})
+        stacking_limit = tec.get(terrain_key, {}).get("stack") or 6  # rule 9.4 default
+
+        return {
+            "unit": self._unit_snapshot(unit, zoc_set),
+            "path": list(path),
+            "path_hex_costs": path_hex_costs,
+            "total_cp_cost": total_cp_cost,
+            "zoc_hexes": sorted(zoc_set),
+            "enemy_occupied_hexes": enemy_occupied,
+            "stacking_in_destination": stacking_sp,
+            "stacking_limit": stacking_limit,
+            "weather": self.gs.weather,
+            "context": context_type,
+        }
+
+    def _build_combat_context(self, action: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Build the 'combat' context dict for the Rules Arbiter.
+
+        Computes: attacker/defender snapshots, adjacency, terrain, supply status.
+        """
+        attacker_id = action.get("attacker_id", "")
+        defender_id = action.get("defender_id", "")
+        attacker = self.gs.units.get(attacker_id)
+        defender = self.gs.units.get(defender_id)
+        if attacker is None or defender is None:
+            return {}
+
+        combat_type = action.get("combat_type", "close_assault")
+        attacker_cp_cost = float(action.get("attacker_cp_cost", 10))
+
+        # Adjacency: attacker and defender must be in neighboring hexes
+        adjacent = (
+            self.hex_map.direction_to(attacker.hex_id or "", defender.hex_id or "") is not None
+        )
+
+        # Terrain at defender hex (lowercase for arbiter prompt readability)
+        def_hex = self.gs.hexes.get(defender.hex_id or "")
+        terrain = def_hex.terrain.value.lower() if def_hex else "clear"
+
+        enemy_side = Side.AXIS if attacker.side == Side.COMMONWEALTH else Side.COMMONWEALTH
+        enemy_units = [u for u in self.gs.units.values() if u.side == enemy_side and u.is_active()]
+        zoc_set = self.hex_map.zoc_hexes(enemy_side, enemy_units)
+
+        return {
+            "attacker": self._unit_snapshot(attacker, zoc_set),
+            "defender": {
+                "id": defender.id,
+                "hex_id": defender.hex_id,
+                "supply_status": defender.supply_status.value,
+            },
+            "combat_type": combat_type,
+            "attacker_cp_cost": attacker_cp_cost,
+            "attacker_cp_remaining": attacker.cp_remaining,
+            "adjacent": adjacent,
+            "terrain": terrain,
+            "defender_in_supply": defender.supply_status == SupplyStatus.IN_SUPPLY,
+            "weather": self.gs.weather,
+        }
 
     # ── End OpStage ────────────────────────────────────────────────────────────
 

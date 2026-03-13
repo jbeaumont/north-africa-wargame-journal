@@ -20,6 +20,8 @@ Event types (event.type values)
   fortification   — fort constructed or upgraded
   weather         — weather changed for this OpStage
   initiative      — initiative determined for this OpStage
+  weather_roll    — weather die roll resolved for this OpStage
+  arbiter_rejection — Rules Arbiter rejected a proposed action
 """
 
 from __future__ import annotations

@@ -323,6 +323,11 @@ class GameState:
         """
         Return a state snapshot with enemy units hidden unless adjacent to a
         friendly unit.  Used as the Player Agent's input.
+
+        Enemy units that are adjacent to a friendly unit are NOT included in
+        the 'units' dict (rule 16 intent: type/strength unknown).  Their
+        hex positions are reported as 'contact_hexes' so the commander knows
+        enemy presence without knowing unit details.
         """
         # Build set of friendly hex_ids for adjacency check
         friendly_hexes: set[str] = {
@@ -330,21 +335,24 @@ class GameState:
             if u.side == viewing_side and u.hex_id
         }
 
-        # Build set of "visible" enemy hexes (adjacent to any friendly hex)
-        visible_enemy_hexes: set[str] = set()
+        # Build set of "contact" enemy hexes (adjacent to any friendly hex)
+        contact_hexes: set[str] = set()
         for h_id in friendly_hexes:
             h = self.get_hex(h_id)
-            visible_enemy_hexes.update(h.neighbors())
+            contact_hexes.update(h.neighbors())
 
         visible_units: dict[str, dict] = {}
+        enemy_contact_hexes: set[str] = set()
         for uid, unit in self.units.items():
             if unit.is_eliminated():
                 continue
             if unit.side == viewing_side:
                 visible_units[uid] = unit.to_dict()
-            elif unit.hex_id in visible_enemy_hexes:
-                # Enemy unit in contact range — visible but flag it
-                visible_units[uid] = {**unit.to_dict(), "_observed": True}
+            elif unit.hex_id in contact_hexes:
+                # Enemy unit is in contact range — report the hex only,
+                # not the unit type or strength (rule 16 intent)
+                if unit.hex_id:
+                    enemy_contact_hexes.add(unit.hex_id)
             # Otherwise: enemy unit unknown to this side — omitted
 
         own_dumps = {
@@ -362,6 +370,7 @@ class GameState:
             "initiative": self.initiative,
             "viewing_side": viewing_side.value,
             "units": visible_units,
+            "contact_hexes": sorted(enemy_contact_hexes),
             "supply_dumps": own_dumps,
             "events": [e.to_dict() for e in self.events],
         }

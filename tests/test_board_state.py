@@ -350,10 +350,13 @@ class TestFogOfWar:
     def test_fog_hides_non_adjacent_enemy(self):
         agent = BoardStateAgent.from_scenario("crusader")
         fow = agent.fog_of_war(Side.COMMONWEALTH)
-        # Any unit in the fog view should either be friendly or marked _observed
+        # Enemy units must NOT appear in the units dict — only contact_hexes
         for uid, u in fow["units"].items():
-            if u.get("side") == "axis":
-                assert u.get("_observed") is True
+            assert u.get("side") != "axis", (
+                f"Axis unit {uid} leaked into CW fog-of-war units dict"
+            )
+        assert "contact_hexes" in fow
+        assert isinstance(fow["contact_hexes"], list)
 
 
 # ── Narrative ─────────────────────────────────────────────────────────────────

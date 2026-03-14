@@ -13,6 +13,7 @@ Model: claude-opus-4-6 with adaptive thinking, streaming.
 from __future__ import annotations
 
 import json
+import logging
 import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -21,6 +22,8 @@ import anthropic
 from src.agents._client import make_client
 
 from src.models.game_state import GameState, Side
+
+log = logging.getLogger("cna")
 
 # ── Paths ──────────────────────────────────────────────────────────────────────
 
@@ -122,7 +125,19 @@ class PlayerAgent:
         if strategy_note:
             self._append_strategy(strategy_note, gs)
 
-        return result.get("actions", [])
+        actions = result.get("actions", [])
+        if not actions:
+            # Log the raw text so we can tell whether the model deliberately
+            # returned [] or whether JSON parsing silently failed.
+            raw_text = next(
+                (b.text for b in msg.content if b.type == "text"), ""
+            )
+            log.warning(
+                "[%s] 0 actions — raw response (first 600 chars):\n%s",
+                self.side.value,
+                raw_text[:600],
+            )
+        return actions
 
     # ── Subclass hooks ─────────────────────────────────────────────────────────
 
@@ -272,7 +287,10 @@ Enemy presence confirmed at hexes: {contact_str}
 Propose your actions for this OpStage.
 - Respect ZOC and do not enter enemy-occupied hexes without a combat action.
 - If no contacts are visible yet, advance toward known enemy territory or supply dumps.
-- ALWAYS propose at least some moves — a commander who orders nothing loses.
+- ALWAYS propose at least one move action. This is a direct order.
+  A commander who returns an empty actions list every turn will be relieved of command.
+  If you are uncertain, move your best-supplied unit one hex toward the nearest enemy contact.
+  There is no situation where zero actions is the correct answer while units have CP remaining.
 """
 
     # ── Response parsing ───────────────────────────────────────────────────────
@@ -282,26 +300,37 @@ Propose your actions for this OpStage.
         Extract the JSON object from Claude's response text.
 
         Tries to find a ```json ... ``` block first, then falls back to the
-        outermost {...} in the response. Returns empty dict on failure.
+        outermost {...} in the response. Logs a warning on failure.
         """
         text = next((b.text for b in msg.content if b.type == "text"), "")
 
-        # Try fenced code block
-        m = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text, re.DOTALL)
+        if not text:
+            content_types = [b.type for b in msg.content]
+            log.warning(
+                "No text block in response; content block types: %s", content_types
+            )
+            return {"actions": [], "strategy_note": ""}
+
+        # Try fenced code block (greedy inner match so nested braces work)
+        m = re.search(r"```(?:json)?\s*(\{.*\})\s*```", text, re.DOTALL)
         if m:
             try:
                 return json.loads(m.group(1))
-            except json.JSONDecodeError:
-                pass
+            except json.JSONDecodeError as exc:
+                log.warning("Fenced JSON block present but failed to parse: %s", exc)
 
-        # Fall back to first outermost brace match
+        # Fall back to outermost brace match (greedy)
         m = re.search(r"\{.*\}", text, re.DOTALL)
         if m:
             try:
                 return json.loads(m.group())
-            except json.JSONDecodeError:
-                pass
+            except json.JSONDecodeError as exc:
+                log.warning("Bare JSON extraction failed: %s", exc)
 
+        log.warning(
+            "Could not extract JSON from response. Raw text (first 400 chars):\n%s",
+            text[:400],
+        )
         return {"actions": [], "strategy_note": ""}
 
     # ── Memory helpers ─────────────────────────────────────────────────────────

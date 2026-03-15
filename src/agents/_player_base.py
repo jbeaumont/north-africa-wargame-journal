@@ -21,6 +21,7 @@ from typing import Any, Dict, List, Optional
 import anthropic
 from src.agents._client import make_client
 
+from src.engine.hex_map import HexMap
 from src.models.game_state import GameState, Side
 from src.models.hex import (
     Terrain, HexsideFeature, DIRECTIONS,
@@ -57,7 +58,8 @@ def _hex_neighbor(hex_id: str, direction: str) -> Optional[str]:
 
 # ── Paths ──────────────────────────────────────────────────────────────────────
 
-_MEMORY_DIR = Path(__file__).parent.parent.parent / "memory"
+_MEMORY_DIR  = Path(__file__).parent.parent.parent / "memory"
+_TABLES_PATH = Path(__file__).parent.parent.parent / "data" / "extracted" / "rules_tables.json"
 
 # ── Action schema shown to the agent ──────────────────────────────────────────
 
@@ -76,9 +78,15 @@ Each element of the `actions` array must be one of:
 ```
 Rules:
 - path must start at the unit's current hex.
+- Every hex in the path MUST be a valid map hex (see "Valid Map Hexes" below).
+- Every consecutive pair of hexes MUST be adjacent — no skipping hexes.
 - Total CP cost of all hexes entered must not exceed the unit's CPA.
 - Path must not pass through enemy-occupied hexes (unless attacking).
 - Motorized units cost ½ CP per hex on road hexsides.
+- ZOC STOP (rule 8.14): if any hex in the path is in enemy ZOC, the unit
+  STOPS IMMEDIATELY there. Do NOT include further hexes in the path beyond
+  the first ZOC hex — those steps will be rejected. Check "Enemy ZOC Hexes"
+  below before writing any path.
 
 ### Combat (Close Assault)
 ```json
@@ -115,6 +123,15 @@ class PlayerAgent:
         self.side = side
         self.memory_dir = memory_dir or _MEMORY_DIR
         self._client = make_client()
+        self._tec: Optional[dict] = None  # lazy-loaded TEC for HexMap
+
+    def _hex_map(self, gs: GameState) -> HexMap:
+        """Build (or rebuild) a HexMap for the given GameState's hexes."""
+        if self._tec is None:
+            with open(_TABLES_PATH) as f:
+                tables = json.load(f)
+            self._tec = tables["terrain_effects_chart"]["terrain_types"]
+        return HexMap(gs.hexes, self._tec)
 
     # ── Public interface ───────────────────────────────────────────────────────
 
@@ -318,6 +335,29 @@ No text outside the JSON block. If you have nothing to do, use `"actions": []`.
             else "  (none known in loaded map area)"
         )
 
+        # ── Valid hex list (off-map guard) ────────────────────────────────────
+        # The loaded map is sparse (not every coordinate is a playable hex).
+        # Paths that include hex IDs not in this set receive a 999-CP cost and
+        # are rejected.  Give agents the complete list so they never propose
+        # an off-map hex.
+        valid_hexes_str = ", ".join(sorted(gs.hexes.keys()))
+
+        # ── Enemy ZOC hexes ───────────────────────────────────────────────────
+        # Rule 8.14: a unit entering an enemy ZOC hex must STOP IMMEDIATELY.
+        # Pre-compute the ZOC set so agents can see exactly which hexes are
+        # "stop hexes" before writing any path.
+        enemy_side = Side.AXIS if self.side == Side.COMMONWEALTH else Side.COMMONWEALTH
+        hm = self._hex_map(gs)
+        enemy_units_list = [
+            u for u in gs.units.values()
+            if u.side == enemy_side and u.is_active()
+        ]
+        zoc_set = hm.zoc_hexes(enemy_side, enemy_units_list)
+        if zoc_set:
+            zoc_str = ", ".join(sorted(zoc_set))
+        else:
+            zoc_str = "(none)"
+
         # ── OOS guidance ──────────────────────────────────────────────────────
         own_active = [u for u in units.values() if u.get("side") == self.side.value]
         n_oos = sum(1 for u in own_active if u.get("supply_status") != "in_supply")
@@ -344,10 +384,19 @@ Turn {gs.turn} / OpStage {gs.opstage} / Weather: {gs.weather}
 ## Your Supply Dumps (move units toward these)
 {dump_str}
 
+## Valid Map Hexes (ONLY use hex IDs from this list in paths)
+{valid_hexes_str}
+Any hex ID NOT in the above list is off-map and costs 999 CP — the Arbiter will reject it.
+
 ## Impassable Hexes (DO NOT route through these)
 {impassable_str}
-Motorized units also cannot cross UP an escarpment hexside (rule 8.42).
 Any hex the engine assigns 999 CP is impassable — never propose a path through it.
+
+## Enemy ZOC Hexes — STOP HERE (rule 8.14)
+{zoc_str}
+Rule 8.14: your unit MUST STOP IMMEDIATELY upon entering any of these hexes.
+If you want to move into a ZOC hex, make it the LAST hex in the path.
+NEVER include additional hexes in the path after a ZOC hex — that portion is auto-rejected.
 
 ## Enemy Contact
 Enemy presence confirmed at hexes: {contact_str}
@@ -362,7 +411,7 @@ Enemy presence confirmed at hexes: {contact_str}
 
 ---
 Propose your actions for this OpStage.
-- Respect ZOC and do not enter enemy-occupied hexes without a combat action.
+- Enemy ZOC hexes are listed above — stop there; do not enter enemy-occupied hexes without a combat action.
 - If no contacts are visible yet, advance toward known enemy territory or supply dumps.
 - ALWAYS propose at least one move action. This is a direct order.
   A commander who returns an empty actions list every turn will be relieved of command.

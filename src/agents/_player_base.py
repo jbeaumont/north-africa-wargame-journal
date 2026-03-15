@@ -7,7 +7,7 @@ Each agent:
   - Reads/writes persistent memory files (strategy + rules mastered).
   - Returns a list of action dicts for the BoardStateAgent dispatcher.
 
-Model: claude-opus-4-6 with adaptive thinking, streaming.
+Model: claude-sonnet-4-6, streaming.
 """
 
 from __future__ import annotations
@@ -106,9 +106,8 @@ class PlayerAgent:
                 time.sleep(2 ** attempt)
             try:
                 with self._client.messages.stream(
-                    model="claude-opus-4-6",
+                    model="claude-sonnet-4-6",
                     max_tokens=8192,
-                    thinking={"type": "enabled", "budget_tokens": 2048},
                     system=system,
                     messages=[{"role": "user", "content": user}],
                 ) as stream:

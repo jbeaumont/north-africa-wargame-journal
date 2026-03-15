@@ -447,10 +447,14 @@ def validate_action(
     )
 
     try:
-        # Use streaming with adaptive thinking; collect the final message
+        # Use streaming with adaptive thinking; collect the final message.
+        # Opus + adaptive thinking is used here because the remaining actions
+        # that reach the arbiter (after mechanical_precheck) are genuine
+        # edge cases requiring real rules reasoning.
         with client.messages.stream(
-            model="claude-haiku-4-5-20251001",
+            model="claude-opus-4-6",
             max_tokens=1024,
+            thinking={"type": "adaptive"},
             system=[
                 {
                     "type": "text",

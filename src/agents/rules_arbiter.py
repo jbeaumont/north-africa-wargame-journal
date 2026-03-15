@@ -67,6 +67,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import time
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -259,38 +260,64 @@ output only the JSON verdict."""
 
 # ── Mechanical pre-check (no LLM needed) ──────────────────────────────────────
 
+_MECHANICAL_VALID = {"valid": True}  # reusable approval sentinel
+
+
 def mechanical_precheck(action: Dict[str, Any], context: Dict[str, Any]) -> Optional[dict]:
     """
-    Deterministically reject actions that violate unambiguous engine rules.
+    Deterministically reject OR approve actions without an LLM call.
 
-    Returns a rejection dict {"valid": False, ...} if the action is clearly
-    illegal, or None if the action needs the LLM arbiter for a full verdict.
+    Returns:
+      {"valid": False, ...}  — action is clearly illegal; skip arbiter.
+      {"valid": True}        — action is clearly legal; skip arbiter.
+      None                   — ambiguous; send to LLM arbiter.
 
-    This short-circuits the most common rejection cases without an API call,
-    cutting per-turn arbiter calls by ~60-70% in practice.
+    For moves, a definitive approval is issued when the unit starts outside
+    any enemy ZOC (zoc_status == "none") and all deterministic checks pass.
+    Units that start IN enemy ZOC (zoc_status "contact" or "engaged") still
+    need the LLM to verify the ZOC exit cost and ZOC-to-ZOC rule (8.15).
 
-    Rules checked
-    -------------
-    MOVE:
-      rule 8.13  — path must not end in an enemy-occupied hex
-      rule 8.14  — ZOC stop: path may not continue past a ZOC hex
-      (engine)   — cost 999 = non-adjacent or impassable; reject any such hop
-      (engine)   — total_cp_cost alone exceeding cp_remaining is always invalid
+    Rules checked (MOVE)
+    --------------------
+      (engine)   — cost 999 = non-adjacent or impassable; reject
+      rule 6.13  — total_cp_cost must not exceed cp_remaining
+      rule 8.13  — destination must not be enemy-occupied
+      rule 8.14  — path may not continue past a ZOC hex
+      rule 8.15  — ZOC-to-ZOC: unit in ZOC may not move directly to another ZOC hex
+      rule 8.17  — non-motorized units (CPA ≤ 10) may not exceed 150% of CPA
+      rule 9.4   — stacking: destination must have room for the moving unit
 
-    COMBAT:
-      (engine)   — attacker must be adjacent (engine sets adjacent=True/False)
-      (engine)   — attacker must have enough CP for the declared cost
+    Mechanical APPROVAL (MOVE): issued when zoc_status == "none" and all
+    checks above pass.  At that point the LLM has nothing left to reason about.
+
+    Rules checked (COMBAT)
+    ----------------------
+      rule 11.2  — attacker must be adjacent to defender
+      rule 11.3  — attacker must have sufficient CP remaining
+
+    Mechanical APPROVAL (COMBAT): issued when attacker is outside enemy ZOC
+    (zoc_status == "none") and all CP/adjacency checks pass.  Units in enemy
+    ZOC must still be checked for the "must attack ZOC-exerting unit" constraint
+    (rule 10.31).
     """
     action_type = action.get("action", "")
 
     if action_type == "move":
-        unit_ctx   = context.get("unit", {})
-        path       = context.get("path", [])
-        hex_costs  = context.get("path_hex_costs", {})
-        total_cost = context.get("total_cp_cost", 0.0)
-        cp_remain  = float(unit_ctx.get("cp_remaining", 0))
-        zoc_hexes  = set(context.get("zoc_hexes", []))
-        enemy_occ  = set(context.get("enemy_occupied_hexes", []))
+        unit_ctx     = context.get("unit", {})
+        path         = context.get("path", [])
+        hex_costs    = context.get("path_hex_costs", {})
+        total_cost   = context.get("total_cp_cost", 0.0)
+        cp_remain    = float(unit_ctx.get("cp_remaining", 0))
+        zoc_hexes    = set(context.get("zoc_hexes", []))
+        enemy_occ    = set(context.get("enemy_occupied_hexes", []))
+        zoc_status   = unit_ctx.get("zoc_status", "none")
+        cpa          = float(unit_ctx.get("cpa", 0))
+        is_motorized = bool(unit_ctx.get("is_motorized", True))
+        stacking_in_dest = float(context.get("stacking_in_destination", 0))
+        stacking_limit   = float(context.get("stacking_limit", 6))
+        unit_sp          = float(context.get("unit_stacking_points", 1))
+
+        # ── Rejection checks (always run) ─────────────────────────────────────
 
         # Any 999-cost hop is non-adjacent or impassable (engine guarantee)
         for hx, cost in hex_costs.items():
@@ -301,8 +328,7 @@ def mechanical_precheck(action: Dict[str, Any], context: Dict[str, Any]) -> Opti
                     "rule_ref": "8.13",
                 }
 
-        # CP check: if the base path cost alone exceeds remaining CP, always invalid.
-        # (ZOC exit costs are additive, so this is a lower bound.)
+        # Rule 6.13: total CP cost must not exceed remaining CP
         if total_cost > cp_remain:
             return {
                 "valid": False,
@@ -312,7 +338,7 @@ def mechanical_precheck(action: Dict[str, Any], context: Dict[str, Any]) -> Opti
                 "rule_ref": "6.13",
             }
 
-        # Rule 8.13: cannot enter an enemy-occupied hex on a move action
+        # Rule 8.13: cannot enter an enemy-occupied hex
         dest = path[-1] if path else None
         if dest and dest in enemy_occ:
             return {
@@ -321,11 +347,9 @@ def mechanical_precheck(action: Dict[str, Any], context: Dict[str, Any]) -> Opti
                 "rule_ref": "8.13",
             }
 
-        # Rule 8.14: ZOC stop — unit must halt immediately upon entering a ZOC hex.
-        # If any hex that is NOT the final destination appears in zoc_hexes, the
-        # path illegally continues past the stop point.
+        # Rule 8.14: ZOC stop — path may not continue past the first ZOC hex
         hexes_entered = path[1:]  # exclude origin
-        for i, hx in enumerate(hexes_entered[:-1]):  # all but the last entered hex
+        for hx in hexes_entered[:-1]:  # all but the last entered hex
             if hx in zoc_hexes:
                 return {
                     "valid": False,
@@ -336,12 +360,58 @@ def mechanical_precheck(action: Dict[str, Any], context: Dict[str, Any]) -> Opti
                     "rule_ref": "8.14",
                 }
 
-        return None  # needs arbiter
+        # Rule 8.15: ZOC-to-ZOC — unit starting in enemy ZOC may not move
+        # directly to another enemy ZOC hex (rule 8.15 / 10.23)
+        if zoc_status != "none" and dest and dest in zoc_hexes:
+            return {
+                "valid": False,
+                "reason": (
+                    f"Unit is in enemy ZOC and destination {dest} is also in enemy ZOC. "
+                    f"A unit may not voluntarily move from one enemy ZOC hex into another "
+                    f"(rule 8.15)."
+                ),
+                "rule_ref": "8.15",
+            }
+
+        # Rule 8.17: non-motorized units (CPA ≤ 10) may not voluntarily
+        # exceed 150% of their base CPA
+        if not is_motorized and cpa <= 10 and total_cost > 1.5 * cpa:
+            return {
+                "valid": False,
+                "reason": (
+                    f"Non-motorized unit (CPA {cpa}) may not exceed 150% of CPA "
+                    f"({1.5 * cpa} CP max); proposed cost is {total_cost} CP (rule 8.17)."
+                ),
+                "rule_ref": "8.17",
+            }
+
+        # Rule 9.4: stacking — destination hex must have room for the moving unit
+        if unit_sp > 0 and stacking_in_dest + unit_sp > stacking_limit:
+            return {
+                "valid": False,
+                "reason": (
+                    f"Destination {dest} already has {stacking_in_dest} SP occupied "
+                    f"(limit {stacking_limit}); moving unit adds {unit_sp} SP (rule 9.4)."
+                ),
+                "rule_ref": "9.4",
+            }
+
+        # ── Mechanical approval ───────────────────────────────────────────────
+        # If the unit starts OUTSIDE enemy ZOC all deterministic checks have
+        # been satisfied.  The LLM has nothing left to reason about.
+        if zoc_status == "none":
+            return _MECHANICAL_VALID
+
+        # Unit is in enemy ZOC: ZOC exit cost and ZOC-to-ZOC exception (10.24)
+        # require LLM reasoning.  Fall through to the arbiter.
+        return None
 
     if action_type == "combat":
+        attacker_ctx   = context.get("attacker", {})
         adjacent       = context.get("adjacent", False)
         cp_cost        = float(context.get("attacker_cp_cost", 10))
         cp_remain      = float(context.get("attacker_cp_remaining", 0))
+        zoc_status     = attacker_ctx.get("zoc_status", "none")
 
         if not adjacent:
             return {
@@ -359,7 +429,13 @@ def mechanical_precheck(action: Dict[str, Any], context: Dict[str, Any]) -> Opti
                 "rule_ref": "11.3",
             }
 
-        return None  # needs arbiter
+        # Mechanical approval: if attacker is outside enemy ZOC, rule 10.31
+        # (must attack ZOC-exerting unit) does not apply.
+        if zoc_status == "none":
+            return _MECHANICAL_VALID
+
+        # Attacker is in enemy ZOC: need LLM to check rule 10.31
+        return None
 
     return None  # unknown type: let arbiter handle
 
@@ -446,33 +522,54 @@ def validate_action(
         "Respond with ONLY JSON. No text outside the JSON object."
     )
 
-    try:
-        # Use streaming with adaptive thinking; collect the final message.
-        # Opus + adaptive thinking is used here because the remaining actions
-        # that reach the arbiter (after mechanical_precheck) are genuine
-        # edge cases requiring real rules reasoning.
-        with client.messages.stream(
-            model="claude-opus-4-6",
-            max_tokens=1024,
-            thinking={"type": "adaptive"},
-            system=[
-                {
-                    "type": "text",
-                    "text": system_prompt,
-                    # Cache the large static system prompt across calls
-                    "cache_control": {"type": "ephemeral"},
-                }
-            ],
-            messages=[{"role": "user", "content": user_message}],
-        ) as stream:
-            response = stream.get_final_message()
+    # Retry up to 2 extra times on parse failure or transient API error.
+    # Parse failures are rare but occur under parallel load (garbled JSON).
+    # Exponential backoff: 1s, 2s.
+    last_exc: Optional[Exception] = None
+    for attempt in range(3):
+        if attempt:
+            time.sleep(2 ** (attempt - 1))  # 1s, 2s
+        try:
+            # Use streaming with adaptive thinking; collect the final message.
+            # Opus + adaptive thinking is used here because the remaining
+            # actions that reach the arbiter (after mechanical_precheck) are
+            # genuine edge cases requiring real rules reasoning.
+            with client.messages.stream(
+                model="claude-opus-4-6",
+                max_tokens=1024,
+                thinking={"type": "adaptive"},
+                system=[
+                    {
+                        "type": "text",
+                        "text": system_prompt,
+                        # Cache the large static system prompt across calls
+                        "cache_control": {"type": "ephemeral"},
+                    }
+                ],
+                messages=[{"role": "user", "content": user_message}],
+            ) as stream:
+                response = stream.get_final_message()
 
-        # Extract the text content block (thinking blocks are separate)
-        text_blocks = [b for b in response.content if b.type == "text"]
-        if not text_blocks:
-            return _FALLBACK_INVALID
+            # Extract the text content block (thinking blocks are separate)
+            text_blocks = [b for b in response.content if b.type == "text"]
+            if not text_blocks:
+                last_exc = ValueError("No text block in arbiter response")
+                continue
 
-        return _parse_verdict(text_blocks[0].text)
+            verdict = _parse_verdict(text_blocks[0].text)
+            # _parse_verdict returns _FALLBACK_INVALID on parse failure;
+            # check for that sentinel and retry rather than accepting a
+            # spurious rejection.
+            if verdict is _FALLBACK_INVALID:
+                last_exc = ValueError("Arbiter response could not be parsed as JSON")
+                continue
 
-    except anthropic.APIError as exc:
-        return {**_FALLBACK_ERROR, "reason": f"Arbiter API error: {exc}"}
+            return verdict
+
+        except anthropic.APIError as exc:
+            last_exc = exc
+            continue
+
+    if isinstance(last_exc, anthropic.APIError):
+        return {**_FALLBACK_ERROR, "reason": f"Arbiter API error: {last_exc}"}
+    return _FALLBACK_INVALID

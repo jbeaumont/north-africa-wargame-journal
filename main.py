@@ -58,9 +58,10 @@ _MEMORY_DIR = _REPO_ROOT / "memory"
 
 # ── Action application helpers ────────────────────────────────────────────────
 
-# Maximum concurrent arbiter API calls.  Anthropic rate limits are per-minute
-# token-based, not per-request, so 8 threads is safe and empirically fast.
-_ARBITER_MAX_WORKERS = 8
+# Maximum concurrent arbiter API calls.  After mechanical_precheck eliminates
+# ~90% of actions, very few reach the LLM arbiter; 4 workers avoids 429s while
+# still parallelising the genuine edge-case checks.
+_ARBITER_MAX_WORKERS = 4
 
 
 def _build_verdicts(

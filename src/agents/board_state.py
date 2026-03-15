@@ -864,6 +864,7 @@ class BoardStateAgent:
             "enemy_occupied_hexes": enemy_occupied,
             "stacking_in_destination": stacking_sp,
             "stacking_limit": stacking_limit,
+            "unit_stacking_points": self.hex_map.unit_stacking_points(unit),
             "weather": self.gs.weather,
             "context": context_type,
         }

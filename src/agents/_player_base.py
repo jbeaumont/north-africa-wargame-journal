@@ -22,9 +22,38 @@ import anthropic
 from src.agents._client import make_client
 
 from src.models.game_state import GameState, Side
-from src.models.hex import Terrain
+from src.models.hex import (
+    Terrain, HexsideFeature, DIRECTIONS,
+    _ODD_DELTAS, _EVEN_DELTAS, _SECTION_ORDER, _MAX_COL, _MAX_ROW,
+)
 
 log = logging.getLogger("cna")
+
+
+def _hex_neighbor(hex_id: str, direction: str) -> Optional[str]:
+    """Return the hex_id of the neighbour in *direction* from *hex_id*, or None if off-map."""
+    sec = hex_id[0]
+    col = int(hex_id[1:3])
+    row = int(hex_id[3:5])
+    idx = DIRECTIONS.index(direction)
+    deltas = _ODD_DELTAS if col % 2 == 1 else _EVEN_DELTAS
+    dc, dr = deltas[idx]
+    new_col = col + dc
+    new_row = row + dr
+    sec_idx = _SECTION_ORDER.index(sec)
+    if new_col < 1:
+        sec_idx -= 1
+        if sec_idx < 0:
+            return None
+        new_col = _MAX_COL
+    elif new_col > _MAX_COL:
+        sec_idx += 1
+        if sec_idx >= len(_SECTION_ORDER):
+            return None
+        new_col = 1
+    if new_row < 1 or new_row > _MAX_ROW:
+        return None
+    return f"{_SECTION_ORDER[sec_idx]}{new_col:02d}{new_row:02d}"
 
 # ── Paths ──────────────────────────────────────────────────────────────────────
 
@@ -258,6 +287,17 @@ No text outside the JSON block. If you have nothing to do, use `"actions": []`.
             hid for hid, h in gs.hexes.items()
             if h.terrain == Terrain.SALT_MARSH
         )
+        # Escarpment-UP hexsides: impassable for motorized units (rule 8.42).
+        # Format: "FROM → TO" so agents can avoid the specific crossing.
+        escarpment_crossings: list[str] = []
+        for hid, h in gs.hexes.items():
+            for direction, feature in h.hexsides.items():
+                if feature == HexsideFeature.ESCARPMENT_UP:
+                    neighbor = _hex_neighbor(hid, direction)
+                    if neighbor:
+                        escarpment_crossings.append(f"{hid}→{neighbor}")
+        escarpment_crossings.sort()
+
         impassable_parts = []
         if impassable_all:
             impassable_parts.append(
@@ -266,6 +306,11 @@ No text outside the JSON block. If you have nothing to do, use `"actions": []`.
         if impassable_mot:
             impassable_parts.append(
                 f"Impassable for MOTORIZED units (Salt Marsh): {', '.join(impassable_mot)}"
+            )
+        if escarpment_crossings:
+            impassable_parts.append(
+                "Impassable for MOTORIZED units (escarpment UP — rule 8.42):\n  "
+                + ", ".join(escarpment_crossings)
             )
         impassable_str = (
             "\n".join(impassable_parts)

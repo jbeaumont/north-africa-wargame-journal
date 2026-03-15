@@ -336,9 +336,8 @@ def validate_action(
     try:
         # Use streaming with adaptive thinking; collect the final message
         with client.messages.stream(
-            model="claude-opus-4-6",
+            model="claude-haiku-4-5-20251001",
             max_tokens=1024,
-            thinking={"type": "adaptive"},
             system=[
                 {
                     "type": "text",

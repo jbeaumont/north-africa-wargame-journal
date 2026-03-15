@@ -22,6 +22,7 @@ import anthropic
 from src.agents._client import make_client
 
 from src.models.game_state import GameState, Side
+from src.models.hex import Terrain
 
 log = logging.getLogger("cna")
 
@@ -245,6 +246,33 @@ No text outside the JSON block. If you have nothing to do, use `"actions": []`.
 
         contact_str = ", ".join(contacts) if contacts else "(none)"
 
+        # ── Impassable hex list ───────────────────────────────────────────────
+        # Derive from gs.hexes: Swamp is impassable for everyone; Salt Marsh is
+        # impassable for motorized units. List them so agents don't waste actions
+        # trying to route through them.
+        impassable_all = sorted(
+            hid for hid, h in gs.hexes.items()
+            if h.terrain == Terrain.SWAMP
+        )
+        impassable_mot = sorted(
+            hid for hid, h in gs.hexes.items()
+            if h.terrain == Terrain.SALT_MARSH
+        )
+        impassable_parts = []
+        if impassable_all:
+            impassable_parts.append(
+                f"Impassable for ALL units (Swamp): {', '.join(impassable_all)}"
+            )
+        if impassable_mot:
+            impassable_parts.append(
+                f"Impassable for MOTORIZED units (Salt Marsh): {', '.join(impassable_mot)}"
+            )
+        impassable_str = (
+            "\n".join(impassable_parts)
+            if impassable_parts
+            else "  (none known in loaded map area)"
+        )
+
         # ── OOS guidance ──────────────────────────────────────────────────────
         own_active = [u for u in units.values() if u.get("side") == self.side.value]
         n_oos = sum(1 for u in own_active if u.get("supply_status") != "in_supply")
@@ -270,6 +298,11 @@ Turn {gs.turn} / OpStage {gs.opstage} / Weather: {gs.weather}
 
 ## Your Supply Dumps (move units toward these)
 {dump_str}
+
+## Impassable Hexes (DO NOT route through these)
+{impassable_str}
+Motorized units also cannot cross UP an escarpment hexside (rule 8.42).
+Any hex the engine assigns 999 CP is impassable — never propose a path through it.
 
 ## Enemy Contact
 Enemy presence confirmed at hexes: {contact_str}
@@ -349,9 +382,15 @@ Propose your actions for this OpStage.
         """
         Called by the engine when the Rules Arbiter rejects an action.
         Appends the corrected rule understanding to the rules_mastered file.
+        Skips if this rule_ref already has an entry (deduplication — first
+        clear explanation wins; repetition only adds noise).
         """
         self.memory_dir.mkdir(exist_ok=True)
         path = self.memory_dir / f"{self.side.value}_rules_mastered.md"
+        if path.exists():
+            existing = path.read_text()
+            if f"### Rule {rule_ref}" in existing:
+                return  # already learned this rule
         with open(path, "a") as f:
             f.write(
                 f"\n### Rule {rule_ref} — Turn {gs.turn} / OpStage {gs.opstage}\n"

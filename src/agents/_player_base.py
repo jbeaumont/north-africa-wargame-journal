@@ -7,12 +7,13 @@ Each agent:
   - Reads/writes persistent memory files (strategy + rules mastered).
   - Returns a list of action dicts for the BoardStateAgent dispatcher.
 
-Model: claude-opus-4-6 with adaptive thinking, streaming.
+Model: claude-sonnet-4-6, streaming.
 """
 
 from __future__ import annotations
 
 import json
+import logging
 import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -20,11 +21,82 @@ from typing import Any, Dict, List, Optional
 import anthropic
 from src.agents._client import make_client
 
+from src.engine.hex_map import HexMap
 from src.models.game_state import GameState, Side
+from src.models.hex import (
+    Terrain, HexsideFeature, DIRECTIONS,
+    _ODD_DELTAS, _EVEN_DELTAS, _SECTION_ORDER, _MAX_COL, _MAX_ROW,
+)
+
+log = logging.getLogger("cna")
+
+
+def _hex_neighbor(hex_id: str, direction: str) -> Optional[str]:
+    """Return the hex_id of the neighbour in *direction* from *hex_id*, or None if off-map."""
+    sec = hex_id[0]
+    col = int(hex_id[1:3])
+    row = int(hex_id[3:5])
+    idx = DIRECTIONS.index(direction)
+    deltas = _ODD_DELTAS if col % 2 == 1 else _EVEN_DELTAS
+    dc, dr = deltas[idx]
+    new_col = col + dc
+    new_row = row + dr
+    sec_idx = _SECTION_ORDER.index(sec)
+    if new_col < 1:
+        sec_idx -= 1
+        if sec_idx < 0:
+            return None
+        new_col = _MAX_COL
+    elif new_col > _MAX_COL:
+        sec_idx += 1
+        if sec_idx >= len(_SECTION_ORDER):
+            return None
+        new_col = 1
+    if new_row < 1 or new_row > _MAX_ROW:
+        return None
+    return f"{_SECTION_ORDER[sec_idx]}{new_col:02d}{new_row:02d}"
 
 # ── Paths ──────────────────────────────────────────────────────────────────────
 
-_MEMORY_DIR = Path(__file__).parent.parent.parent / "memory"
+_MEMORY_DIR  = Path(__file__).parent.parent.parent / "memory"
+_TABLES_PATH = Path(__file__).parent.parent.parent / "data" / "extracted" / "rules_tables.json"
+
+# ── Forced tool definition (Fix 1: structured output via tool_choice) ─────────
+# Sonnet 4.6 does not support assistant prefill, so we use forced tool use
+# instead. The model must call this tool, guaranteeing valid JSON output
+# without preamble or markdown analysis blocks.
+_PROPOSE_TOOL: dict = {
+    "name": "propose_actions",
+    "description": (
+        "Submit your proposed tactical actions for this Operations Stage. "
+        "You MUST call this tool. If you have no useful moves, pass actions=[]."
+    ),
+    "input_schema": {
+        "type": "object",
+        "required": ["actions", "strategy_note"],
+        "properties": {
+            "actions": {
+                "type": "array",
+                "description": "List of action dicts (move or combat).",
+                "items": {
+                    "type": "object",
+                    "required": ["action"],
+                    "properties": {
+                        "action":      {"type": "string", "enum": ["move", "combat"]},
+                        "unit_id":     {"type": "string"},
+                        "path":        {"type": "array", "items": {"type": "string"}},
+                        "target_hex":  {"type": "string"},
+                        "combat_type": {"type": "string"},
+                    },
+                },
+            },
+            "strategy_note": {
+                "type": "string",
+                "description": "1–2 sentence note on your plan for the record.",
+            },
+        },
+    },
+}
 
 # ── Action schema shown to the agent ──────────────────────────────────────────
 
@@ -43,9 +115,16 @@ Each element of the `actions` array must be one of:
 ```
 Rules:
 - path must start at the unit's current hex.
+- Every consecutive pair must be ADJACENT (appear as neighbors in the grid above).
+  A two-row jump like C3424→C3426 is NOT adjacent and costs 999 CP.
+  Going from C3424 south two hexes requires two steps: C3424→C3425→C3426.
 - Total CP cost of all hexes entered must not exceed the unit's CPA.
 - Path must not pass through enemy-occupied hexes (unless attacking).
 - Motorized units cost ½ CP per hex on road hexsides.
+- ZOC STOP (rule 8.14): if any hex in the path is in enemy ZOC, the unit
+  STOPS IMMEDIATELY there. Do NOT include further hexes in the path beyond
+  the first ZOC hex — those steps will be rejected. Check "Enemy ZOC Hexes"
+  below before writing any path.
 
 ### Combat (Close Assault)
 ```json
@@ -82,6 +161,15 @@ class PlayerAgent:
         self.side = side
         self.memory_dir = memory_dir or _MEMORY_DIR
         self._client = make_client()
+        self._tec: Optional[dict] = None  # lazy-loaded TEC for HexMap
+
+    def _hex_map(self, gs: GameState) -> HexMap:
+        """Build (or rebuild) a HexMap for the given GameState's hexes."""
+        if self._tec is None:
+            with open(_TABLES_PATH) as f:
+                tables = json.load(f)
+            self._tec = tables["terrain_effects_chart"]["terrain_types"]
+        return HexMap(gs.hexes, self._tec)
 
     # ── Public interface ───────────────────────────────────────────────────────
 
@@ -92,37 +180,53 @@ class PlayerAgent:
         Each action dict matches the BoardStateAgent dispatcher schema.
         Actions will be validated by the Rules Arbiter before execution.
         Retries up to 3 times on transient network errors.
+
+        Fix 1: forced tool use (tool_choice=any) guarantees JSON output.
+        Fix 3: retry once with a stripped-down prompt if 0 actions returned.
         """
         import time
         system = self._system_prompt(gs)
         user   = self._user_message(gs)
 
-        last_exc: Exception = RuntimeError("no attempts made")
-        for attempt in range(3):
-            if attempt:
-                time.sleep(2 ** attempt)
-            try:
-                with self._client.messages.stream(
-                    model="claude-opus-4-6",
-                    max_tokens=4096,
-                    thinking={"type": "adaptive"},
-                    system=system,
-                    messages=[{"role": "user", "content": user}],
-                ) as stream:
-                    msg = stream.get_final_message()
-                break  # success
-            except Exception as exc:
-                last_exc = exc
-                continue
-        else:
+        def _call(user_content: str) -> anthropic.types.Message:
+            last_exc: Exception = RuntimeError("no attempts made")
+            for attempt in range(3):
+                if attempt:
+                    time.sleep(2 ** attempt)
+                try:
+                    with self._client.messages.stream(
+                        model="claude-sonnet-4-6",
+                        max_tokens=8192,
+                        system=system,
+                        tools=[_PROPOSE_TOOL],
+                        tool_choice={"type": "any"},
+                        messages=[{"role": "user", "content": user_content}],
+                    ) as stream:
+                        return stream.get_final_message()
+                except Exception as exc:
+                    last_exc = exc
             raise last_exc
 
+        msg = _call(user)
         result = self._parse_response(msg)
         strategy_note = result.get("strategy_note", "")
         if strategy_note:
             self._append_strategy(strategy_note, gs)
 
-        return result.get("actions", [])
+        actions = result.get("actions", [])
+        if not actions:
+            log.warning(
+                "[%s] 0 actions on first attempt — retrying with hard prompt.",
+                self.side.value,
+            )
+            # Fix 3: retry with a minimal hard prompt — no adjacency tables,
+            # no memory files, just the unit list and a direct order.
+            msg = _call(self._retry_prompt(gs))
+            result = self._parse_response(msg)
+            actions = result.get("actions", [])
+            if not actions:
+                log.warning("[%s] 0 actions after retry — giving up.", self.side.value)
+        return actions
 
     # ── Subclass hooks ─────────────────────────────────────────────────────────
 
@@ -159,15 +263,8 @@ rejected actions waste your commander's time.
 
 {_ACTION_SCHEMA}
 
-## Output Format
-Respond with ONLY a JSON code block containing:
-```json
-{{
-  "actions": [ ...action dicts... ],
-  "strategy_note": "1–2 sentence note on your plan for the record"
-}}
-```
-No text outside the JSON block. If you have nothing to do, use `"actions": []`.
+Call the `propose_actions` tool with your list of actions and a brief strategy note.
+If you have nothing useful to do this OpStage, call it with `"actions": []`.
 """.strip()
 
         return [
@@ -187,6 +284,7 @@ No text outside the JSON block. If you have nothing to do, use `"actions": []`.
         fow    = gs.fog_of_war(self.side)
         units  = fow.get("units", {})
         contacts = fow.get("contact_hexes", [])
+        dumps  = fow.get("supply_dumps", {})
 
         # ── Own units table ────────────────────────────────────────────────────
         rows = []
@@ -208,6 +306,17 @@ No text outside the JSON block. If you have nothing to do, use `"actions": []`.
             + "\n".join(rows) if rows else "(no active units)"
         )
 
+        # ── Supply dumps table ────────────────────────────────────────────────
+        dump_rows = []
+        for d in sorted(dumps.values(), key=lambda x: x.get("label", "")):
+            if d.get("is_dummy"):
+                continue
+            fuel  = "unlimited" if d.get("is_unlimited") else f"{d.get('fuel',0):.0f}"
+            dump_rows.append(
+                f"  {d.get('label') or d.get('id','?'):<22} hex {d.get('hex_id','?'):<6}  fuel:{fuel}"
+            )
+        dump_str = "\n".join(dump_rows) if dump_rows else "  (none)"
+
         # ── Memory files ───────────────────────────────────────────────────────
         strategy_path = self.memory_dir / f"{self.side.value}_strategy.md"
         rules_path    = self.memory_dir / f"{self.side.value}_rules_mastered.md"
@@ -219,13 +328,143 @@ No text outside the JSON block. If you have nothing to do, use `"actions": []`.
 
         contact_str = ", ".join(contacts) if contacts else "(none)"
 
+        # ── Impassable hex list ───────────────────────────────────────────────
+        # Derive from gs.hexes: Swamp is impassable for everyone; Salt Marsh is
+        # impassable for motorized units. List them so agents don't waste actions
+        # trying to route through them.
+        impassable_all = sorted(
+            hid for hid, h in gs.hexes.items()
+            if h.terrain == Terrain.SWAMP
+        )
+        impassable_mot = sorted(
+            hid for hid, h in gs.hexes.items()
+            if h.terrain == Terrain.SALT_MARSH
+        )
+        # Escarpment-UP hexsides: impassable for motorized units (rule 8.42).
+        # Format: "FROM → TO" so agents can avoid the specific crossing.
+        escarpment_crossings: list[str] = []
+        for hid, h in gs.hexes.items():
+            for direction, feature in h.hexsides.items():
+                if feature == HexsideFeature.ESCARPMENT_UP:
+                    neighbor = _hex_neighbor(hid, direction)
+                    if neighbor:
+                        escarpment_crossings.append(f"{hid}→{neighbor}")
+        escarpment_crossings.sort()
+
+        impassable_parts = []
+        if impassable_all:
+            impassable_parts.append(
+                f"Impassable for ALL units (Swamp): {', '.join(impassable_all)}"
+            )
+        if impassable_mot:
+            impassable_parts.append(
+                f"Impassable for MOTORIZED units (Salt Marsh): {', '.join(impassable_mot)}"
+            )
+        if escarpment_crossings:
+            impassable_parts.append(
+                "Impassable for MOTORIZED units (escarpment UP — rule 8.42):\n  "
+                + ", ".join(escarpment_crossings)
+            )
+        impassable_str = (
+            "\n".join(impassable_parts)
+            if impassable_parts
+            else "  (none known in loaded map area)"
+        )
+
+        # ── Enemy ZOC hexes ───────────────────────────────────────────────────
+        # Rule 8.14: a unit entering an enemy ZOC hex must STOP IMMEDIATELY.
+        # Pre-compute the ZOC set so agents can see exactly which hexes are
+        # "stop hexes" before writing any path.
+        enemy_side = Side.AXIS if self.side == Side.COMMONWEALTH else Side.COMMONWEALTH
+        hm = self._hex_map(gs)
+        enemy_units_list = [
+            u for u in gs.units.values()
+            if u.side == enemy_side and u.is_active()
+        ]
+        zoc_set = hm.zoc_hexes(enemy_side, enemy_units_list)
+        if zoc_set:
+            zoc_str = ", ".join(sorted(zoc_set))
+        else:
+            zoc_str = "(none)"
+
+        # ── Per-unit reachable-hex table (1-hop only, CP-remaining units only) ──
+        # Fix 2: only emit adjacency for units that still have CP this OpStage
+        # (units with 0 CP remaining cannot move anyway), and drop the 2-hop
+        # expansion — agents can chain 1-hop pairs themselves. This cuts the
+        # adjacency table by ~70% when many units are low on CP.
+        own_side_units_adj: list[str] = []
+        for u in sorted(gs.units.values(), key=lambda x: x.id):
+            if u.side != self.side or not u.is_active() or not u.hex_id:
+                continue
+            if u.cp_remaining <= 0:
+                continue  # skip units with no movement left
+            nbrs1 = sorted(
+                v for v in hm.neighbors_by_direction(u.hex_id).values()
+                if v is not None
+            )
+            own_side_units_adj.append(
+                f"  {u.id} at {u.hex_id} (CP left: {u.cp_remaining}): "
+                f"{', '.join(nbrs1)}"
+            )
+        adjacency_str = "\n".join(own_side_units_adj) if own_side_units_adj else "  (none)"
+
+        # ── OOS guidance ──────────────────────────────────────────────────────
+        own_active = [u for u in units.values() if u.get("side") == self.side.value]
+        n_oos = sum(1 for u in own_active if u.get("supply_status") != "in_supply")
+        oos_note = ""
+        if n_oos > 0:
+            oos_note = f"""
+## IMPORTANT: Out-of-Supply Guidance ({n_oos}/{len(own_active)} units OOS)
+Out-of-supply units are NOT immobile — you MUST still propose actions:
+- Move OOS units TOWARD your nearest supply dump (listed above) to restore supply.
+- OOS units may still ATTACK enemy units, especially other OOS enemies (equal footing).
+- Staying stationary accomplishes nothing. Every OpStage you fail to move is wasted.
+- Do NOT return an empty actions list just because units are out of supply.
+Supply dumps you can move toward are listed in "Your Supply Dumps" above.
+"""
+
         return f"""## Situation Report — {gs.historical_date_str()}
 Turn {gs.turn} / OpStage {gs.opstage} / Weather: {gs.weather}
 
 {narrative}
-
+{oos_note}
 ## Your Units
 {unit_table}
+
+## Your Supply Dumps (move units toward these)
+{dump_str}
+
+## Hex Grid — How to Build Valid Paths
+The board is a staggered-offset hex grid.  Hex IDs are <Section><Col:2d><Row:2d>
+(e.g. C3424 = section C, column 34, row 24).  The grid covers sections A–E,
+columns 01–60, rows 01–33.  Unoccupied hexes default to Desert (1 CP).
+
+CRITICAL: row numbers do NOT increase by 2 between adjacent hexes in the same column.
+  WRONG path: [C3424, C3426]  ← C3426 is NOT adjacent to C3424; this costs 999 CP.
+  RIGHT path:  [C3424, C3425, C3426]  ← two steps, each 1 row apart.
+
+Each hex has exactly 6 neighbors.  The offsets depend on column parity:
+  Even column (col % 2 == 0): N=(col,row-1) NE=(col+1,row) SE=(col+1,row+1)
+                               S=(col,row+1) SW=(col-1,row+1) NW=(col-1,row)
+  Odd  column (col % 2 == 1): N=(col,row-1) NE=(col+1,row-1) SE=(col+1,row)
+                               S=(col,row+1) SW=(col-1,row)   NW=(col-1,row-1)
+
+Valid 1- and 2-step paths for each of YOUR units (pre-computed — use these directly):
+{adjacency_str}
+RULE: every consecutive pair in your path MUST appear as a 1-hop pair above.
+For a 2-step path [A, B, C]: A→B must be in the 1-hop list AND B→C must appear
+in the 2-hop expansion for B.  For paths longer than 2 steps apply the offset
+formula at each new hex, or chain the 2-hop expansions.
+
+## Impassable Hexes (DO NOT route through these)
+{impassable_str}
+Any hex the engine assigns 999 CP is impassable — never propose a path through it.
+
+## Enemy ZOC Hexes — STOP HERE (rule 8.14)
+{zoc_str}
+Rule 8.14: your unit MUST STOP IMMEDIATELY upon entering any of these hexes.
+If you want to move into a ZOC hex, make it the LAST hex in the path.
+NEVER include additional hexes in the path after a ZOC hex — that portion is auto-rejected.
 
 ## Enemy Contact
 Enemy presence confirmed at hexes: {contact_str}
@@ -239,37 +478,78 @@ Enemy presence confirmed at hexes: {contact_str}
 {rules_text}
 
 ---
-Propose your actions for this OpStage. Remember: conserve supply, respect ZOC,
-and do not enter enemy-occupied hexes without attacking.
+Propose your actions for this OpStage.
+- Enemy ZOC hexes are listed above — stop there; do not enter enemy-occupied hexes without a combat action.
+- If no contacts are visible yet, advance toward known enemy territory or supply dumps.
+- ALWAYS propose at least one move action. This is a direct order.
+  A commander who returns an empty actions list every turn will be relieved of command.
+  If you are uncertain, move your best-supplied unit one hex toward the nearest enemy contact.
+  There is no situation where zero actions is the correct answer while units have CP remaining.
 """
 
     # ── Response parsing ───────────────────────────────────────────────────────
+
+    def _retry_prompt(self, gs: GameState) -> str:
+        """
+        Fix 3: stripped-down prompt for the retry call after 0 actions.
+
+        No adjacency tables, no memory, no narrative — just the unit list
+        and a direct order. Keeps token cost low on the retry path.
+        """
+        fow   = gs.fog_of_war(self.side)
+        units = fow.get("units", {})
+        rows  = []
+        for uid, u in sorted(units.items(), key=lambda x: x[1].get("name", "")):
+            if u.get("side") != self.side.value:
+                continue
+            rows.append(
+                f"  {uid} at {u.get('hex_id','?')} "
+                f"CP:{u.get('cp_remaining',0)}/{u.get('cpa',0)} "
+                f"supply:{u.get('supply_status','?')}"
+            )
+        unit_lines = "\n".join(rows) if rows else "  (none)"
+
+        return (
+            f"Turn {gs.turn} / OpStage {gs.opstage}. "
+            f"Your previous response could not be parsed as JSON.\n\n"
+            f"Your units:\n{unit_lines}\n\n"
+            f"Output ONLY a JSON code block. Move at least one unit one hex. "
+            f"If all units have 0 CP remaining, return {{\"actions\": [], "
+            f"\"strategy_note\": \"no CP remaining\"}}."
+        )
 
     def _parse_response(self, msg: anthropic.types.Message) -> Dict[str, Any]:
         """
         Extract the JSON object from Claude's response text.
 
         Tries to find a ```json ... ``` block first, then falls back to the
-        outermost {...} in the response. Returns empty dict on failure.
+        outermost {...} in the response. Logs a warning on failure.
         """
+        # Fix 1: with forced tool use the response is always a tool_use block.
+        # Extract the input dict directly — no regex, no JSON parsing needed.
+        for block in msg.content:
+            if block.type == "tool_use" and block.name == "propose_actions":
+                return block.input  # already a dict
+
+        # Fallback: if somehow a text block arrived (e.g. stop_reason=end_turn
+        # on the retry path where tool_choice wasn't applied), try text parsing.
         text = next((b.text for b in msg.content if b.type == "text"), "")
+        if text:
+            m = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text, re.DOTALL)
+            if m:
+                try:
+                    return json.loads(m.group(1))
+                except json.JSONDecodeError:
+                    pass
+            m = re.search(r"\{.*\}", text, re.DOTALL)
+            if m:
+                try:
+                    return json.loads(m.group())
+                except json.JSONDecodeError:
+                    pass
 
-        # Try fenced code block
-        m = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text, re.DOTALL)
-        if m:
-            try:
-                return json.loads(m.group(1))
-            except json.JSONDecodeError:
-                pass
-
-        # Fall back to first outermost brace match
-        m = re.search(r"\{.*\}", text, re.DOTALL)
-        if m:
-            try:
-                return json.loads(m.group())
-            except json.JSONDecodeError:
-                pass
-
+        content_types = [b.type for b in msg.content]
+        log.warning("Could not extract actions; block types: %s", content_types)
         return {"actions": [], "strategy_note": ""}
 
     # ── Memory helpers ─────────────────────────────────────────────────────────
@@ -289,9 +569,15 @@ and do not enter enemy-occupied hexes without attacking.
         """
         Called by the engine when the Rules Arbiter rejects an action.
         Appends the corrected rule understanding to the rules_mastered file.
+        Skips if this rule_ref already has an entry (deduplication — first
+        clear explanation wins; repetition only adds noise).
         """
         self.memory_dir.mkdir(exist_ok=True)
         path = self.memory_dir / f"{self.side.value}_rules_mastered.md"
+        if path.exists():
+            existing = path.read_text()
+            if f"### Rule {rule_ref}" in existing:
+                return  # already learned this rule
         with open(path, "a") as f:
             f.write(
                 f"\n### Rule {rule_ref} — Turn {gs.turn} / OpStage {gs.opstage}\n"

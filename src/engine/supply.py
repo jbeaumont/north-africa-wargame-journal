@@ -230,6 +230,19 @@ def is_in_supply(
             if dump.hex_id == hex_id:
                 return True
 
+        # Rule 32.16: "Supply Unit" means the supply counter on the map, not
+        # just static depots.  Supply Unit counters (UnitType.SUPPLY) placed
+        # by the scenario or moved by the player also serve as endpoints.
+        for su in game_state.units.values():
+            if su.side != unit.side:
+                continue
+            if su.type != UnitType.SUPPLY:
+                continue
+            if su.is_eliminated():
+                continue
+            if su.hex_id == hex_id:
+                return True
+
         # Expand to neighbours
         for nbr in hex_map.neighbors(hex_id):
             # rule 32.16: supply line blocked by enemy ZOC unless a friendly

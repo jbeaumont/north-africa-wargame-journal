@@ -352,21 +352,31 @@ No text outside the JSON block. If you have nothing to do, use `"actions": []`.
         else:
             zoc_str = "(none)"
 
-        # ── Per-unit legal next-hex list ──────────────────────────────────────
-        # Rather than exposing the raw offset algebra (confusing), pre-compute
-        # the 6 actual neighbors for every active friendly unit's current hex.
-        # Agents simply pick the best neighbor; they do NOT need to derive
-        # coordinates themselves.
+        # ── Per-unit reachable-hex table (1- and 2-hop) ───────────────────────
+        # Pre-compute both the immediate neighbors AND their neighbors so agents
+        # can build valid 1- or 2-step paths without applying the offset formula
+        # themselves.  Each entry lists: step-1 neighbors, then every (step-1,
+        # step-2) pair so the agent can read off a 2-step path directly.
         own_side_units_adj: list[str] = []
         for u in sorted(gs.units.values(), key=lambda x: x.id):
             if u.side != self.side or not u.is_active() or not u.hex_id:
                 continue
-            nbrs = sorted(
+            nbrs1 = sorted(
                 v for v in hm.neighbors_by_direction(u.hex_id).values()
                 if v is not None
             )
+            # Build 2-hop table: for each step-1 neighbor list ITS neighbors
+            two_hop_parts: list[str] = []
+            for n1 in nbrs1:
+                nbrs2 = sorted(
+                    v for v in hm.neighbors_by_direction(n1).values()
+                    if v is not None and v != u.hex_id  # exclude backtrack
+                )
+                two_hop_parts.append(f"{n1}→[{', '.join(nbrs2)}]")
             own_side_units_adj.append(
-                f"  {u.id} (at {u.hex_id}): neighbors = {', '.join(nbrs)}"
+                f"  {u.id} at {u.hex_id}:\n"
+                f"    1-hop: {', '.join(nbrs1)}\n"
+                f"    2-hop: {' | '.join(two_hop_parts)}"
             )
         adjacency_str = "\n".join(own_side_units_adj) if own_side_units_adj else "  (none)"
 
@@ -411,10 +421,12 @@ Each hex has exactly 6 neighbors.  The offsets depend on column parity:
   Odd  column (col % 2 == 1): N=(col,row-1) NE=(col+1,row-1) SE=(col+1,row)
                                S=(col,row+1) SW=(col-1,row)   NW=(col-1,row-1)
 
-For your convenience, the valid neighbors of each of YOUR units' current hexes:
+Valid 1- and 2-step paths for each of YOUR units (pre-computed — use these directly):
 {adjacency_str}
-Use ONLY these neighbor IDs as the next step from each unit's position.
-Building longer paths: apply the same offset rule at each intermediate hex.
+RULE: every consecutive pair in your path MUST appear as a 1-hop pair above.
+For a 2-step path [A, B, C]: A→B must be in the 1-hop list AND B→C must appear
+in the 2-hop expansion for B.  For paths longer than 2 steps apply the offset
+formula at each new hex, or chain the 2-hop expansions.
 
 ## Impassable Hexes (DO NOT route through these)
 {impassable_str}

@@ -228,14 +228,20 @@ VALIDATION GUIDELINES for {action_type}:
 
 {"MOVE:" + chr(10) + chr(10).join([
 "- A unit may never enter a hex containing an enemy unit (rule 8.13).",
-"- If a unit moves into an enemy ZOC, it MUST stop immediately (rule 8.14).",
+"- ZOC STOP (rule 8.14): if a hex in the path is in `zoc_hexes`, the unit stops",
+"  IMMEDIATELY upon entering it.  A path that ENDS at a ZOC hex is LEGAL — the",
+"  unit simply halts there.  Only reject if there are additional hexes in the path",
+"  AFTER the ZOC hex (i.e. the unit would continue past where it must stop).",
 "- To exit an enemy ZOC: 2 CP if in Contact, 4 CP if Engaged (rule 8.15).",
 "- A unit may NOT voluntarily exit a ZOC directly into another enemy ZOC unless rule 10.24 applies.",
 "- Total CP cost (including ZOC exit cost) must not push breakdown points beyond the unit's breakdown rating before checking.",
 "- Non-motorized units (CPA ≤ 10) may not voluntarily exceed 150% of base CPA (rule 8.17).",
 "- No vehicle may move UP an escarpment (rule 8.42).",
-"- The engine has pre-computed total_cp_cost. Check it against cp_remaining and CPA limits.",
-"- If cp_remaining < total_cp_cost AND the unit is non-motorized AND that would exceed 150% CPA: invalid.",
+"- The engine has pre-computed total_cp_cost AND path_hex_costs. Trust them.",
+"  A hex cost of 999 means non-adjacent or impassable.  If ANY hex cost is 999, reject.",
+"  Otherwise, trust the engine values — do NOT re-derive costs from terrain names.",
+"- IMPORTANT: if your step-by-step analysis concludes that every rule is satisfied,",
+"  return {\"valid\": true}.  Never emit {\"valid\": false} after concluding the move is valid.",
 ]) if action_type == "move" else ""}
 
 {"COMBAT:" + chr(10) + chr(10).join([

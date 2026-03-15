@@ -26,13 +26,14 @@ import json
 import logging
 import sys
 import traceback
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional, Tuple
 
 import anthropic
 
 from src.agents.board_state import BoardStateAgent
-from src.agents.rules_arbiter import validate_action
+from src.agents.rules_arbiter import validate_action, mechanical_precheck
 from src.agents.player_allied import AlliedPlayerAgent
 from src.agents.player_axis import AxisPlayerAgent
 from src.agents.journal import JournalAgent
@@ -57,6 +58,62 @@ _MEMORY_DIR = _REPO_ROOT / "memory"
 
 # ── Action application helpers ────────────────────────────────────────────────
 
+# Maximum concurrent arbiter API calls.  Anthropic rate limits are per-minute
+# token-based, not per-request, so 8 threads is safe and empirically fast.
+_ARBITER_MAX_WORKERS = 8
+
+
+def _build_verdicts(
+    actions: List[Dict[str, Any]],
+    board: BoardStateAgent,
+    client: anthropic.Anthropic,
+) -> List[Tuple[Dict[str, Any], Dict[str, Any], dict]]:
+    """
+    Phase 1 of action processing: validate all actions and return verdicts.
+
+    For each action:
+      1. Build engine context (deterministic, fast, sequential — board state
+         must be consistent for each context snapshot).
+      2. Run mechanical_precheck — reject obvious violations without an API call.
+      3. Remaining actions are validated in parallel via ThreadPoolExecutor.
+
+    Returns a list of (action, context, verdict) in original proposal order.
+    """
+    # Step 1 + 2: build contexts and run mechanical pre-checks sequentially.
+    # Context building reads board state, so it must stay serial.
+    entries: List[Tuple[Dict[str, Any], Dict[str, Any], Optional[dict]]] = []
+    for action in actions:
+        action_type = action.get("action", "")
+        if action_type not in ("move", "combat"):
+            # Engine-internal actions (supply, weather, etc.) skip validation.
+            entries.append((action, {}, {"valid": True}))
+            continue
+
+        context = board.build_action_context(action)
+        verdict = mechanical_precheck(action, context)  # None → needs arbiter
+        entries.append((action, context, verdict))
+
+    # Step 3: fire arbiter API calls in parallel for those that need it.
+    needs_arbiter = [i for i, (_, _, v) in enumerate(entries) if v is None]
+
+    if needs_arbiter:
+        n_workers = min(_ARBITER_MAX_WORKERS, len(needs_arbiter))
+        log.debug("Firing %d arbiter calls with %d workers", len(needs_arbiter), n_workers)
+
+        with ThreadPoolExecutor(max_workers=n_workers) as pool:
+            future_to_idx = {
+                pool.submit(validate_action, entries[i][0], entries[i][1], client=client): i
+                for i in needs_arbiter
+            }
+            for future in as_completed(future_to_idx):
+                i = future_to_idx[future]
+                action, context, _ = entries[i]
+                entries[i] = (action, context, future.result())
+
+    # All entries now have a verdict.
+    return [(a, c, v) for a, c, v in entries]  # type: ignore[misc]
+
+
 def _apply_validated(
     board: BoardStateAgent,
     player_agent,
@@ -65,35 +122,38 @@ def _apply_validated(
     side_label: str,
 ) -> None:
     """
-    Validate each proposed action through the Rules Arbiter and apply it
-    to the board.  Rejected actions are logged and fed back to the player
-    agent's rules-mastered memory so it learns over time.
+    Validate all proposed actions (in parallel where possible) then apply
+    valid ones sequentially to the board.
+
+    Two-phase approach:
+      Phase 1 (_build_verdicts): all contexts built + arbiter called in parallel.
+      Phase 2: valid actions applied to board state in original order.
+
+    Rejected actions are logged and fed back to the player agent's
+    rules-mastered memory so it learns over time.
     """
-    for action in actions:
+    # Phase 1: parallel validation (board state not mutated here)
+    validated = _build_verdicts(actions, board, client)
+
+    # Phase 2: sequential application (board state mutated here)
+    for action, _context, verdict in validated:
         action_type = action.get("action", "unknown")
         unit_id = action.get("unit_id", "")
 
-        # Only move and combat go through the arbiter; other action types
-        # (supply, weather, end_opstage) are engine-internal and always valid.
-        if action_type in ("move", "combat"):
-            context = board.build_action_context(action)
-            verdict = validate_action(action, context, client=client)
-
-            if not verdict.get("valid", False):
-                reason = verdict.get("reason", "(no reason)")
-                rule_ref = verdict.get("rule_ref", "")
-                log.warning(
-                    "[%s] Arbiter REJECTED %s for %s: %s (rule %s)",
-                    side_label, action_type, unit_id, reason, rule_ref,
+        if not verdict.get("valid", False):
+            reason = verdict.get("reason", "(no reason)")
+            rule_ref = verdict.get("rule_ref", "")
+            log.warning(
+                "[%s] Arbiter REJECTED %s for %s: %s (rule %s)",
+                side_label, action_type, unit_id, reason, rule_ref,
+            )
+            if rule_ref:
+                player_agent.append_rules_learned(
+                    rule_ref,
+                    f"Rejected {action_type} for {unit_id}: {reason}",
+                    board.gs,
                 )
-                # Teach the agent what it got wrong
-                if rule_ref:
-                    player_agent.append_rules_learned(
-                        rule_ref,
-                        f"Rejected {action_type} for {unit_id}: {reason}",
-                        board.gs,
-                    )
-                continue  # skip the rejected action
+            continue
 
         result = board.apply_action(action)
         if result.success:

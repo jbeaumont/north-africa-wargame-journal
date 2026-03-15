@@ -1,0 +1,199 @@
+{
+  "rule": "52.6",
+  "description": "The Italian Pasta Rule. Each Italian battalion must receive an additional 1 Water Point (Pasta Point) when Stores are distributed. A battalion not receiving its Pasta Point: (1) may not voluntarily exceed its CPA that Turn, and (2) if its Cohesion Level is -10 or worse, immediately becomes Disorganized as if it had reached -26. When such a unit later receives its Pasta Point, it regains its original Cohesion Level (the level before disorganization).",
+  "cases": [
+    {
+      "id": "received_pasta_not_previously_restricted",
+      "description": "Unit received Pasta Point and was not previously restricted: no change, no event",
+      "rule_clause": "each Italian battalion, when it receives its Stores, must receive an additional 1 Point of Water when Stores are distributed",
+      "inputs": {
+        "pasta_rule": true,
+        "cohesion": 0,
+        "status_before": "active",
+        "pasta_restricted_before": false,
+        "received_pasta_point": true
+      },
+      "expected": {
+        "pasta_restricted_after": false,
+        "status_after": "active",
+        "event_emitted": false,
+        "event_type": null,
+        "forced_disorganized": null
+      }
+    },
+    {
+      "id": "received_pasta_was_restricted_status_active",
+      "description": "Unit receives Pasta Point after having been restricted; unit was active so no recovery needed: clear flag, no status change, no event",
+      "rule_clause": "As soon as such units get their Pasta Point, they regain the original Cohesion Level (i.e., the level they had before they disintegrated)",
+      "inputs": {
+        "pasta_rule": true,
+        "cohesion": -5,
+        "status_before": "active",
+        "pasta_restricted_before": true,
+        "received_pasta_point": true
+      },
+      "expected": {
+        "pasta_restricted_after": false,
+        "status_after": "active",
+        "event_emitted": false,
+        "event_type": null,
+        "forced_disorganized": null
+      }
+    },
+    {
+      "id": "received_pasta_was_restricted_disorganized_cohesion_minus_10",
+      "description": "Unit receives Pasta Point; was pasta-disorganized (cohesion -10, which triggered forced disorganization); cohesion level is genuine -10 (not genuinely -26): restore to active and emit recovery event",
+      "rule_clause": "As soon as such units get their Pasta Point, they regain the original Cohesion Level (i.e., the level they had before they disintegrated)",
+      "inputs": {
+        "pasta_rule": true,
+        "cohesion": -10,
+        "status_before": "disorganized",
+        "pasta_restricted_before": true,
+        "received_pasta_point": true
+      },
+      "expected": {
+        "pasta_restricted_after": false,
+        "status_after": "active",
+        "event_emitted": true,
+        "event_type": "recovery",
+        "forced_disorganized": null
+      },
+      "note": "The unit's true cohesion is -10 (not genuinely -26), so it was disorganized purely due to the Pasta Rule. On receiving the Pasta Point it regains its original cohesion level (-10) and is no longer treated as -26."
+    },
+    {
+      "id": "received_pasta_was_restricted_disorganized_cohesion_minus_26",
+      "description": "Unit receives Pasta Point; was disorganized but cohesion is genuinely -26 (not pasta-caused): clear flag, keep disorganized, no recovery event",
+      "rule_clause": "As soon as such units get their Pasta Point, they regain the original Cohesion Level (i.e., the level they had before they disintegrated)",
+      "inputs": {
+        "pasta_rule": true,
+        "cohesion": -26,
+        "status_before": "disorganized",
+        "pasta_restricted_before": true,
+        "received_pasta_point": true
+      },
+      "expected": {
+        "pasta_restricted_after": false,
+        "status_after": "disorganized",
+        "event_emitted": false,
+        "event_type": null,
+        "forced_disorganized": null
+      },
+      "note": "Cohesion is genuinely -26 so the unit was already at the disorganization threshold independently of the Pasta Rule. Restoring the 'original Cohesion Level' (-26) still leaves the unit disorganized."
+    },
+    {
+      "id": "no_pasta_cohesion_zero_active",
+      "description": "Unit did not receive Pasta Point; cohesion 0 (not -10 or worse): set restricted flag, keep active, emit pasta_rule event, not forced-disorganized",
+      "rule_clause": "Any battalion-sized unit that does not receive their Pasta Point (one Water point) may not voluntarily exceed their CPA that Turn. Furthermore, Italian battalions not receiving their Pasta Point that have a Cohesion Level of -10 or worse immediately become Disorganized",
+      "inputs": {
+        "pasta_rule": true,
+        "cohesion": 0,
+        "status_before": "active",
+        "pasta_restricted_before": false,
+        "received_pasta_point": false
+      },
+      "expected": {
+        "pasta_restricted_after": true,
+        "status_after": "active",
+        "event_emitted": true,
+        "event_type": "pasta_rule",
+        "forced_disorganized": false
+      }
+    },
+    {
+      "id": "no_pasta_cohesion_minus_5_active",
+      "description": "Unit did not receive Pasta Point; cohesion -5 (above -10 threshold): set restricted flag, keep active, emit pasta_rule event, not forced-disorganized",
+      "rule_clause": "Italian battalions not receiving their Pasta Point that have a Cohesion Level of -10 or worse immediately become Disorganized",
+      "inputs": {
+        "pasta_rule": true,
+        "cohesion": -5,
+        "status_before": "active",
+        "pasta_restricted_before": false,
+        "received_pasta_point": false
+      },
+      "expected": {
+        "pasta_restricted_after": true,
+        "status_after": "active",
+        "event_emitted": true,
+        "event_type": "pasta_rule",
+        "forced_disorganized": false
+      }
+    },
+    {
+      "id": "no_pasta_cohesion_minus_10_active",
+      "description": "Unit did not receive Pasta Point; cohesion exactly -10 (at threshold): set restricted flag, force disorganized as-if -26, emit pasta_rule event, forced_disorganized=true",
+      "rule_clause": "Italian battalions not receiving their Pasta Point that have a Cohesion Level of -10 or worse immediately become Disorganized, as if they had reached -26",
+      "inputs": {
+        "pasta_rule": true,
+        "cohesion": -10,
+        "status_before": "active",
+        "pasta_restricted_before": false,
+        "received_pasta_point": false
+      },
+      "expected": {
+        "pasta_restricted_after": true,
+        "status_after": "disorganized",
+        "event_emitted": true,
+        "event_type": "pasta_rule",
+        "forced_disorganized": true
+      }
+    },
+    {
+      "id": "no_pasta_cohesion_minus_15_active",
+      "description": "Unit did not receive Pasta Point; cohesion -15 (worse than -10): set restricted flag, force disorganized as-if -26, same result as -10 case",
+      "rule_clause": "Italian battalions not receiving their Pasta Point that have a Cohesion Level of -10 or worse immediately become Disorganized, as if they had reached -26",
+      "inputs": {
+        "pasta_rule": true,
+        "cohesion": -15,
+        "status_before": "active",
+        "pasta_restricted_before": false,
+        "received_pasta_point": false
+      },
+      "expected": {
+        "pasta_restricted_after": true,
+        "status_after": "disorganized",
+        "event_emitted": true,
+        "event_type": "pasta_rule",
+        "forced_disorganized": true
+      }
+    },
+    {
+      "id": "no_pasta_cohesion_minus_10_already_disorganized",
+      "description": "Unit did not receive Pasta Point; cohesion -10; unit was already disorganized before this turn: set restricted flag, no status change needed (already disorganized), emit pasta_rule event, forced_disorganized=false (no new disorganization occurred)",
+      "rule_clause": "Italian battalions not receiving their Pasta Point that have a Cohesion Level of -10 or worse immediately become Disorganized, as if they had reached -26",
+      "inputs": {
+        "pasta_rule": true,
+        "cohesion": -10,
+        "status_before": "disorganized",
+        "pasta_restricted_before": false,
+        "received_pasta_point": false
+      },
+      "expected": {
+        "pasta_restricted_after": true,
+        "status_after": "disorganized",
+        "event_emitted": true,
+        "event_type": "pasta_rule",
+        "forced_disorganized": false
+      },
+      "note": "The rule says units 'immediately become Disorganized'. This unit was already disorganized, so forced_disorganized=false because the status did not change as a result of the Pasta Rule firing."
+    },
+    {
+      "id": "no_pasta_cohesion_minus_26_already_disorganized",
+      "description": "Unit did not receive Pasta Point; cohesion genuinely -26 and already disorganized: set restricted flag, keep disorganized, emit pasta_rule event, forced_disorganized=false",
+      "rule_clause": "Italian battalions not receiving their Pasta Point that have a Cohesion Level of -10 or worse immediately become Disorganized, as if they had reached -26",
+      "inputs": {
+        "pasta_rule": true,
+        "cohesion": -26,
+        "status_before": "disorganized",
+        "pasta_restricted_before": false,
+        "received_pasta_point": false
+      },
+      "expected": {
+        "pasta_restricted_after": true,
+        "status_after": "disorganized",
+        "event_emitted": true,
+        "event_type": "pasta_rule",
+        "forced_disorganized": false
+      }
+    }
+  ]
+}

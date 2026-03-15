@@ -1,0 +1,339 @@
+{
+  "rule": "8.37",
+  "description": "Terrain Effects Chart movement cost cases. Base CP costs come from the TEC (rule 8.37, data/extracted/rules_tables.json image-read values). Hexside modifiers add to or replace base terrain costs. Road movement for motorized units costs 1/2 CP per hex (rule 8.31: 'costs range from 1/2 CP for roads (for motorized units)'). Track movement costs 1 CP per hex (rule 8.46: 'Movement along tracks is at 1 CP per hex'). Road hexside (TEC note 6) negates all hexside feature entry costs and BD. Track hexside (TEC note 8) halves hexside feature costs and BD. All terrain names use the fixture schema vocabulary matching the TEC.",
+  "cases": [
+    {
+      "id": "desert_no_hexside_motorized",
+      "description": "Desert hex, no hexside feature, motorized unit: base Desert CP cost",
+      "rule_clause": "Desert: CP cost to Enter or Cross — Mot: 1, non-Mot: 1 (TEC, rule 8.37; see data/extracted/rules_tables.json)",
+      "inputs": {
+        "to_terrain": "Desert",
+        "hexside_feature": "None",
+        "motorized": true,
+        "weather": "clear"
+      },
+      "expected": {
+        "cp_cost": 1.0,
+        "notes": "Base Desert terrain cost, motorized. TEC: cp_mot=1. Rule 8.45 confirms Desert hexes are defined as Libyan Sand Desert."
+      }
+    },
+    {
+      "id": "desert_no_hexside_non_motorized",
+      "description": "Desert hex, no hexside feature, non-motorized (foot infantry): base Desert non-motorized CP cost",
+      "rule_clause": "Desert: CP cost to Enter or Cross — non-Mot: 1 (TEC, rule 8.37)",
+      "inputs": {
+        "to_terrain": "Desert",
+        "hexside_feature": "None",
+        "motorized": false,
+        "weather": "clear"
+      },
+      "expected": {
+        "cp_cost": 1.0,
+        "notes": "Base Desert terrain cost, non-motorized. TEC: cp_non_mot=1. Same as motorized for Desert."
+      }
+    },
+    {
+      "id": "desert_road_hexside_motorized",
+      "description": "Desert hex, Road hexside, motorized: moving along road gives fixed 1/2 CP per hex (rule 8.31)",
+      "rule_clause": "The costs range from 1/2 CP for roads (for motorized units) [rule 8.31]. TEC note 6: Negates all hexside terrain feature entry costs and Breakdown Point Values.",
+      "inputs": {
+        "to_terrain": "Desert",
+        "hexside_feature": "Road",
+        "motorized": true,
+        "weather": "clear"
+      },
+      "expected": {
+        "cp_cost": 0.5,
+        "notes": "Rule 8.31 explicitly states 1/2 CP for roads for motorized units. TEC Road row has -1 modifier but rule 8.31 prose gives the fixed 0.5 CP rate. OCR of 8.31 reads 'costs range from % CP for roads' where '%' is the OCR rendering of the '1/2' fraction glyph. TEC note 6 also negates any hexside feature cost."
+      }
+    },
+    {
+      "id": "desert_road_hexside_non_motorized",
+      "description": "Desert hex, Road hexside, non-motorized: road reduces terrain cost by 1 CP (TEC Road modifier -1), floor at terrain cost minus modifier",
+      "rule_clause": "Road: CP cost modifier — non-Mot: -1 (TEC, rule 8.37, note 6: Negates all hexside terrain feature entry costs and Breakdown Point Values)",
+      "inputs": {
+        "to_terrain": "Desert",
+        "hexside_feature": "Road",
+        "motorized": false,
+        "weather": "clear"
+      },
+      "expected": {
+        "cp_cost": 0.0,
+        "notes": "TEC Road cp_non_mot modifier is -1. Desert base non-mot = 1. 1 + (-1) = 0 CP. Rule 8.31 only specifies the 1/2 CP minimum for motorized on roads; no minimum is stated for non-motorized. If the engine enforces a minimum of 1 CP for any movement, this becomes 1.0. OCR ambiguity: actual minimum for non-motorized road movement not found explicitly in rules text.",
+        "ambiguity": "The rules text (8.31) only states '1/2 CP for roads' for motorized units. The minimum for non-motorized units on roads is not stated explicitly. The TEC -1 modifier applied to Desert (1 CP) yields 0. If a minimum of 1 CP per hex is enforced universally this would be 1.0. Mark as ambiguous."
+      }
+    },
+    {
+      "id": "desert_track_hexside_motorized",
+      "description": "Desert hex, Track hexside, motorized: track costs 1 CP per hex regardless of terrain (rule 8.46)",
+      "rule_clause": "Movement along tracks is at 1 CP per hex and halves most hexside crossing CP costs [rule 8.46]. TEC note 7: Applies only to the units/truck points in that hex at that time.",
+      "inputs": {
+        "to_terrain": "Desert",
+        "hexside_feature": "Track",
+        "motorized": true,
+        "weather": "clear"
+      },
+      "expected": {
+        "cp_cost": 1.0,
+        "notes": "Rule 8.46 states track movement is 1 CP per hex. TEC Track row: cp_mot = same_as_terrain (but rule 8.46 prose overrides with fixed 1 CP). TEC note 7 says applies only to units/truck points in that hex. Desert base = 1 CP; track gives 1 CP. Result is 1.0."
+      }
+    },
+    {
+      "id": "rough_no_hexside_motorized",
+      "description": "Rough hex, no hexside feature, motorized unit: base Rough terrain cost",
+      "rule_clause": "Rough: CP cost to Enter or Cross — Mot: 2, non-Mot: 2 (TEC, rule 8.37)",
+      "inputs": {
+        "to_terrain": "Rough",
+        "hexside_feature": "None",
+        "motorized": true,
+        "weather": "clear"
+      },
+      "expected": {
+        "cp_cost": 2.0,
+        "notes": "Base Rough terrain cost, motorized. TEC: cp_mot=2."
+      }
+    },
+    {
+      "id": "rough_no_hexside_non_motorized",
+      "description": "Rough hex, no hexside feature, non-motorized: base Rough terrain cost",
+      "rule_clause": "Rough: CP cost to Enter or Cross — non-Mot: 2 (TEC, rule 8.37)",
+      "inputs": {
+        "to_terrain": "Rough",
+        "hexside_feature": "None",
+        "motorized": false,
+        "weather": "clear"
+      },
+      "expected": {
+        "cp_cost": 2.0,
+        "notes": "Base Rough terrain cost, non-motorized. TEC: cp_non_mot=2."
+      }
+    },
+    {
+      "id": "rough_wadi_hexside_motorized_clear",
+      "description": "Rough hex, Wadi hexside, motorized, clear weather: base Rough + Wadi hexside cost",
+      "rule_clause": "All units expend CP's to cross a Wadi hexside [rule 8.41]. Wadi hexside: +2 CP both Mot and non-Mot (TEC, rule 8.37). Roads negate wadis for movement purposes, while Tracks halve the cost to cross [rule 8.41].",
+      "inputs": {
+        "to_terrain": "Rough",
+        "hexside_feature": "Wadi",
+        "motorized": true,
+        "weather": "clear"
+      },
+      "expected": {
+        "cp_cost": 4.0,
+        "notes": "Rough base cp_mot=2 + Wadi hexside +2 = 4 CP. Clear weather so no rainstorm prohibition. TEC Wadi_hexside cp_mot=+2."
+      }
+    },
+    {
+      "id": "rough_ridge_hexside_motorized",
+      "description": "Rough hex, Ridge hexside, motorized: base Rough + Ridge hexside cost",
+      "rule_clause": "Ridge hexside: +1 CP for both Mot and non-Mot (TEC, rule 8.37). Rule 8.43: All units may cross these hexsides at a variety of Movement and Breakdown costs; see 8.37.",
+      "inputs": {
+        "to_terrain": "Rough",
+        "hexside_feature": "Ridge",
+        "motorized": true,
+        "weather": "clear"
+      },
+      "expected": {
+        "cp_cost": 3.0,
+        "notes": "Rough base cp_mot=2 + Ridge hexside +1 = 3 CP. TEC Ridge_hexside cp_mot=+1."
+      }
+    },
+    {
+      "id": "salt_marsh_no_hexside_motorized",
+      "description": "Salt Marsh hex, no hexside, motorized unit (standard): Prohibited — most motorized may not enter Salt Marsh without track",
+      "rule_clause": "Vehicles other than Light Trucks, Recce-type units, and motorcycle infantry may only enter/leave the hex on a track [TEC note 2, rule 8.44]. Salt Marsh cp_mot: P (TEC, rule 8.37).",
+      "inputs": {
+        "to_terrain": "Salt_Marsh",
+        "hexside_feature": "None",
+        "motorized": true,
+        "weather": "clear"
+      },
+      "expected": {
+        "cp_cost": "P",
+        "notes": "Standard motorized unit (tank, truck convoy, AFV, SP artillery) may not enter Salt Marsh without a track or road. TEC cp_mot='P'. Rule 8.44 confirms. The TEC note 2 lists specific exceptions (Light Trucks, Recce-type, motorcycle infantry) that may use a track — those exceptions not covered by this case."
+      }
+    },
+    {
+      "id": "salt_marsh_no_hexside_non_motorized",
+      "description": "Salt Marsh hex, no hexside, non-motorized (foot infantry): 5 CP cost",
+      "rule_clause": "Salt Marsh: cp_non_mot = 5 (TEC, rule 8.37). Rule 8.44: Salt marshes are ... no fun for infantry either.",
+      "inputs": {
+        "to_terrain": "Salt_Marsh",
+        "hexside_feature": "None",
+        "motorized": false,
+        "weather": "clear"
+      },
+      "expected": {
+        "cp_cost": 5.0,
+        "notes": "Non-motorized (foot) infantry may enter Salt Marsh at 5 CP per TEC. TEC cp_non_mot=5. Rule 8.44 does not prohibit infantry."
+      }
+    },
+    {
+      "id": "swamp_no_hexside_motorized",
+      "description": "Swamp hex, no hexside, motorized: Prohibited (impassable to all units)",
+      "rule_clause": "Swamp: cp_mot = P, cp_non_mot = P (TEC, rule 8.37).",
+      "inputs": {
+        "to_terrain": "Swamp",
+        "hexside_feature": "None",
+        "motorized": true,
+        "weather": "clear"
+      },
+      "expected": {
+        "cp_cost": "P",
+        "notes": "Swamp is impassable to all units per TEC. TEC cp_mot='P'."
+      }
+    },
+    {
+      "id": "swamp_no_hexside_non_motorized",
+      "description": "Swamp hex, no hexside, non-motorized (foot infantry): Prohibited (impassable to all units)",
+      "rule_clause": "Swamp: cp_non_mot = P (TEC, rule 8.37).",
+      "inputs": {
+        "to_terrain": "Swamp",
+        "hexside_feature": "None",
+        "motorized": false,
+        "weather": "clear"
+      },
+      "expected": {
+        "cp_cost": "P",
+        "notes": "Swamp is impassable to all units, including foot infantry, per TEC. TEC cp_non_mot='P'."
+      }
+    },
+    {
+      "id": "desert_escarpment_up_motorized",
+      "description": "Any terrain (Desert used), Up Escarpment hexside, motorized: Prohibited — no vehicle may ever move up an escarpment",
+      "rule_clause": "No vehicle may ever move 'up' an escarpment (i.e., cross an escarpment hexside by moving from the down side to the up side) [rule 8.42]. If a Track crosses an escarpment hexside, vehicles may use the Track to move down the escarpment, but never up [rule 8.42].",
+      "inputs": {
+        "to_terrain": "Desert",
+        "hexside_feature": "Escarpment_Up",
+        "motorized": true,
+        "weather": "clear"
+      },
+      "expected": {
+        "cp_cost": "P",
+        "notes": "Rule 8.42 explicitly prohibits any vehicle from crossing an escarpment hexside moving upward, even if a Track is present. TEC Up_Escarpment_hexside cp_mot='P'."
+      }
+    },
+    {
+      "id": "desert_escarpment_up_non_motorized",
+      "description": "Any terrain (Desert used), Up Escarpment hexside, non-motorized foot infantry: cost from TEC (not stated in prose of 8.42)",
+      "rule_clause": "Movement costs for crossing escarpment hexsides are listed in the Terrain Effects Chart (8.37) [rule 8.42]. TEC Up_Escarpment_hexside: cp_non_mot noted as 'P_vehicles' in extracted data — actual numeric value for foot infantry not recoverable from OCR text; must read from scanned TEC image.",
+      "inputs": {
+        "to_terrain": "Desert",
+        "hexside_feature": "Escarpment_Up",
+        "motorized": false,
+        "weather": "clear"
+      },
+      "expected": {
+        "cp_cost": "see_tec",
+        "notes": "Rule 8.42 only prohibits vehicles from crossing escarpment upward. Foot infantry CAN cross up escarpment. The actual CP cost is listed in the TEC (rule 8.37) but the OCR of cna_rules.txt (line 16984) did not capture the numeric value — only the terrain label 'Up Escarpment'. The rules_tables.json extracted value for cp_non_mot is 'P_vehicles' (indicating vehicles are prohibited) but does not give the numeric cost for non-motorized foot. The task prompt suggests 8 CP citing rule 8.42 but rule 8.42 only states '+8 CP' for the Track-DOWN vehicle movement, NOT for foot infantry moving UP. Verify against physical rulebook TEC page 70.",
+        "ambiguity": "OCR does not capture TEC numeric cell values for Up Escarpment non-motorized. Rule 8.42 prose does not state the foot infantry up-escarpment cost. The value 'P_vehicles' in rules_tables.json is a note about vehicle prohibition, not a non-motorized CP cost. Physical TEC page 70 must be consulted."
+      }
+    },
+    {
+      "id": "desert_escarpment_down_motorized",
+      "description": "Any terrain (Desert used), Down Escarpment hexside, motorized (without track): cost from TEC",
+      "rule_clause": "Down Escarpment hexside: cp_mot = +3 (TEC, rule 8.37). Rule 8.42: If a Track crosses an escarpment hexside, vehicles may use the Track to move down the escarpment... The cost for moving down via Track would be +8 CP's and six Breakdown Points.",
+      "inputs": {
+        "to_terrain": "Desert",
+        "hexside_feature": "Escarpment_Down",
+        "motorized": true,
+        "weather": "clear"
+      },
+      "expected": {
+        "cp_cost": 4.0,
+        "notes": "Desert base cp_mot=1 + Down Escarpment hexside +3 = 4 CP. TEC Down_Escarpment_hexside cp_mot=+3. This is the cost WITHOUT a Track. With a Track via 8.42, the cost is instead +8 CP (replacing the standard hexside cost) plus 6 Breakdown Points. This case tests no-track downward crossing."
+      }
+    },
+    {
+      "id": "major_river_no_road_motorized",
+      "description": "Major River hexside, no road/railroad, motorized: Prohibited (only crossable via road or railroad)",
+      "rule_clause": "Major River hexside: May only be crossed if the hexside is crossed by a road or railroad [TEC note 11, rule 8.37]. Major_River_hexside: cp_mot = P (TEC).",
+      "inputs": {
+        "to_terrain": "Clear",
+        "hexside_feature": "Major_River",
+        "motorized": true,
+        "weather": "clear"
+      },
+      "expected": {
+        "cp_cost": "P",
+        "notes": "TEC note 11 (rule 8.37): Major River hexside may only be crossed if the hexside is crossed by a road or railroad. Without road/railroad, crossing is Prohibited for all units. TEC Major_River_hexside cp_mot='P'."
+      }
+    },
+    {
+      "id": "major_river_no_road_non_motorized",
+      "description": "Major River hexside, no road/railroad, non-motorized: Prohibited (only crossable via road or railroad per TEC note 11)",
+      "rule_clause": "Major River hexside: May only be crossed if the hexside is crossed by a road or railroad [TEC note 11, rule 8.37]. Major_River_hexside: cp_non_mot = P (TEC).",
+      "inputs": {
+        "to_terrain": "Clear",
+        "hexside_feature": "Major_River",
+        "motorized": false,
+        "weather": "clear"
+      },
+      "expected": {
+        "cp_cost": "P",
+        "notes": "TEC note 11 (rule 8.37): Major River hexside may only be crossed if the hexside is crossed by a road or railroad. Without road/railroad, crossing is Prohibited for non-motorized units as well. TEC Major_River_hexside cp_non_mot='P'."
+      }
+    },
+    {
+      "id": "wadi_motorized_rainstorm_no_road",
+      "description": "Wadi hexside, motorized, rainstorm weather, no road: Prohibited (rainstorm makes wadis impassable except via road)",
+      "rule_clause": "Players should note that in an Operations Stage in which the Weather is Rainstorm wadis in affected map sections are impassable at all points, except where they are traversed by roads [rule 8.41]. All wadi hexsides are uncrossable during a rainstorm, except by Roads [rule 29.55].",
+      "inputs": {
+        "to_terrain": "Rough",
+        "hexside_feature": "Wadi",
+        "motorized": true,
+        "weather": "rainstorm"
+      },
+      "expected": {
+        "cp_cost": "P",
+        "notes": "Rule 8.41 and rule 29.55 both confirm that wadi hexsides are impassable during rainstorm unless there is a road. Note 8.41 says 'except where they are traversed by roads' (not tracks). A railroad is treated as a road for this purpose per TEC note 10. This case has no road/railroad, so crossing is Prohibited."
+      }
+    },
+    {
+      "id": "minimum_cost_down_slope_desert_motorized",
+      "description": "Desert hex, Down Slope hexside, motorized: base Desert + Down Slope modifier; tests whether result < 1 CP is enforced as minimum",
+      "rule_clause": "Down Slope hexside: cp_mot = -1 (TEC, rule 8.37). Desert cp_mot = 1. Rule 8.31: 'costs range from 1/2 CP for roads (for motorized units)' — the stated minimum is 1/2 CP, not 1 CP.",
+      "inputs": {
+        "to_terrain": "Desert",
+        "hexside_feature": "Slope_Down",
+        "motorized": true,
+        "weather": "clear"
+      },
+      "expected": {
+        "cp_cost": 0.0,
+        "notes": "Desert base cp_mot=1 + Down Slope hexside -1 = 0 CP. Rule 8.31 states the minimum is '1/2 CP for roads' for motorized; it does not state a universal 1 CP minimum. The 1/2 CP figure may only apply to road movement specifically. If a universal 1 CP minimum is enforced, this becomes 1.0. If 1/2 CP is the universal minimum, this becomes 0.5. This case exposes the ambiguity — the TEC math yields 0 CP, but 0 CP movement may be nonsensical. Verify against rulebook.",
+        "ambiguity": "Rule 8.31 names '1/2 CP' as the lower bound only in the context of road movement for motorized. A blanket minimum-1-CP rule was not found in cna_rules.txt OCR search. The task prompt describes a 1.0 CP minimum from rule 8.37, but no such clause was located in the OCR text. This case intentionally surfaces this gap for the test author to resolve against the physical rulebook."
+      }
+    },
+    {
+      "id": "rough_up_slope_motorized",
+      "description": "Rough hex, Up Slope hexside, motorized: base Rough + Up Slope hexside cost",
+      "rule_clause": "Up Slope hexside: cp_mot = +1 (TEC, rule 8.37). Rule 8.43: All units may cross these hexsides at a variety of Movement and Breakdown costs; see 8.37.",
+      "inputs": {
+        "to_terrain": "Rough",
+        "hexside_feature": "Slope_Up",
+        "motorized": true,
+        "weather": "clear"
+      },
+      "expected": {
+        "cp_cost": 3.0,
+        "notes": "Rough base cp_mot=2 + Up Slope hexside +1 = 3 CP. TEC Up_Slope_hexside cp_mot=+1."
+      }
+    },
+    {
+      "id": "oasis_no_hexside_motorized",
+      "description": "Village/Bir/Oasis hex, no hexside, motorized: same CP cost as underlying terrain",
+      "rule_clause": "Village/Bir/Oasis: cp_mot = same_as_terrain, cp_non_mot = same_as_terrain (TEC, rule 8.37). Rule 8.48: Oases do not affect movement.",
+      "inputs": {
+        "to_terrain": "Oasis",
+        "hexside_feature": "None",
+        "motorized": true,
+        "weather": "clear"
+      },
+      "expected": {
+        "cp_cost": "see_tec",
+        "notes": "Rule 8.48 explicitly states 'Oases do not affect movement.' The TEC lists Village/Bir/Oasis as 'same_as_terrain', meaning the CP cost equals whatever the hex terrain type (Clear, Rough, etc.) the oasis overlay sits on. The actual CP cost cannot be determined without knowing the underlying terrain. This fixture records the rule; engine must look up the underlying hex terrain type."
+      }
+    }
+  ]
+}

@@ -1,0 +1,1454 @@
+{
+  "_source": "buildFile.xml",
+  "_note": "CNA uses sideways hex grid (pointy-top hexes, columns E-W). dx=column spacing, dy=row spacing within column. Odd columns staggered by dy/2.",
+  "parameters": {
+    "dx": 72.95,
+    "dy": 85.25,
+    "x0_default": -15,
+    "y0_default": 4,
+    "sideways": true,
+    "hex_size_approx_pixels": 79.1
+  },
+  "coordinate_system": {
+    "format": "SCCRRR where S=section letter (A-E), CC=column (01-60), RR=row (01-33)",
+    "examples": [
+      "A0101",
+      "B3025",
+      "B0117",
+      "C0716"
+    ],
+    "section_order": "A=west(Tunisia/Tripolitania), B=central(Cyrenaica/Tobruk), C=east(Egypt border), D=Egypt, E=deep Egypt/Nile"
+  },
+  "neighbor_directions": {
+    "description": "Pointy-top hex neighbors for odd/even columns",
+    "odd_column": [
+      "N=(col,row-1)",
+      "NE=(col+1,row-1)",
+      "SE=(col+1,row)",
+      "S=(col,row+1)",
+      "SW=(col-1,row)",
+      "NW=(col-1,row-1)"
+    ],
+    "even_column": [
+      "N=(col,row-1)",
+      "NE=(col+1,row)",
+      "SE=(col+1,row+1)",
+      "S=(col,row+1)",
+      "SW=(col-1,row+1)",
+      "NW=(col-1,row)"
+    ]
+  },
+  "boards": {
+    "CNA Original": {
+      "image": "CNA Map Vassal Mitch Guthrie 2021.png",
+      "width": 0,
+      "height": 0,
+      "hex_grid": {
+        "dx": 72.95,
+        "dy": 85.25,
+        "x0": -15.0,
+        "y0": 4.0,
+        "sideways": true
+      }
+    }
+  },
+  "all_boards": {
+    "AL 1st Free French Brigade": {
+      "image": "OC AL 1st Free French Brigade.png",
+      "width": 0,
+      "height": 0
+    },
+    "AL 1st Greek Brigade Group": {
+      "image": "OC AL 1st Greek Brigade Group.png",
+      "width": 0,
+      "height": 0
+    },
+    "AL 2nd Free French Brigade": {
+      "image": "OC AL 2nd Free French Brigade.png",
+      "width": 0,
+      "height": 0
+    },
+    "AL MISC": {
+      "image": "OC Comm Misc-01.png",
+      "width": 0,
+      "height": 0
+    },
+    "AL SGSU": {
+      "image": "",
+      "width": 800,
+      "height": 500
+    },
+    "AL The Polish (Carpathian) Division": {
+      "image": "OC AL The Polish (Carpathian) Division.png",
+      "width": 0,
+      "height": 0
+    },
+    "AL Unasisgned Allied Units": {
+      "image": "OC AL Unasisgned Allied Units.png",
+      "width": 0,
+      "height": 0
+    },
+    "AU 18th Australian Brigade": {
+      "image": "OC AU 18th Australian Brigade.png",
+      "width": 0,
+      "height": 0
+    },
+    "AU 6th Australian Division": {
+      "image": "OC AU 6th Australian Division.png",
+      "width": 0,
+      "height": 0
+    },
+    "AU 9th Australian Division": {
+      "image": "OC AU 9th Australian Division.png",
+      "width": 0,
+      "height": 0
+    },
+    "Allied Aircraft Withdrawal Schedule": {
+      "image": "Allied Aircraft Withdrawal Schedule.png",
+      "width": 0,
+      "height": 0
+    },
+    "Allied Fleet Reinfrocement Schedule": {
+      "image": "30.6 Commonwealth Fleet Reinfrocement Schedule.png",
+      "width": 0,
+      "height": 0
+    },
+    "Allied Land Unit Reinf Schedule": {
+      "image": "Allied Land Unit Reinf Schedule.png",
+      "width": 0,
+      "height": 0
+    },
+    "Axis Aircraft Withdrawal Schedule": {
+      "image": "Axis Aircraft Withdrawal Schedule.png",
+      "width": 0,
+      "height": 0
+    },
+    "Axis Control": {
+      "image": "axis control sheet.png",
+      "width": 0,
+      "height": 0
+    },
+    "Axis Land Unit Reinf Schedule": {
+      "image": "Axis Land Unit Reinf Schedule.png",
+      "width": 0,
+      "height": 0
+    },
+    "BR 10th Armoured Division": {
+      "image": "OC BR 10th Armoured Division.png",
+      "width": 0,
+      "height": 0
+    },
+    "BR 1st Armoured Division": {
+      "image": "OC BR 1st Armoured Division.png",
+      "width": 0,
+      "height": 0
+    },
+    "BR 1st Army Tank Brigade": {
+      "image": "OC BR 1st Army Tank Brigade.png",
+      "width": 0,
+      "height": 0
+    },
+    "BR 22nd Armoured Brigade": {
+      "image": "OC BR 22nd Armoured Brigade.png",
+      "width": 0,
+      "height": 0
+    },
+    "BR 22nd Guards Brigade (200th Guards Brigade)": {
+      "image": "OC BR 22nd Guards Brigade (200th Guards Brigade).png",
+      "width": 0,
+      "height": 0
+    },
+    "BR 2nd Armoured Division": {
+      "image": "OC BR 2nd Armoured Division.png",
+      "width": 0,
+      "height": 0
+    },
+    "BR 44th (Home Countries) Infantry Division": {
+      "image": "OC BR 44th (Home Countries) Infantry Division.png",
+      "width": 0,
+      "height": 0
+    },
+    "BR 50th (Northumbrian) Infantry Division": {
+      "image": "OC BR 50th (Northumbrian) Infantry Division.png",
+      "width": 0,
+      "height": 0
+    },
+    "BR 51st Highland Division": {
+      "image": "OC BR 51st Highland Division.png",
+      "width": 0,
+      "height": 0
+    },
+    "BR 70th Infantry Division": {
+      "image": "OC BR 70th Infantry Division.png",
+      "width": 0,
+      "height": 0
+    },
+    "BR 7th Armoured Division": {
+      "image": "OC BR 7th Armoured Division-01.png",
+      "width": 0,
+      "height": 0
+    },
+    "BR 8th Armoured Division": {
+      "image": "OC BR 8th Armoured Division.png",
+      "width": 0,
+      "height": 0
+    },
+    "BR Selby Force - The Matruh Garrison": {
+      "image": "OC BR Selby Force - The Matruh Garrison.png",
+      "width": 0,
+      "height": 0
+    },
+    "BR Unassigned Air units": {
+      "image": "OC BR Unassigned Air units.png",
+      "width": 0,
+      "height": 0
+    },
+    "BR Unassigned Anti-Tank Regiments": {
+      "image": "OC BR Unassigned Anti-Tank Regiments.png",
+      "width": 0,
+      "height": 0
+    },
+    "BR Unassigned Armor-Class Units": {
+      "image": "OC BR Unassigned Armor-Class Units.png",
+      "width": 0,
+      "height": 0
+    },
+    "BR Unassigned Artillery Units": {
+      "image": "OC BR Unassigned Artillery Units.png",
+      "width": 0,
+      "height": 0
+    },
+    "BR Unassigned Infantry-Type Units": {
+      "image": "OC BR Unassigned Infantry-Type Units.png",
+      "width": 0,
+      "height": 0
+    },
+    "CNA Original": {
+      "image": "CNA Map Vassal Mitch Guthrie 2021.png",
+      "width": 0,
+      "height": 0
+    },
+    "Comm Control": {
+      "image": "COMM control sheet.png",
+      "width": 0,
+      "height": 0
+    },
+    "GE 15th Panzer Division": {
+      "image": "OC GE 15th Panzer Division.png",
+      "width": 0,
+      "height": 0
+    },
+    "GE 164th Light Afrika Division": {
+      "image": "OC GE 164th Light Afrika Division.png",
+      "width": 0,
+      "height": 0
+    },
+    "GE 300th Oasis Battalion": {
+      "image": "OC GE 300th Oasis Battalion.png",
+      "width": 0,
+      "height": 0
+    },
+    "GE 5th Light Panzer Division": {
+      "image": "OC GE 5th Light Panzer Division-01.png",
+      "width": 0,
+      "height": 0
+    },
+    "GE 90th Light (The Afrika) Division": {
+      "image": "OC GE 90th Light (The Afrika) Division.png",
+      "width": 0,
+      "height": 0
+    },
+    "GE Fallschirmjaeger-Battalion Ramcke": {
+      "image": "GE Fallschirmjaeger-Battalion Ramcke.png",
+      "width": 0,
+      "height": 0
+    },
+    "GE Kampfgruppe HQs": {
+      "image": "OC GE Kampfgruppe HQs-01.png",
+      "width": 0,
+      "height": 0
+    },
+    "GE Misc": {
+      "image": "",
+      "width": 800,
+      "height": 500
+    },
+    "GE Non-Divisional Artillery Units": {
+      "image": "OC GE Non-Divisional Artillery Units.png",
+      "width": 0,
+      "height": 0
+    },
+    "GE SGSU": {
+      "image": "",
+      "width": 800,
+      "height": 800
+    },
+    "GE Sonderverband 288": {
+      "image": "OC GE Sonderverband 288.png",
+      "width": 0,
+      "height": 0
+    },
+    "GE Unassigned Air Units": {
+      "image": "GE Unassigned Air Units.png",
+      "width": 0,
+      "height": 0
+    },
+    "GE Unassigned Infantry Units": {
+      "image": "OC GE Unassigned Infantry Units.png",
+      "width": 0,
+      "height": 0
+    },
+    "IN 10th Indian Division": {
+      "image": "OC IN 10th Indian Division.png",
+      "width": 0,
+      "height": 0
+    },
+    "IN 161st Indian Motor Brigade": {
+      "image": "OC IN 161st Indian Motor Brigade.png",
+      "width": 0,
+      "height": 0
+    },
+    "IN 18th Indian Brigade": {
+      "image": "OC IN 18th Indian Brigade.png",
+      "width": 0,
+      "height": 0
+    },
+    "IN 3rd Indian Motorized Brigade": {
+      "image": "IN 3rd Indian Motorized Brigade-01.png",
+      "width": 0,
+      "height": 0
+    },
+    "IN 4th Indian Division": {
+      "image": "OC IN 4th Indian Division.png",
+      "width": 0,
+      "height": 0
+    },
+    "IN 5th Indian Division": {
+      "image": "OC IN 5th Indian Division.png",
+      "width": 0,
+      "height": 0
+    },
+    "IN Unassigned Indian Units": {
+      "image": "OC IN Unassigned Indian Units.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT 101st Trieste Divisione Fanteria Moroizzate": {
+      "image": "OC IT 101st Trieste Divisione Fanteria Moroizzate.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT 102nd Trento Divisione Fanteria Moiruzzate": {
+      "image": "OC IT 102nd Trento Divisione Fanteria Moiruzzate.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT 132nd Ariete Divisione Corazzata (Armored)": {
+      "image": "OC IT 132nd Ariete Divisione Corazzata (Armored).png",
+      "width": 0,
+      "height": 0
+    },
+    "IT 133rd Littoria Divisione Corazzata (Armored)": {
+      "image": "OC IT 133rd Littoria Divisione Corazzata (Armored).png",
+      "width": 0,
+      "height": 0
+    },
+    "IT 136th Giovani Fascisti Divisione Fanteria": {
+      "image": "OC IT 136th Giovani Fascisti Divisione Fanteria.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT 16th Pistoia Division": {
+      "image": "OC IT 16th Pistoia Division.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT 17th Pavia Division": {
+      "image": "OC IT 17th Pavia Division.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT 185th Folgore Division": {
+      "image": "OC IT 185th Folgore Division.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT 1st CCNN (23 March) Division": {
+      "image": "IT 1st CCNN (23 March) Division.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT 1st Libyan Infantry Division (Sibille)": {
+      "image": "IT 1st Libyan Infantry Division (Sibille).png",
+      "width": 0,
+      "height": 0
+    },
+    "IT 25th Bolgna Division": {
+      "image": "OC IT 25th Bolgna Division.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT 27th Brescia DIvision": {
+      "image": "OC IT 27th Brescia DIvision.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT 2nd CCNN (28 October) Division": {
+      "image": "OC IT 2nd CCNN (28 October) Division-01.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT 2nd Libyan (Prescatori) Infantry Division": {
+      "image": "OC IT 2nd Libyan (Prescatori) Infantry Division.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT 3rd CCNN (21 April) Division": {
+      "image": "OC 3rd CCNN (21 April) Division.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT 4th CCNN (3 January) Division": {
+      "image": "OC IT 4th CCNN (3 January) Division-01.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT 55th Savona DIvision": {
+      "image": "OC IT 55th Savona DIvision.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT 60th Sabratha Division": {
+      "image": "OC IT 60th Sabratha Division.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT 61st Sirte Division": {
+      "image": "OC IT 61st Sirte Division.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT 62nd Marmarica Division": {
+      "image": "OC IT 62nd Marmarica Division.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT 63rd Cirene Division": {
+      "image": "OC IT 63rd Cirene Division.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT 64th Catanzaro Division": {
+      "image": "OC IT 64th Catanzaro Division.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT Bardia Garrison": {
+      "image": "OC IT Bardia Garrison.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT Battlegroups": {
+      "image": "OC IT Battlegroups.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT Benghazi Garrison": {
+      "image": "OC IT Benghazi Garrison.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT Derna Garrison": {
+      "image": "OC IT Derna Garrison.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT Giariabub Oasis Complex Garrison": {
+      "image": "OC IT Giariabub Oasis Complex Garrison.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT Gruppo Maletti": {
+      "image": "OC IT Gruppo Maletti.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT Minor Garrison Units": {
+      "image": "OC IT Minor Garrison Units.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT Misc": {
+      "image": "",
+      "width": 500,
+      "height": 500
+    },
+    "IT Raggruppamento Esplorante del Corp Di Manovra": {
+      "image": "OC IT Raggruppamento Esplorante del Corp Di Manovra.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT SGSU": {
+      "image": "",
+      "width": 800,
+      "height": 500
+    },
+    "IT The Libyan Tank Command": {
+      "image": "OC IT The Libyan Tank Command.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT The Sahara Detachment": {
+      "image": "OC IT The Sahara Detachment.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT Tobruk Garrison": {
+      "image": "OC IT Tobruk Garrison.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT Unassigned Armored Units": {
+      "image": "OC IT Unassigned Armored Units.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT Unassigned Blackshirt Units": {
+      "image": "OC IT Unassigned Blackshirt Units-01.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT Unassigned Gun Units": {
+      "image": "OC IT Unassigned Gun Units-01.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT Unassigned Infantry and Recon Units": {
+      "image": "OC IT Unassigned Infantry and Recon Units.png",
+      "width": 0,
+      "height": 0
+    },
+    "IT Unassigned Units without a Parent Formation": {
+      "image": "OC IT Unassigned Units without a Parent Formation.png",
+      "width": 0,
+      "height": 0
+    },
+    "NZ 2nd New Zealand Division": {
+      "image": "OC NZ 2nd New Zealand Division.png",
+      "width": 0,
+      "height": 0
+    },
+    "NZ Unassigned Newzealand Units": {
+      "image": "OC NZ Unassigned Newzealand Units.png",
+      "width": 0,
+      "height": 0
+    },
+    "SA 1st South African Infantry Division": {
+      "image": "OC SA 1st South African Infantry Division.png",
+      "width": 0,
+      "height": 0
+    },
+    "SA 2nd South African Infantry Division": {
+      "image": "OC SA 2nd South African Infantry Division.png",
+      "width": 0,
+      "height": 0
+    },
+    "SA Unassigned South African Units": {
+      "image": "OC SA Unassigned South African Units.png",
+      "width": 0,
+      "height": 0
+    }
+  },
+  "hex_labeled_zones": {},
+  "location_to_hex": {
+    "OC 0101": {
+      "hex_id": "C0101",
+      "section": "C",
+      "col": 1,
+      "row": 1
+    },
+    "OC 0102": {
+      "hex_id": "C0102",
+      "section": "C",
+      "col": 1,
+      "row": 2
+    },
+    "OC 0103": {
+      "hex_id": "C0103",
+      "section": "C",
+      "col": 1,
+      "row": 3
+    },
+    "OC 0104": {
+      "hex_id": "C0104",
+      "section": "C",
+      "col": 1,
+      "row": 4
+    },
+    "OC 0105": {
+      "hex_id": "C0105",
+      "section": "C",
+      "col": 1,
+      "row": 5
+    },
+    "OC 0106": {
+      "hex_id": "C0106",
+      "section": "C",
+      "col": 1,
+      "row": 6
+    },
+    "OC 0107": {
+      "hex_id": "C0107",
+      "section": "C",
+      "col": 1,
+      "row": 7
+    },
+    "OC 0108": {
+      "hex_id": "C0108",
+      "section": "C",
+      "col": 1,
+      "row": 8
+    },
+    "OC 0109": {
+      "hex_id": "C0109",
+      "section": "C",
+      "col": 1,
+      "row": 9
+    },
+    "OC 0110": {
+      "hex_id": "C0110",
+      "section": "C",
+      "col": 1,
+      "row": 10
+    },
+    "OC 0111": {
+      "hex_id": "C0111",
+      "section": "C",
+      "col": 1,
+      "row": 11
+    },
+    "OC 0112": {
+      "hex_id": "C0112",
+      "section": "C",
+      "col": 1,
+      "row": 12
+    },
+    "OC 0113": {
+      "hex_id": "C0113",
+      "section": "C",
+      "col": 1,
+      "row": 13
+    },
+    "OC 0114": {
+      "hex_id": "C0114",
+      "section": "C",
+      "col": 1,
+      "row": 14
+    },
+    "OC 0115": {
+      "hex_id": "C0115",
+      "section": "C",
+      "col": 1,
+      "row": 15
+    },
+    "OC 0116": {
+      "hex_id": "C0116",
+      "section": "C",
+      "col": 1,
+      "row": 16
+    },
+    "OC 0117": {
+      "hex_id": "C0117",
+      "section": "C",
+      "col": 1,
+      "row": 17
+    },
+    "OC 0118": {
+      "hex_id": "C0118",
+      "section": "C",
+      "col": 1,
+      "row": 18
+    },
+    "OC 0119": {
+      "hex_id": "C0119",
+      "section": "C",
+      "col": 1,
+      "row": 19
+    },
+    "OC 0120": {
+      "hex_id": "C0120",
+      "section": "C",
+      "col": 1,
+      "row": 20
+    },
+    "OC 0121": {
+      "hex_id": "C0121",
+      "section": "C",
+      "col": 1,
+      "row": 21
+    },
+    "OC 0122": {
+      "hex_id": "C0122",
+      "section": "C",
+      "col": 1,
+      "row": 22
+    },
+    "OC 0123": {
+      "hex_id": "C0123",
+      "section": "C",
+      "col": 1,
+      "row": 23
+    },
+    "OC 0124": {
+      "hex_id": "C0124",
+      "section": "C",
+      "col": 1,
+      "row": 24
+    },
+    "OC 0125": {
+      "hex_id": "C0125",
+      "section": "C",
+      "col": 1,
+      "row": 25
+    },
+    "OC 0126": {
+      "hex_id": "C0126",
+      "section": "C",
+      "col": 1,
+      "row": 26
+    },
+    "OC 0127": {
+      "hex_id": "C0127",
+      "section": "C",
+      "col": 1,
+      "row": 27
+    },
+    "OC 0201": {
+      "hex_id": "C0201",
+      "section": "C",
+      "col": 2,
+      "row": 1
+    },
+    "OC 0202": {
+      "hex_id": "C0202",
+      "section": "C",
+      "col": 2,
+      "row": 2
+    },
+    "OC 0203": {
+      "hex_id": "C0203",
+      "section": "C",
+      "col": 2,
+      "row": 3
+    },
+    "OC 0204": {
+      "hex_id": "C0204",
+      "section": "C",
+      "col": 2,
+      "row": 4
+    },
+    "OC 0205": {
+      "hex_id": "C0205",
+      "section": "C",
+      "col": 2,
+      "row": 5
+    },
+    "OC 0206": {
+      "hex_id": "C0206",
+      "section": "C",
+      "col": 2,
+      "row": 6
+    },
+    "OC 0207": {
+      "hex_id": "C0207",
+      "section": "C",
+      "col": 2,
+      "row": 7
+    },
+    "OC 0208": {
+      "hex_id": "C0208",
+      "section": "C",
+      "col": 2,
+      "row": 8
+    },
+    "OC 0209": {
+      "hex_id": "C0209",
+      "section": "C",
+      "col": 2,
+      "row": 9
+    },
+    "OC 0301": {
+      "hex_id": "C0301",
+      "section": "C",
+      "col": 3,
+      "row": 1
+    },
+    "OC 0302": {
+      "hex_id": "C0302",
+      "section": "C",
+      "col": 3,
+      "row": 2
+    },
+    "OC 0303": {
+      "hex_id": "C0303",
+      "section": "C",
+      "col": 3,
+      "row": 3
+    },
+    "OC 0304": {
+      "hex_id": "C0304",
+      "section": "C",
+      "col": 3,
+      "row": 4
+    },
+    "OC 0305": {
+      "hex_id": "C0305",
+      "section": "C",
+      "col": 3,
+      "row": 5
+    },
+    "OC 0306": {
+      "hex_id": "C0306",
+      "section": "C",
+      "col": 3,
+      "row": 6
+    },
+    "OC 0307": {
+      "hex_id": "C0307",
+      "section": "C",
+      "col": 3,
+      "row": 7
+    },
+    "OC 0308": {
+      "hex_id": "C0308",
+      "section": "C",
+      "col": 3,
+      "row": 8
+    },
+    "OC 0309": {
+      "hex_id": "C0309",
+      "section": "C",
+      "col": 3,
+      "row": 9
+    },
+    "OC 0401": {
+      "hex_id": "C0401",
+      "section": "C",
+      "col": 4,
+      "row": 1
+    },
+    "OC 0402": {
+      "hex_id": "C0402",
+      "section": "C",
+      "col": 4,
+      "row": 2
+    },
+    "OC 0403": {
+      "hex_id": "C0403",
+      "section": "C",
+      "col": 4,
+      "row": 3
+    },
+    "OC 0404": {
+      "hex_id": "C0404",
+      "section": "C",
+      "col": 4,
+      "row": 4
+    },
+    "OC 0405": {
+      "hex_id": "C0405",
+      "section": "C",
+      "col": 4,
+      "row": 5
+    },
+    "OC 0406": {
+      "hex_id": "C0406",
+      "section": "C",
+      "col": 4,
+      "row": 6
+    },
+    "OC 0407": {
+      "hex_id": "C0407",
+      "section": "C",
+      "col": 4,
+      "row": 7
+    },
+    "OC 0408": {
+      "hex_id": "C0408",
+      "section": "C",
+      "col": 4,
+      "row": 8
+    },
+    "OC 0501": {
+      "hex_id": "C0501",
+      "section": "C",
+      "col": 5,
+      "row": 1
+    },
+    "OC 0502": {
+      "hex_id": "C0502",
+      "section": "C",
+      "col": 5,
+      "row": 2
+    },
+    "OC 0503": {
+      "hex_id": "C0503",
+      "section": "C",
+      "col": 5,
+      "row": 3
+    },
+    "OC 0504": {
+      "hex_id": "C0504",
+      "section": "C",
+      "col": 5,
+      "row": 4
+    },
+    "OC 0601": {
+      "hex_id": "C0601",
+      "section": "C",
+      "col": 6,
+      "row": 1
+    },
+    "OC 0602": {
+      "hex_id": "C0602",
+      "section": "C",
+      "col": 6,
+      "row": 2
+    },
+    "OC 0603": {
+      "hex_id": "C0603",
+      "section": "C",
+      "col": 6,
+      "row": 3
+    },
+    "OC 0604": {
+      "hex_id": "C0604",
+      "section": "C",
+      "col": 6,
+      "row": 4
+    },
+    "OC 0605": {
+      "hex_id": "C0605",
+      "section": "C",
+      "col": 6,
+      "row": 5
+    },
+    "OC 0606": {
+      "hex_id": "C0606",
+      "section": "C",
+      "col": 6,
+      "row": 6
+    },
+    "OC 0607": {
+      "hex_id": "C0607",
+      "section": "C",
+      "col": 6,
+      "row": 7
+    },
+    "OC 0701": {
+      "hex_id": "C0701",
+      "section": "C",
+      "col": 7,
+      "row": 1
+    },
+    "OC 0702": {
+      "hex_id": "C0702",
+      "section": "C",
+      "col": 7,
+      "row": 2
+    },
+    "OC 0703": {
+      "hex_id": "C0703",
+      "section": "C",
+      "col": 7,
+      "row": 3
+    },
+    "OC 0704": {
+      "hex_id": "C0704",
+      "section": "C",
+      "col": 7,
+      "row": 4
+    },
+    "OC 0706": {
+      "hex_id": "C0706",
+      "section": "C",
+      "col": 7,
+      "row": 6
+    },
+    "OC 0707": {
+      "hex_id": "C0707",
+      "section": "C",
+      "col": 7,
+      "row": 7
+    },
+    "OC 0708": {
+      "hex_id": "C0708",
+      "section": "C",
+      "col": 7,
+      "row": 8
+    },
+    "OC 0801": {
+      "hex_id": "C0801",
+      "section": "C",
+      "col": 8,
+      "row": 1
+    },
+    "OC 0901": {
+      "hex_id": "C0901",
+      "section": "C",
+      "col": 9,
+      "row": 1
+    },
+    "OC 0214": {
+      "hex_id": "C0214",
+      "section": "C",
+      "col": 2,
+      "row": 14
+    },
+    "OC 0215": {
+      "hex_id": "C0215",
+      "section": "C",
+      "col": 2,
+      "row": 15
+    },
+    "OC 0216": {
+      "hex_id": "C0216",
+      "section": "C",
+      "col": 2,
+      "row": 16
+    },
+    "OC 0217": {
+      "hex_id": "C0217",
+      "section": "C",
+      "col": 2,
+      "row": 17
+    },
+    "OC 0218": {
+      "hex_id": "C0218",
+      "section": "C",
+      "col": 2,
+      "row": 18
+    },
+    "OC 0219": {
+      "hex_id": "C0219",
+      "section": "C",
+      "col": 2,
+      "row": 19
+    },
+    "OC 0220": {
+      "hex_id": "C0220",
+      "section": "C",
+      "col": 2,
+      "row": 20
+    },
+    "OC 0211": {
+      "hex_id": "C0211",
+      "section": "C",
+      "col": 2,
+      "row": 11
+    },
+    "OC 0212": {
+      "hex_id": "C0212",
+      "section": "C",
+      "col": 2,
+      "row": 12
+    },
+    "OC 0213": {
+      "hex_id": "C0213",
+      "section": "C",
+      "col": 2,
+      "row": 13
+    },
+    "OC 0505": {
+      "hex_id": "C0505",
+      "section": "C",
+      "col": 5,
+      "row": 5
+    },
+    "OC 0506": {
+      "hex_id": "C0506",
+      "section": "C",
+      "col": 5,
+      "row": 6
+    },
+    "OC 0705": {
+      "hex_id": "C0705",
+      "section": "C",
+      "col": 7,
+      "row": 5
+    },
+    "OC 0802": {
+      "hex_id": "C0802",
+      "section": "C",
+      "col": 8,
+      "row": 2
+    },
+    "OC 0803": {
+      "hex_id": "C0803",
+      "section": "C",
+      "col": 8,
+      "row": 3
+    },
+    "OC 0804": {
+      "hex_id": "C0804",
+      "section": "C",
+      "col": 8,
+      "row": 4
+    },
+    "OC 0805": {
+      "hex_id": "C0805",
+      "section": "C",
+      "col": 8,
+      "row": 5
+    },
+    "OC 0902": {
+      "hex_id": "C0902",
+      "section": "C",
+      "col": 9,
+      "row": 2
+    },
+    "OC 0903": {
+      "hex_id": "C0903",
+      "section": "C",
+      "col": 9,
+      "row": 3
+    },
+    "OC 0904": {
+      "hex_id": "C0904",
+      "section": "C",
+      "col": 9,
+      "row": 4
+    }
+  },
+  "pixel_to_hex_formula": {
+    "col": "round((px - x0) / dx) + 1",
+    "row_odd_col": "round((py - y0) / dy) + 1",
+    "row_even_col": "round((py - y0 - dy/2) / dy) + 1"
+  },
+  "sample_hex_centers": {
+    "0101": {
+      "x": -15.0,
+      "y": 4.0
+    },
+    "0102": {
+      "x": -15.0,
+      "y": 89.25
+    },
+    "0103": {
+      "x": -15.0,
+      "y": 174.5
+    },
+    "0104": {
+      "x": -15.0,
+      "y": 259.75
+    },
+    "0105": {
+      "x": -15.0,
+      "y": 345.0
+    },
+    "0106": {
+      "x": -15.0,
+      "y": 430.25
+    },
+    "0107": {
+      "x": -15.0,
+      "y": 515.5
+    },
+    "0108": {
+      "x": -15.0,
+      "y": 600.75
+    },
+    "0109": {
+      "x": -15.0,
+      "y": 686.0
+    },
+    "0201": {
+      "x": 57.95,
+      "y": 46.62
+    },
+    "0202": {
+      "x": 57.95,
+      "y": 131.88
+    },
+    "0203": {
+      "x": 57.95,
+      "y": 217.12
+    },
+    "0204": {
+      "x": 57.95,
+      "y": 302.38
+    },
+    "0205": {
+      "x": 57.95,
+      "y": 387.62
+    },
+    "0206": {
+      "x": 57.95,
+      "y": 472.88
+    },
+    "0207": {
+      "x": 57.95,
+      "y": 558.12
+    },
+    "0208": {
+      "x": 57.95,
+      "y": 643.38
+    },
+    "0209": {
+      "x": 57.95,
+      "y": 728.62
+    },
+    "0301": {
+      "x": 130.9,
+      "y": 4.0
+    },
+    "0302": {
+      "x": 130.9,
+      "y": 89.25
+    },
+    "0303": {
+      "x": 130.9,
+      "y": 174.5
+    },
+    "0304": {
+      "x": 130.9,
+      "y": 259.75
+    },
+    "0305": {
+      "x": 130.9,
+      "y": 345.0
+    },
+    "0306": {
+      "x": 130.9,
+      "y": 430.25
+    },
+    "0307": {
+      "x": 130.9,
+      "y": 515.5
+    },
+    "0308": {
+      "x": 130.9,
+      "y": 600.75
+    },
+    "0309": {
+      "x": 130.9,
+      "y": 686.0
+    },
+    "0401": {
+      "x": 203.85,
+      "y": 46.62
+    },
+    "0402": {
+      "x": 203.85,
+      "y": 131.88
+    },
+    "0403": {
+      "x": 203.85,
+      "y": 217.12
+    },
+    "0404": {
+      "x": 203.85,
+      "y": 302.38
+    },
+    "0405": {
+      "x": 203.85,
+      "y": 387.62
+    },
+    "0406": {
+      "x": 203.85,
+      "y": 472.88
+    },
+    "0407": {
+      "x": 203.85,
+      "y": 558.12
+    },
+    "0408": {
+      "x": 203.85,
+      "y": 643.38
+    },
+    "0409": {
+      "x": 203.85,
+      "y": 728.62
+    },
+    "0501": {
+      "x": 276.8,
+      "y": 4.0
+    },
+    "0502": {
+      "x": 276.8,
+      "y": 89.25
+    },
+    "0503": {
+      "x": 276.8,
+      "y": 174.5
+    },
+    "0504": {
+      "x": 276.8,
+      "y": 259.75
+    },
+    "0505": {
+      "x": 276.8,
+      "y": 345.0
+    },
+    "0506": {
+      "x": 276.8,
+      "y": 430.25
+    },
+    "0507": {
+      "x": 276.8,
+      "y": 515.5
+    },
+    "0508": {
+      "x": 276.8,
+      "y": 600.75
+    },
+    "0509": {
+      "x": 276.8,
+      "y": 686.0
+    },
+    "0601": {
+      "x": 349.75,
+      "y": 46.62
+    },
+    "0602": {
+      "x": 349.75,
+      "y": 131.88
+    },
+    "0603": {
+      "x": 349.75,
+      "y": 217.12
+    },
+    "0604": {
+      "x": 349.75,
+      "y": 302.38
+    },
+    "0605": {
+      "x": 349.75,
+      "y": 387.62
+    },
+    "0606": {
+      "x": 349.75,
+      "y": 472.88
+    },
+    "0607": {
+      "x": 349.75,
+      "y": 558.12
+    },
+    "0608": {
+      "x": 349.75,
+      "y": 643.38
+    },
+    "0609": {
+      "x": 349.75,
+      "y": 728.62
+    },
+    "0701": {
+      "x": 422.7,
+      "y": 4.0
+    },
+    "0702": {
+      "x": 422.7,
+      "y": 89.25
+    },
+    "0703": {
+      "x": 422.7,
+      "y": 174.5
+    },
+    "0704": {
+      "x": 422.7,
+      "y": 259.75
+    },
+    "0705": {
+      "x": 422.7,
+      "y": 345.0
+    },
+    "0706": {
+      "x": 422.7,
+      "y": 430.25
+    },
+    "0707": {
+      "x": 422.7,
+      "y": 515.5
+    },
+    "0708": {
+      "x": 422.7,
+      "y": 600.75
+    },
+    "0709": {
+      "x": 422.7,
+      "y": 686.0
+    },
+    "0801": {
+      "x": 495.65,
+      "y": 46.62
+    },
+    "0802": {
+      "x": 495.65,
+      "y": 131.88
+    },
+    "0803": {
+      "x": 495.65,
+      "y": 217.12
+    },
+    "0804": {
+      "x": 495.65,
+      "y": 302.38
+    },
+    "0805": {
+      "x": 495.65,
+      "y": 387.62
+    },
+    "0806": {
+      "x": 495.65,
+      "y": 472.88
+    },
+    "0807": {
+      "x": 495.65,
+      "y": 558.12
+    },
+    "0808": {
+      "x": 495.65,
+      "y": 643.38
+    },
+    "0809": {
+      "x": 495.65,
+      "y": 728.62
+    },
+    "0901": {
+      "x": 568.6,
+      "y": 4.0
+    },
+    "0902": {
+      "x": 568.6,
+      "y": 89.25
+    },
+    "0903": {
+      "x": 568.6,
+      "y": 174.5
+    },
+    "0904": {
+      "x": 568.6,
+      "y": 259.75
+    },
+    "0905": {
+      "x": 568.6,
+      "y": 345.0
+    },
+    "0906": {
+      "x": 568.6,
+      "y": 430.25
+    },
+    "0907": {
+      "x": 568.6,
+      "y": 515.5
+    },
+    "0908": {
+      "x": 568.6,
+      "y": 600.75
+    },
+    "0909": {
+      "x": 568.6,
+      "y": 686.0
+    }
+  }
+}

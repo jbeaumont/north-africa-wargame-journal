@@ -1,0 +1,302 @@
+{
+  "_meta": {
+    "generated_by": "oracle-agent",
+    "date": "2026-03-07",
+    "rules_source": "data/rules/cna_rules.txt",
+    "rule_sections": ["15.2", "15.25", "15.28", "15.3", "15.4", "15.5", "15.7", "15.8", "15.82", "15.87", "15.88", "15.9"],
+    "table_status": "DEFERRED — Close Assault Results Table (15.79) not yet extracted from PDF. Differential calculation and loss mechanics are fully tested; table lookup is stubbed."
+  },
+  "probe_detection_cases": [
+    {
+      "description": "Rule 15.25: attacker commits exactly 50% — full Close Assault",
+      "rule_ref": "15.25",
+      "attacker_available_toe": 7,
+      "attacker_committed_toe": 4,
+      "expected_is_probe": false,
+      "note": "15.25: must commit at least 50% (3.5 rounds up to 4) for full assault. 4 of 7 = 57% >= 50%."
+    },
+    {
+      "description": "Rule 15.25 example: 7 TOE, 2 to hex A + 1 to hex B = 3/7 = 43% — Probe",
+      "rule_ref": "15.25",
+      "attacker_available_toe": 7,
+      "attacker_committed_toe": 3,
+      "expected_is_probe": true,
+      "note": "15.25 example: 3 of 7 < 50% → both assaults become Probes."
+    },
+    {
+      "description": "Rule 15.25 counter-example: 3 of 7 to hex A = 43% → Probe",
+      "rule_ref": "15.25",
+      "attacker_available_toe": 7,
+      "attacker_committed_toe": 3,
+      "expected_is_probe": true
+    }
+  ],
+  "combined_arms_cases": [
+    {
+      "description": "Rule 15.4: 2 tank TOE (CA rating 7 each) with zero infantry — 2 unsupported",
+      "rule_ref": "15.4",
+      "tank_toe": 2,
+      "infantry_toe": 0,
+      "tank_ca_rating": 7,
+      "expected_raw_points": 14,
+      "expected_actual_reduction": 1,
+      "expected_actual_points": 13,
+      "note": "15.4: 2 unsupported tanks → within 1-3 range → reduce Actual by 1. Actual = Raw - reduction = 14 - 1 = 13. Rule text: 'for every one to three TOE Strength Points of unsupported tanks, the Actual Close Assault Strength of the tanks is reduced by one'."
+    },
+    {
+      "description": "Rule 15.4 text example: 2 tank TOE, each CA rating 7, zero infantry → 'Actual Close Assault Strength is reduced to zero'",
+      "rule_ref": "15.4",
+      "tank_toe": 2,
+      "infantry_toe": 0,
+      "tank_ca_rating": 7,
+      "expected_actual_reduction": 1,
+      "note": "Rule text says '2 TOE Points of tanks, each with CA rating of 7 are assaulting unsupported, the Actual CA Strength is reduced to zero.' This means reduction = 14 (not just 1). AUDIT NOTE: this contradicts the '1-3 unsupported = -1' formula. The rule text example may mean that 2 tank TOE × 7 = 14 raw points, but ALL is reduced, which is the max(-4) cap or a special case. Actual formula: per 1-3 unsupported tanks → -1 actual; max reduction = 4. But the example says 14 → 0... FLAG for manual PDF re-read."
+    },
+    {
+      "description": "Rule 15.4: 4 unsupported tank TOE → reduce Actual by 2 (4/3 rounds up = 2)",
+      "rule_ref": "15.4",
+      "tank_toe": 4,
+      "infantry_toe": 0,
+      "tank_ca_rating": 5,
+      "expected_raw_points": 20,
+      "expected_actual_reduction": 2,
+      "expected_actual_points": 18,
+      "note": "4 unsupported tanks: 4 / 3 = 1.33 → rounds up to 2. But rule says 'per 1-3 → -1', so for 4 it would be -2 (ceil(4/3)). Max cap = 4."
+    },
+    {
+      "description": "Rule 15.4: tanks fully supported (equal infantry) — no reduction",
+      "rule_ref": "15.4",
+      "tank_toe": 3,
+      "infantry_toe": 3,
+      "tank_ca_rating": 6,
+      "expected_actual_reduction": 0,
+      "note": "3 tank TOE + 3 infantry TOE = fully supported. No reduction."
+    },
+    {
+      "description": "Rule 15.4: max reduction cap is 4 Actual points",
+      "rule_ref": "15.4",
+      "tank_toe": 15,
+      "infantry_toe": 0,
+      "tank_ca_rating": 5,
+      "expected_actual_reduction": 4,
+      "note": "15 unsupported tanks / 3 = 5 reductions, but 'in no case may the reduction be more than four Actual Assault Points.'"
+    }
+  ],
+  "small_force_cases": [
+    {
+      "description": "Rule 15.28: attacker has 3 Raw Points (<5) → treated as 0",
+      "rule_ref": "15.28",
+      "attacker_raw": 3,
+      "defender_raw": 12,
+      "expected_attacker_effective_raw": 0,
+      "note": "15.28: 'if one Player has fewer than 5 Raw Assault Points, he is considered to have zero Close Assault Points'"
+    },
+    {
+      "description": "Rule 15.28: both players have <10 Raw Points → use Raw as Actual",
+      "rule_ref": "15.28",
+      "attacker_raw": 8,
+      "defender_raw": 6,
+      "expected_use_raw_as_actual": true,
+      "note": "15.28: 'If each Player has fewer than 10 Raw Strength Points, the Raw Assault Strength Points are used as if they were Actual Assault Strength Points'"
+    }
+  ],
+  "differential_cases": [
+    {
+      "description": "Basic differential from example in rule 15.26",
+      "rule_ref": "15.26",
+      "attacker_actual": 6,
+      "defender_actual": 8,
+      "expected_basic_differential": -2,
+      "note": "15.26: Basic Assault Differential = Attacker Actual - Defender Actual = 6 - 8 = -2"
+    },
+    {
+      "description": "2x raw strength bonus: rule 15.51 example",
+      "rule_ref": "15.51",
+      "attacker_raw": 24,
+      "defender_raw": 12,
+      "attacker_actual": 2,
+      "defender_actual": 1,
+      "expected_basic_differential": 1,
+      "two_x_bonus_applies": true,
+      "expected_column_shift_from_2x": 2,
+      "note": "15.51 example: 24 Raw vs 12 Raw → 2:1 ratio → +2 column bonus. Basic diff = 2-1 = +1, then +2 cols → resolves at +3 column."
+    }
+  ],
+  "org_size_adjustment_cases": [
+    {
+      "description": "Rule 15.53: Division (larger) vs Battalion (smaller) → +4 column shift",
+      "rule_ref": "15.53",
+      "larger_side_unit_size": "division",
+      "smaller_side_unit_size": "battalion",
+      "expected_column_shift": 4
+    },
+    {
+      "description": "Rule 15.53: Brigade vs Battalion → +2 column shift",
+      "rule_ref": "15.53",
+      "larger_side_unit_size": "brigade",
+      "smaller_side_unit_size": "battalion",
+      "expected_column_shift": 2
+    },
+    {
+      "description": "Rule 15.53: Battalion vs Company → +2 column shift",
+      "rule_ref": "15.53",
+      "larger_side_unit_size": "battalion",
+      "smaller_side_unit_size": "company",
+      "expected_column_shift": 2
+    },
+    {
+      "description": "Rule 15.52: equal sizes — no column shift",
+      "rule_ref": "15.52",
+      "larger_side_unit_size": "battalion",
+      "smaller_side_unit_size": "battalion",
+      "expected_column_shift": 0
+    },
+    {
+      "description": "Rule 15.53: Brigade vs Company → +4 column shift",
+      "rule_ref": "15.53",
+      "larger_side_unit_size": "brigade",
+      "smaller_side_unit_size": "company",
+      "expected_column_shift": 4
+    }
+  ],
+  "loss_calculation_cases": [
+    {
+      "description": "Rule 15.83c: Attacker rounds up, Defender rounds down",
+      "rule_ref": "15.83c",
+      "loss_pct": 35,
+      "raw_points": 87,
+      "is_attacker": true,
+      "expected_raw_loss": 31,
+      "note": "35% × 87 = 30.45 → attacker rounds UP → 31"
+    },
+    {
+      "description": "Rule 15.83c: Defender rounds down for same input",
+      "rule_ref": "15.83c",
+      "loss_pct": 35,
+      "raw_points": 87,
+      "is_attacker": false,
+      "expected_raw_loss": 30,
+      "note": "35% × 87 = 30.45 → defender rounds DOWN → 30"
+    },
+    {
+      "description": "Rule 15.77 Overrun: all Defender losses round up",
+      "rule_ref": "15.77",
+      "loss_pct": 35,
+      "raw_points": 87,
+      "is_attacker": false,
+      "is_overrun": true,
+      "expected_raw_loss": 31,
+      "note": "In overrun, defender also rounds up. 35% × 87 = 30.45 → rounds UP → 31"
+    }
+  ],
+  "dp_cases": [
+    {
+      "description": "Rule 15.87: attacker loses 30%+ of committed TOE → 3 DP",
+      "rule_ref": "15.87",
+      "raw_losses": 30,
+      "raw_committed": 90,
+      "loss_pct_actual": 33.3,
+      "expected_dp": 3,
+      "note": "30/90 = 33.3% >= 30% → 3 DP"
+    },
+    {
+      "description": "Rule 15.87: exactly 30% → 3 DP",
+      "rule_ref": "15.87",
+      "raw_losses": 30,
+      "raw_committed": 100,
+      "loss_pct_actual": 30.0,
+      "expected_dp": 3
+    },
+    {
+      "description": "Rule 15.87: 29% losses → 0 DP from this rule",
+      "rule_ref": "15.87",
+      "raw_losses": 29,
+      "raw_committed": 100,
+      "loss_pct_actual": 29.0,
+      "expected_dp": 0,
+      "note": "Less than 30% — no DP from combat losses. (DP still earned from exceeding CPA per rule 6.21.)"
+    },
+    {
+      "description": "Rule 6.21: exceeding CPA earns 1 DP per CP over",
+      "rule_ref": "6.21",
+      "cp_used": 18,
+      "cpa": 15,
+      "expected_dp": 3,
+      "note": "18 CP used vs CPA 15 → 3 CP over → 3 DP"
+    }
+  ],
+  "auto_surrender_cases": [
+    {
+      "description": "Rule 15.88: cohesion <= -17 AND assaulted → auto-surrender",
+      "rule_ref": "15.88",
+      "cohesion": -17,
+      "out_of_ammo": false,
+      "is_assaulted": true,
+      "expected_auto_surrender": true,
+      "note": "15.88: 'units out of Ammunition or with a -17 or worse Cohesion Level that are assaulted automatically Surrender'"
+    },
+    {
+      "description": "Rule 15.88: out of ammo AND assaulted → auto-surrender",
+      "rule_ref": "15.88",
+      "cohesion": 0,
+      "out_of_ammo": true,
+      "is_assaulted": true,
+      "expected_auto_surrender": true
+    },
+    {
+      "description": "Rule 15.88: cohesion -16 (not -17), in supply → no auto-surrender",
+      "rule_ref": "15.88",
+      "cohesion": -16,
+      "out_of_ammo": false,
+      "is_assaulted": true,
+      "expected_auto_surrender": false
+    }
+  ],
+  "retreat_cases": [
+    {
+      "description": "Rule 15.82: 2-hex retreat, unit retreats only 1 hex → 10% extra loss",
+      "rule_ref": "15.82",
+      "retreat_hexes_required": 2,
+      "retreat_hexes_taken": 1,
+      "raw_points": 50,
+      "loss_pct_from_table": 10,
+      "expected_total_loss_pct": 20,
+      "note": "15.82: 1 hex not retreated × 10% = +10% loss. Total = table 10% + 10% = 20%."
+    },
+    {
+      "description": "Rule 15.82: unit in major city may ignore retreat",
+      "rule_ref": "15.82",
+      "retreat_hexes_required": 3,
+      "in_major_city": true,
+      "expected_retreat_optional": true
+    }
+  ],
+  "no_defender_case": {
+    "description": "Rule 15.29: defender allocates no units → auto 3-hex retreat + 3 DP",
+    "rule_ref": "15.29",
+    "defender_committed_toe": 0,
+    "expected_auto_retreat_hexes": 3,
+    "expected_dp": 3,
+    "note": "15.29: 'allocates no units to an Assault all his units in that hex automatically retreat three hexes and earn three Disorganization Points'"
+  },
+  "dice_read_cases": [
+    {
+      "description": "Rule 15.73a: two dice (3,4) read sequentially larger-first = 43",
+      "rule_ref": "15.73a",
+      "die1": 3,
+      "die2": 4,
+      "expected_sequential": "43",
+      "expected_sum": 7,
+      "note": "15.73a: '2 on the large die and a 5 on the small die would be a 25'. Larger die first."
+    },
+    {
+      "description": "Rule 15.73b: dice added for Engaged/Retreat check",
+      "rule_ref": "15.73b",
+      "die1": 3,
+      "die2": 4,
+      "expected_sequential": "43",
+      "expected_sum": 7,
+      "note": "15.73b: same roll, now use sum (3+4=7) for Engaged/Retreat check."
+    }
+  ]
+}

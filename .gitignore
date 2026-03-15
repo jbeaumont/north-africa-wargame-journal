@@ -1,0 +1,21 @@
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.env
+.venv
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Generated turn output (written by tests and the turn loop)
+turns/
+memory/
+
+# Journal entries are committed — they're the deliverable
+# journal/ is NOT ignored

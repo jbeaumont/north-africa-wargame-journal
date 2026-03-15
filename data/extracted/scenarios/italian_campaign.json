@@ -1,0 +1,532 @@
+{
+  "_meta": {
+    "source": "The Campaign for North Africa (SPI, 1979) — Scenario Group One, Case 60.0",
+    "source_pages": "78-79 (PDF text layer)",
+    "extraction_date": "2026-03-01",
+    "rules_mode": "land_and_logistics",
+    "notes": [
+      "Scenario Group One contains two playable sub-scenarios sharing the same setup.",
+      "Supply quantities from Case 60.34 (Axis) and 60.44 (Commonwealth) — full Logistics Game.",
+      "OCR artifacts corrected: '©1000' → 1000, '13714' → 'D3714', '1D3612' → 'D3612'.",
+      "Air forces stubbed — land game only for MVP."
+    ]
+  },
+
+  "scenario": {
+    "name": "The Italian Campaign",
+    "scenario_group": 1,
+    "rule": "60.0",
+    "description": "The opening of the North African campaign. Italy's 10th Army under Graziani invades Egypt, advances to Sidi Barrani, then halts. O'Connor's Operation Compass counter-offensive follows, destroying the 10th Army.",
+    "sub_scenarios": [
+      {
+        "id": "grazianis_offensive",
+        "name": "Graziani's Offensive",
+        "rule": "60.21",
+        "start": {"game_turn": 1, "opstage": 1, "historical_date": "1940-09-09"},
+        "end": {"game_turn": 6, "opstage": 3, "historical_date": "1940-10-20"},
+        "estimated_play_hours": "25-50",
+        "victory_conditions_rule": "60.81"
+      },
+      {
+        "id": "italian_campaign",
+        "name": "The Italian Campaign",
+        "rule": "60.23",
+        "start": {"game_turn": 1, "opstage": 1, "historical_date": "1940-09-09"},
+        "end": {"game_turn": 20, "opstage": 3, "historical_date": "1941-02-07"},
+        "estimated_play_hours": "90-150",
+        "description": "Includes Operation Compass (O'Connor's counteroffensive)",
+        "victory_conditions_rule": "60.82"
+      }
+    ],
+    "initiative_note": "Italian Player has Initiative for entire Game-Turn 1. From Game-Turn 2, players determine Initiative normally (60.6)."
+  },
+
+  "construction_state": {
+    "fortifications": "none",
+    "minefields": "none",
+    "pipeline": "none",
+    "railroad": {
+      "terminus": "D3714",
+      "note": "Railroad runs to Mersa Matruh and ends there"
+    },
+    "roads": "as printed on map",
+    "ports": {
+      "all_at_listed_efficiency_except": [
+        {"location": "C4807", "name": "Tobruk", "efficiency_level": 7, "note": "San Giorgio partially sunk, blocking harbor"}
+      ]
+    },
+    "repair_facilities": {
+      "axis": [
+        {"location": "off_map_tripoli", "name": "Tripoli", "type": "major"},
+        {"location": "C4807", "name": "Tobruk", "type": "temporary"},
+        {"location": "A4827", "name": "Benghazi", "type": "temporary"}
+      ],
+      "commonwealth": [
+        {"location": "E3613", "name": "Alexandria", "type": "major"},
+        {"location": "D3714", "name": "Mersa Matruh", "type": "temporary"}
+      ]
+    }
+  },
+
+  "axis": {
+    "land_units": [
+      {
+        "placement_type": "fixed",
+        "hex": "C4218",
+        "trucks": {"light": 10, "medium": 25, "heavy": 10},
+        "units": [{"name": "1st CCNN Division", "nationality": "italian", "size": "division", "type": "infantry", "org_flags": "I; Att: I(M) [T; Ar/LTC]"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "C4120",
+        "trucks": {"light": 0, "medium": 45, "heavy": 5},
+        "units": [{"name": "63rd Cirene Division", "nationality": "italian", "size": "division", "type": "infantry", "org_flags": "I; Att: LXIII(L) [T; Ar/LTC]"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "C4020",
+        "trucks": {"light": 10, "medium": 15, "heavy": 0},
+        "units": [{"name": "1st Libyan Division", "nationality": "italian", "size": "division", "type": "infantry"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "C3920",
+        "trucks": {"light": 15, "medium": 15, "heavy": 0},
+        "units": [{"name": "2nd Libyan Division", "nationality": "italian", "size": "division", "type": "infantry", "org_flags": "I; Att: IX(L) [T; Tvl/LTC]"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "C3919",
+        "trucks": {"light": 0, "medium": 5, "heavy": 5},
+        "units": [{"name": "Aresca Regiment", "nationality": "italian", "size": "regiment", "type": "recce", "org_flags": "T; LTC; Det: all except XX"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "C3918",
+        "trucks": {"light": 0, "medium": 40, "heavy": 5},
+        "units": [{"name": "62nd Marmarcia Division", "nationality": "italian", "size": "division", "type": "infantry", "org_flags": "I; Att: LXII(L) [T; Ar/LTC]"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "C3617",
+        "trucks": {"light": 5, "medium": 30, "heavy": 5},
+        "units": [{"name": "Maletti Division", "nationality": "italian", "size": "division", "type": "infantry", "org_flags": "I; Att: II(M) [T, Tvl/LTC]"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "C4707",
+        "trucks": {"light": 0, "medium": 30, "heavy": 5},
+        "units": [{"name": "64th Catanzaro Division", "nationality": "italian", "size": "division", "type": "infantry"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "C4507",
+        "trucks": {"light": 10, "medium": 25, "heavy": 10},
+        "units": [{"name": "4th CCNN Division", "nationality": "italian", "size": "division", "type": "infantry"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "C4321",
+        "trucks": {"light": 0, "medium": 20, "heavy": 0},
+        "units": [
+          {"name": "Trivoli Regiment", "nationality": "italian", "size": "regiment", "type": "infantry", "org_flags": "T; LTC; Det: II(QMW) and IX(L)"},
+          {"name": "Bardia Garrison", "nationality": "italian", "size": "garrison", "type": "infantry"}
+        ]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "C4807",
+        "trucks": {"light": 0, "medium": 5, "heavy": 0},
+        "units": [
+          {"name": "HQ Libyan Tank Command", "nationality": "italian", "size": "hq", "type": "hq"},
+          {"name": "Tobruk Garrison", "nationality": "italian", "size": "garrison", "type": "infantry"}
+        ]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "A4827",
+        "units": [{"name": "Benghazi Garrison", "nationality": "italian", "size": "garrison", "type": "infantry"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "B5504",
+        "trucks": {"light": 0, "medium": 5, "heavy": 0},
+        "units": [{"name": "Libyan Parachute Regiment", "nationality": "italian", "size": "regiment", "type": "infantry"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "B5925",
+        "units": [{"name": "Derna Garrison", "nationality": "italian", "size": "garrison", "type": "infantry"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "B4921",
+        "units": [{"name": "Mechili Garrison", "nationality": "italian", "size": "garrison", "type": "infantry"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "C1014",
+        "units": [{"name": "Giarabub Garrison", "nationality": "italian", "size": "garrison", "type": "infantry"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "C3419",
+        "units": [{"name": "Scheferzen Garrison", "nationality": "italian", "size": "garrison", "type": "infantry"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "C3019",
+        "units": [{"name": "Fort Maddalena Garrison", "nationality": "italian", "size": "garrison", "type": "infantry"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "C1715",
+        "units": [{"name": "el Grein Garrison", "nationality": "italian", "size": "garrison", "type": "infantry"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "A4829",
+        "units": [{"name": "Benina Garrison", "nationality": "italian", "size": "garrison", "type": "infantry"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "A4130",
+        "units": [
+          {"name": "Soluch Garrison", "nationality": "italian", "size": "garrison", "type": "infantry"},
+          {"name": "X Company (Armor)", "nationality": "italian", "size": "company", "type": "armor"}
+        ]
+      },
+      {
+        "placement_type": "flexible",
+        "placement_area": "Anywhere in Libya",
+        "units": [
+          {"name": "1/1st Raggruppamento Artiglieria", "nationality": "italian", "size": "battalion", "type": "artillery"},
+          {"name": "2/1st Raggruppamento Artiglieria", "nationality": "italian", "size": "battalion", "type": "artillery"},
+          {"name": "3/1st Raggruppamento Artiglieria", "nationality": "italian", "size": "battalion", "type": "artillery"},
+          {"name": "4/1st Raggruppamento Artiglieria", "nationality": "italian", "size": "battalion", "type": "artillery"},
+          {"name": "XXI Corps", "nationality": "italian", "size": "hq", "type": "hq"},
+          {"name": "XXVI Corps", "nationality": "italian", "size": "hq", "type": "hq"}
+        ]
+      },
+      {
+        "placement_type": "within_n_hexes",
+        "placement_center": "C0716",
+        "placement_radius": 3,
+        "trucks": {"light": 5, "medium": 0, "heavy": 0},
+        "units": [{"name": "Saharan Detachment", "nationality": "italian", "size": "battalion", "type": "infantry"}]
+      },
+      {
+        "placement_type": "flexible",
+        "placement_area": "Anywhere on Map A or B",
+        "units": [
+          {"name": "18th Libyan Division", "nationality": "italian", "size": "division", "type": "infantry"},
+          {"name": "32nd Libyan Division", "nationality": "italian", "size": "division", "type": "infantry"},
+          {"name": "147th Artillery Group", "nationality": "italian", "size": "battalion", "type": "artillery"},
+          {"name": "131st Artillery Group", "nationality": "italian", "size": "battalion", "type": "artillery"},
+          {"name": "2/24th Artillery", "nationality": "italian", "size": "battalion", "type": "artillery"},
+          {"name": "5/1st Artillery", "nationality": "italian", "size": "battalion", "type": "artillery"},
+          {"name": "6th GaF Artillery", "nationality": "italian", "size": "battalion", "type": "artillery"},
+          {"name": "16th GaF Artillery", "nationality": "italian", "size": "battalion", "type": "artillery"},
+          {"name": "22nd GaF Artillery", "nationality": "italian", "size": "battalion", "type": "artillery"},
+          {"name": "42nd GaF Artillery", "nationality": "italian", "size": "battalion", "type": "artillery"},
+          {"name": "350th GaF Artillery Regiment", "nationality": "italian", "size": "regiment", "type": "artillery"}
+        ]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "off_map_tripoli",
+        "units": [
+          {"name": "2nd CCNN Division", "nationality": "italian", "size": "division", "type": "infantry"},
+          {"name": "3rd CCNN Division", "nationality": "italian", "size": "division", "type": "infantry"},
+          {"name": "XXII Corps (Armor)", "nationality": "italian", "size": "hq", "type": "hq"},
+          {"name": "XXIII Corps (Armor)", "nationality": "italian", "size": "hq", "type": "hq"}
+        ]
+      },
+      {
+        "placement_type": "flexible",
+        "placement_area": "Tripolitania",
+        "units": [{"name": "4/10th Army", "nationality": "italian", "size": "division", "type": "infantry"}]
+      }
+    ],
+
+    "supply_dumps": {
+      "fixed": [
+        {"location": "C4807", "name": "Tobruk", "ammo": 200, "fuel": 2000, "stores": 500, "water": null},
+        {"location": "C4321", "name": "Bardia", "ammo": 100, "fuel": 1000, "stores": 200, "water": null},
+        {"location": "A4827", "name": "Benghazi", "ammo": 100, "fuel": 250, "stores": 100, "water": null},
+        {"location": "B5925", "name": "Derna", "ammo": null, "fuel": 250, "stores": 50, "water": null},
+        {"location": "off_map_tripoli", "name": "Tripoli", "ammo": 250, "fuel": 5000, "stores": 250, "water": null},
+        {"location": "C0716", "ammo": 100, "fuel": 50, "stores": 50, "water": null}
+      ],
+      "flexible": {
+        "dumps": [
+          {
+            "id": "Dump 1",
+            "ammo": 1000, "fuel": 1500, "stores": 1500, "water": 200,
+            "placement_constraint": "Any hex on map section C in Libya, not within 4 hexes of a Commonwealth unit"
+          },
+          {
+            "id": "Dump 2",
+            "ammo": 1000, "fuel": 1500, "stores": 1000, "water": 200,
+            "placement_constraint": "Any hex on map section C in Libya, not within 4 hexes of a Commonwealth unit"
+          }
+        ],
+        "dummy_dumps": 2,
+        "dummy_placement_rule": "Same constraint as Dumps 1 and 2"
+      },
+      "airfield_supplement": {
+        "total": {"ammo": 1200, "fuel": 850, "stores": 100, "water": 100},
+        "note": "Freely distributed among Axis airfields"
+      }
+    },
+
+    "convoy_trucks": {
+      "distribution": [
+        {"area": "Tripoli", "light": 25, "medium": 140, "heavy": 40},
+        {"area": "Anywhere in Libya", "light": 30, "medium": 100, "heavy": 25},
+        {"area": "Any Air Facility", "light": 10, "medium": 50, "heavy": 0}
+      ]
+    },
+
+    "air": {
+      "_note": "Deferred — land game only for MVP. Full data in PDF rule 60.32.",
+      "planes_summary": {
+        "CR 42": {"available": 65, "refitted": 25},
+        "CR 32": {"available": 70, "refitted": 28},
+        "Ba 65": {"available": 10, "refitted": 2},
+        "Ba 88": {"available": 24, "refitted": 6},
+        "SM 79": {"available": 133, "refitted": 35},
+        "SM 81": {"available": 17, "refitted": 4},
+        "Ca 309": {"available": 56, "refitted": 12},
+        "Ro 37bis": {"available": 10, "refitted": 6},
+        "Z 801": {"available": 9, "refitted": 9}
+      },
+      "pilots": {"Three": 3, "Two": 10, "One": 15},
+      "sgsu_available": 39,
+      "note": "No planes start in Italy/Sicily. Crete unavailable (still British). No refitting until GT1/OS2."
+    }
+  },
+
+  "commonwealth": {
+    "land_units": [
+      {
+        "placement_type": "fixed",
+        "hex": "C4131",
+        "trucks": {"light": 0, "medium": 10, "heavy": 0},
+        "units": [
+          {"name": "2nd Scots Guards", "nationality": "british", "size": "battalion", "type": "infantry"},
+          {"name": "31st Field Artillery Regiment", "nationality": "indian", "size": "regiment", "type": "artillery", "org_flags": "4 In"}
+        ]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "C3926",
+        "trucks": {"light": 0, "medium": 2, "heavy": 0},
+        "units": [{"name": "1st Company French Motor Marines", "nationality": "french", "size": "company", "type": "infantry"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "C3922",
+        "trucks": {"light": 0, "medium": 15, "heavy": 5},
+        "units": [
+          {"name": "3rd Coldstream Guards", "nationality": "british", "size": "battalion", "type": "infantry"},
+          {"name": "1st Kings Royal Rifle Corps", "nationality": "british", "size": "battalion", "type": "infantry", "org_flags": "I; 7Spt/7"},
+          {"name": "4th RHA", "nationality": "british", "size": "regiment", "type": "artillery", "org_flags": "7 Spt/7"},
+          {"name": "7th Medium Artillery Regiment", "nationality": "british", "size": "regiment", "type": "artillery"}
+        ]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "C3721",
+        "trucks": {"light": 5, "medium": 5, "heavy": 0},
+        "units": [
+          {"name": "1st Royal Northumberland Fusiliers", "nationality": "british", "size": "battalion", "type": "infantry"},
+          {"name": "3rd RHA", "nationality": "british", "size": "regiment", "type": "artillery", "org_flags": "AT; 7Spt/7"}
+        ]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "C3520",
+        "trucks": {"light": 0, "medium": 5, "heavy": 0},
+        "units": [{"name": "1st RTR", "nationality": "british", "size": "regiment", "type": "armor", "org_flags": "7/7"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "C3320",
+        "trucks": {"light": 0, "medium": 10, "heavy": 0},
+        "units": [{"name": "2nd Rifle Brigade", "nationality": "british", "size": "battalion", "type": "infantry", "org_flags": "I; 7Spt/7"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "C3020",
+        "trucks": {"light": 0, "medium": 3, "heavy": 0},
+        "units": [{"name": "11th Hussars", "nationality": "british", "size": "regiment", "type": "recce", "org_flags": "R; 7Spt/7"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "D3714",
+        "trucks": {"light": 5, "medium": 15, "heavy": 5},
+        "units": [
+          {"name": "Matruh Garrison", "nationality": "british", "size": "garrison", "type": "infantry", "org_flags": "I; Att: 1st Essex [23/70], 1st Durham Light Infantry [23/70], 1st South Staffordshires"}
+        ]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "D3612",
+        "trucks": {"light": 5, "medium": 5, "heavy": 5},
+        "units": [{"name": "7th Armoured Division HQ", "nationality": "british", "size": "hq", "type": "hq", "org_flags": "Det: all 7th Armoured Div units listed above"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "D3615",
+        "trucks": {"light": 5, "medium": 20, "heavy": 2},
+        "units": [{"name": "4th Indian Division", "nationality": "indian", "size": "division", "type": "infantry", "org_flags": "Det: 31st Field Arty and 7th In Bde"}]
+      },
+      {
+        "placement_type": "fixed",
+        "hex": "E1829",
+        "trucks": {"light": 0, "medium": 20, "heavy": 0},
+        "units": [{"name": "16th Infantry Brigade", "nationality": "british", "size": "brigade", "type": "infantry", "org_flags": "70th Div"}]
+      },
+      {
+        "placement_type": "flexible",
+        "placement_area": "Alexandria (E3613 and/or E3714)",
+        "trucks": {"light": 10, "medium": 15, "heavy": 5},
+        "units": [
+          {"name": "HQ 2nd New Zealand Division", "nationality": "new_zealand", "size": "hq", "type": "hq"},
+          {"name": "4th New Zealand Brigade", "nationality": "new_zealand", "size": "brigade", "type": "infantry", "org_flags": "2 NZ"},
+          {"name": "27th NZ Machine Gun Battalion", "nationality": "new_zealand", "size": "battalion", "type": "infantry", "org_flags": "2 NZ"},
+          {"name": "2nd NZ Cavalry", "nationality": "new_zealand", "size": "regiment", "type": "recce", "org_flags": "2 NZ"},
+          {"name": "4th NZ Field Artillery Regiment", "nationality": "new_zealand", "size": "regiment", "type": "artillery", "org_flags": "2 NZ"}
+        ]
+      },
+      {
+        "placement_type": "flexible",
+        "placement_area": "Cairo and/or Helwan (E1430)",
+        "note": "In Training",
+        "units": [
+          {"name": "6th Australian Division", "nationality": "australian", "size": "division", "type": "infantry", "org_flags": "Less: 19th Aus Bde, 2/1A Field Arty, 2/2A Field Arty"}
+        ]
+      },
+      {
+        "placement_type": "flexible",
+        "placement_area": "Cairo",
+        "units": [
+          {"name": "8th Field Artillery Regiment", "nationality": "british", "size": "regiment", "type": "artillery"},
+          {"name": "1st Welch", "nationality": "british", "size": "battalion", "type": "infantry"},
+          {"name": "1st Cheshire MG Battalion", "nationality": "british", "size": "battalion", "type": "infantry"},
+          {"name": "2nd Kings Own Royal Regiment", "nationality": "british", "size": "battalion", "type": "infantry"}
+        ]
+      },
+      {
+        "placement_type": "flexible",
+        "placement_area": "Anywhere on Map D or E",
+        "units": [
+          {"name": "8th Medium Artillery Regiment", "nationality": "british", "size": "regiment", "type": "artillery"},
+          {"name": "65th Anti-Tank Regiment", "nationality": "british", "size": "regiment", "type": "anti_tank"},
+          {"name": "149th Anti-Tank Regiment", "nationality": "british", "size": "regiment", "type": "anti_tank"},
+          {"name": "9th Heavy AA Regiment", "nationality": "british", "size": "regiment", "type": "anti_aircraft"},
+          {"name": "15th Light AA Regiment", "nationality": "british", "size": "regiment", "type": "anti_aircraft"},
+          {"name": "57th Light AA Regiment", "nationality": "british", "size": "regiment", "type": "anti_aircraft"}
+        ]
+      }
+    ],
+
+    "tank_assignments": [
+      {
+        "note": "Broken-down vehicles in Alexandria at scenario start",
+        "location": "Alexandria",
+        "status": "broken_down",
+        "tanks": [
+          {"type": "A9 Cruiser", "toe_points": 2},
+          {"type": "A10 Cruiser", "toe_points": 1}
+        ]
+      }
+    ],
+
+    "supply_dumps": {
+      "fixed": [
+        {"location": "D3714", "name": "Mersa Matruh", "ammo": 1000, "fuel": 3000, "stores": 4000, "water": null},
+        {"location": "C4131", "name": "Sidi Barrani", "ammo": 250, "fuel": 500, "stores": 100, "water": null},
+        {"location": "E3613", "name": "Alexandria", "ammo_unlimited": true, "fuel_unlimited": true, "stores_unlimited": true, "water_unlimited": true},
+        {"location": "E2132", "name": "Cairo", "ammo_unlimited": true, "fuel_unlimited": true, "stores_unlimited": true, "water_unlimited": true}
+      ],
+      "flexible": {
+        "dumps": [
+          {
+            "id": "Dump 1",
+            "ammo": 500, "fuel": 750, "stores": 500,
+            "placement_constraint": "Anywhere in Egypt on map C or D"
+          }
+        ],
+        "dummy_dumps": 1,
+        "dummy_placement_rule": "Same constraint as Dump 1"
+      },
+      "air_supply": {
+        "ammo": 200, "fuel": 250, "stores": 50,
+        "note": "Distribute among Air Facilities as desired"
+      }
+    },
+
+    "convoy_trucks": {
+      "distribution": [
+        {"area": "Any hex in Cairo", "light": 0, "medium": 40, "heavy": 10},
+        {"area": "Alexandria", "light": 10, "medium": 20, "heavy": 0},
+        {"area": "Anywhere (maps A-E)", "light": 15, "medium": 40, "heavy": 5},
+        {"area": "Any Air Facility", "light": 5, "medium": 30, "heavy": 20}
+      ]
+    },
+
+    "air": {
+      "_note": "Deferred — land game only for MVP. Full data in PDF rule 60.42.",
+      "planes_summary": {
+        "Lysander": {"available": 12, "refitted": 8},
+        "Bombay": {"available": 15, "refitted": 12},
+        "Sunderland": {"available": 18, "refitted": 11},
+        "Blenheim Mk I": {"available": 26, "refitted": 18},
+        "Blenheim Mk IV": {"available": 12, "refitted": 12},
+        "Blenheim Mk IVF": {"available": 9, "refitted": 5},
+        "Gladiator": {"available": 36, "refitted": 30},
+        "Hurricane Mk I": {"available": 6, "refitted": 4},
+        "Morane 406": {"available": 4, "refitted": 2},
+        "Potez 63/11": {"available": 2, "refitted": 2},
+        "Valentia": {"available": 3, "refitted": 1}
+      },
+      "pilots": {"Three": 1, "Two": 5, "One": 8},
+      "sgsu_available": 14
+    },
+
+    "fleet": {
+      "_note": "Deferred. Deployed per Commonwealth Fleet Schedule (Section 30.0). Ships may not move until GT1/OS2 of GT2.",
+      "at_alexandria": {"battleships": 2, "cruisers": 2, "aa_cruisers": 4, "destroyers": 6},
+      "at_malta": {"cruisers": 1, "aa_cruisers": 1, "destroyers": 2}
+    }
+  },
+
+  "victory_conditions": {
+    "grazianis_offensive": {
+      "rule": "60.81",
+      "italian_strategic": "Take and hold Alexandria or Cairo with a supplied combat unit",
+      "italian_decisive": "Take and hold both Mersa Matruh and Siwa, supplied from Tobruk",
+      "italian_tactical": "Take and hold Sidi Barrani, retain Sollum, Fort Maddalena, and Giarabub in supply",
+      "commonwealth_tactical": "Take and hold Sollum, Halfaya Pass (C3922), and Siwa, supply traced to Alexandria/Cairo",
+      "commonwealth_decisive": "Take and hold Bardia, Fort Maddalena, Sidi Omar, Sollum, and Siwa",
+      "commonwealth_strategic": "Take and hold Tobruk"
+    },
+    "italian_campaign": {
+      "rule": "60.82",
+      "method": "Victory Points for holding locations with supplied combat units. Most points wins.",
+      "vp_table": [
+        {"location": "Mersa Matruh", "italian_vp": 100, "commonwealth_vp": 0},
+        {"location": "Tobruk", "italian_vp": 50, "commonwealth_vp": 25},
+        {"location": "Derna", "italian_vp": 20, "commonwealth_vp": 30},
+        {"location": "Giarabub", "italian_vp": 10, "commonwealth_vp": 10},
+        {"location": "Siwa (C0127)", "italian_vp": 10, "commonwealth_vp": 10},
+        {"location": "Benghazi", "italian_vp": 10, "commonwealth_vp": 50},
+        {"location": "Agadabia (A2629)", "italian_vp": 10, "commonwealth_vp": 50},
+        {"location": "Mersa Brega (A2021)", "italian_vp": 0, "commonwealth_vp": 50}
+      ],
+      "strategic_victory_condition": "If no Italian combat unit can trace a Supply Line on the game-map, Commonwealth wins a Strategic Victory"
+    }
+  }
+}

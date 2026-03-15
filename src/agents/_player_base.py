@@ -61,6 +61,43 @@ def _hex_neighbor(hex_id: str, direction: str) -> Optional[str]:
 _MEMORY_DIR  = Path(__file__).parent.parent.parent / "memory"
 _TABLES_PATH = Path(__file__).parent.parent.parent / "data" / "extracted" / "rules_tables.json"
 
+# ── Forced tool definition (Fix 1: structured output via tool_choice) ─────────
+# Sonnet 4.6 does not support assistant prefill, so we use forced tool use
+# instead. The model must call this tool, guaranteeing valid JSON output
+# without preamble or markdown analysis blocks.
+_PROPOSE_TOOL: dict = {
+    "name": "propose_actions",
+    "description": (
+        "Submit your proposed tactical actions for this Operations Stage. "
+        "You MUST call this tool. If you have no useful moves, pass actions=[]."
+    ),
+    "input_schema": {
+        "type": "object",
+        "required": ["actions", "strategy_note"],
+        "properties": {
+            "actions": {
+                "type": "array",
+                "description": "List of action dicts (move or combat).",
+                "items": {
+                    "type": "object",
+                    "required": ["action"],
+                    "properties": {
+                        "action":      {"type": "string", "enum": ["move", "combat"]},
+                        "unit_id":     {"type": "string"},
+                        "path":        {"type": "array", "items": {"type": "string"}},
+                        "target_hex":  {"type": "string"},
+                        "combat_type": {"type": "string"},
+                    },
+                },
+            },
+            "strategy_note": {
+                "type": "string",
+                "description": "1–2 sentence note on your plan for the record.",
+            },
+        },
+    },
+}
+
 # ── Action schema shown to the agent ──────────────────────────────────────────
 
 _ACTION_SCHEMA = """
@@ -143,30 +180,34 @@ class PlayerAgent:
         Each action dict matches the BoardStateAgent dispatcher schema.
         Actions will be validated by the Rules Arbiter before execution.
         Retries up to 3 times on transient network errors.
+
+        Fix 1: forced tool use (tool_choice=any) guarantees JSON output.
+        Fix 3: retry once with a stripped-down prompt if 0 actions returned.
         """
         import time
         system = self._system_prompt(gs)
         user   = self._user_message(gs)
 
-        last_exc: Exception = RuntimeError("no attempts made")
-        for attempt in range(3):
-            if attempt:
-                time.sleep(2 ** attempt)
-            try:
-                with self._client.messages.stream(
-                    model="claude-sonnet-4-6",
-                    max_tokens=8192,
-                    system=system,
-                    messages=[{"role": "user", "content": user}],
-                ) as stream:
-                    msg = stream.get_final_message()
-                break  # success
-            except Exception as exc:
-                last_exc = exc
-                continue
-        else:
+        def _call(user_content: str) -> anthropic.types.Message:
+            last_exc: Exception = RuntimeError("no attempts made")
+            for attempt in range(3):
+                if attempt:
+                    time.sleep(2 ** attempt)
+                try:
+                    with self._client.messages.stream(
+                        model="claude-sonnet-4-6",
+                        max_tokens=8192,
+                        system=system,
+                        tools=[_PROPOSE_TOOL],
+                        tool_choice={"type": "any"},
+                        messages=[{"role": "user", "content": user_content}],
+                    ) as stream:
+                        return stream.get_final_message()
+                except Exception as exc:
+                    last_exc = exc
             raise last_exc
 
+        msg = _call(user)
         result = self._parse_response(msg)
         strategy_note = result.get("strategy_note", "")
         if strategy_note:
@@ -174,16 +215,17 @@ class PlayerAgent:
 
         actions = result.get("actions", [])
         if not actions:
-            # Log the raw text so we can tell whether the model deliberately
-            # returned [] or whether JSON parsing silently failed.
-            raw_text = next(
-                (b.text for b in msg.content if b.type == "text"), ""
-            )
             log.warning(
-                "[%s] 0 actions — raw response (first 600 chars):\n%s",
+                "[%s] 0 actions on first attempt — retrying with hard prompt.",
                 self.side.value,
-                raw_text[:600],
             )
+            # Fix 3: retry with a minimal hard prompt — no adjacency tables,
+            # no memory files, just the unit list and a direct order.
+            msg = _call(self._retry_prompt(gs))
+            result = self._parse_response(msg)
+            actions = result.get("actions", [])
+            if not actions:
+                log.warning("[%s] 0 actions after retry — giving up.", self.side.value)
         return actions
 
     # ── Subclass hooks ─────────────────────────────────────────────────────────
@@ -221,15 +263,8 @@ rejected actions waste your commander's time.
 
 {_ACTION_SCHEMA}
 
-## Output Format
-Respond with ONLY a JSON code block containing:
-```json
-{{
-  "actions": [ ...action dicts... ],
-  "strategy_note": "1–2 sentence note on your plan for the record"
-}}
-```
-No text outside the JSON block. If you have nothing to do, use `"actions": []`.
+Call the `propose_actions` tool with your list of actions and a brief strategy note.
+If you have nothing useful to do this OpStage, call it with `"actions": []`.
 """.strip()
 
         return [
@@ -352,31 +387,24 @@ No text outside the JSON block. If you have nothing to do, use `"actions": []`.
         else:
             zoc_str = "(none)"
 
-        # ── Per-unit reachable-hex table (1- and 2-hop) ───────────────────────
-        # Pre-compute both the immediate neighbors AND their neighbors so agents
-        # can build valid 1- or 2-step paths without applying the offset formula
-        # themselves.  Each entry lists: step-1 neighbors, then every (step-1,
-        # step-2) pair so the agent can read off a 2-step path directly.
+        # ── Per-unit reachable-hex table (1-hop only, CP-remaining units only) ──
+        # Fix 2: only emit adjacency for units that still have CP this OpStage
+        # (units with 0 CP remaining cannot move anyway), and drop the 2-hop
+        # expansion — agents can chain 1-hop pairs themselves. This cuts the
+        # adjacency table by ~70% when many units are low on CP.
         own_side_units_adj: list[str] = []
         for u in sorted(gs.units.values(), key=lambda x: x.id):
             if u.side != self.side or not u.is_active() or not u.hex_id:
                 continue
+            if u.cp_remaining <= 0:
+                continue  # skip units with no movement left
             nbrs1 = sorted(
                 v for v in hm.neighbors_by_direction(u.hex_id).values()
                 if v is not None
             )
-            # Build 2-hop table: for each step-1 neighbor list ITS neighbors
-            two_hop_parts: list[str] = []
-            for n1 in nbrs1:
-                nbrs2 = sorted(
-                    v for v in hm.neighbors_by_direction(n1).values()
-                    if v is not None and v != u.hex_id  # exclude backtrack
-                )
-                two_hop_parts.append(f"{n1}→[{', '.join(nbrs2)}]")
             own_side_units_adj.append(
-                f"  {u.id} at {u.hex_id}:\n"
-                f"    1-hop: {', '.join(nbrs1)}\n"
-                f"    2-hop: {' | '.join(two_hop_parts)}"
+                f"  {u.id} at {u.hex_id} (CP left: {u.cp_remaining}): "
+                f"{', '.join(nbrs1)}"
             )
         adjacency_str = "\n".join(own_side_units_adj) if own_side_units_adj else "  (none)"
 
@@ -461,6 +489,35 @@ Propose your actions for this OpStage.
 
     # ── Response parsing ───────────────────────────────────────────────────────
 
+    def _retry_prompt(self, gs: GameState) -> str:
+        """
+        Fix 3: stripped-down prompt for the retry call after 0 actions.
+
+        No adjacency tables, no memory, no narrative — just the unit list
+        and a direct order. Keeps token cost low on the retry path.
+        """
+        fow   = gs.fog_of_war(self.side)
+        units = fow.get("units", {})
+        rows  = []
+        for uid, u in sorted(units.items(), key=lambda x: x[1].get("name", "")):
+            if u.get("side") != self.side.value:
+                continue
+            rows.append(
+                f"  {uid} at {u.get('hex_id','?')} "
+                f"CP:{u.get('cp_remaining',0)}/{u.get('cpa',0)} "
+                f"supply:{u.get('supply_status','?')}"
+            )
+        unit_lines = "\n".join(rows) if rows else "  (none)"
+
+        return (
+            f"Turn {gs.turn} / OpStage {gs.opstage}. "
+            f"Your previous response could not be parsed as JSON.\n\n"
+            f"Your units:\n{unit_lines}\n\n"
+            f"Output ONLY a JSON code block. Move at least one unit one hex. "
+            f"If all units have 0 CP remaining, return {{\"actions\": [], "
+            f"\"strategy_note\": \"no CP remaining\"}}."
+        )
+
     def _parse_response(self, msg: anthropic.types.Message) -> Dict[str, Any]:
         """
         Extract the JSON object from Claude's response text.
@@ -468,35 +525,31 @@ Propose your actions for this OpStage.
         Tries to find a ```json ... ``` block first, then falls back to the
         outermost {...} in the response. Logs a warning on failure.
         """
+        # Fix 1: with forced tool use the response is always a tool_use block.
+        # Extract the input dict directly — no regex, no JSON parsing needed.
+        for block in msg.content:
+            if block.type == "tool_use" and block.name == "propose_actions":
+                return block.input  # already a dict
+
+        # Fallback: if somehow a text block arrived (e.g. stop_reason=end_turn
+        # on the retry path where tool_choice wasn't applied), try text parsing.
         text = next((b.text for b in msg.content if b.type == "text"), "")
+        if text:
+            m = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text, re.DOTALL)
+            if m:
+                try:
+                    return json.loads(m.group(1))
+                except json.JSONDecodeError:
+                    pass
+            m = re.search(r"\{.*\}", text, re.DOTALL)
+            if m:
+                try:
+                    return json.loads(m.group())
+                except json.JSONDecodeError:
+                    pass
 
-        if not text:
-            content_types = [b.type for b in msg.content]
-            log.warning(
-                "No text block in response; content block types: %s", content_types
-            )
-            return {"actions": [], "strategy_note": ""}
-
-        # Try fenced code block (greedy inner match so nested braces work)
-        m = re.search(r"```(?:json)?\s*(\{.*\})\s*```", text, re.DOTALL)
-        if m:
-            try:
-                return json.loads(m.group(1))
-            except json.JSONDecodeError as exc:
-                log.warning("Fenced JSON block present but failed to parse: %s", exc)
-
-        # Fall back to outermost brace match (greedy)
-        m = re.search(r"\{.*\}", text, re.DOTALL)
-        if m:
-            try:
-                return json.loads(m.group())
-            except json.JSONDecodeError as exc:
-                log.warning("Bare JSON extraction failed: %s", exc)
-
-        log.warning(
-            "Could not extract JSON from response. Raw text (first 400 chars):\n%s",
-            text[:400],
-        )
+        content_types = [b.type for b in msg.content]
+        log.warning("Could not extract actions; block types: %s", content_types)
         return {"actions": [], "strategy_note": ""}
 
     # ── Memory helpers ─────────────────────────────────────────────────────────

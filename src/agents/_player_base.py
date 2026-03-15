@@ -78,8 +78,9 @@ Each element of the `actions` array must be one of:
 ```
 Rules:
 - path must start at the unit's current hex.
-- Every hex in the path MUST be a valid map hex (see "Valid Map Hexes" below).
-- Every consecutive pair of hexes MUST be adjacent — no skipping hexes.
+- Every consecutive pair must be ADJACENT (appear as neighbors in the grid above).
+  A two-row jump like C3424→C3426 is NOT adjacent and costs 999 CP.
+  Going from C3424 south two hexes requires two steps: C3424→C3425→C3426.
 - Total CP cost of all hexes entered must not exceed the unit's CPA.
 - Path must not pass through enemy-occupied hexes (unless attacking).
 - Motorized units cost ½ CP per hex on road hexsides.
@@ -335,13 +336,6 @@ No text outside the JSON block. If you have nothing to do, use `"actions": []`.
             else "  (none known in loaded map area)"
         )
 
-        # ── Valid hex list (off-map guard) ────────────────────────────────────
-        # The loaded map is sparse (not every coordinate is a playable hex).
-        # Paths that include hex IDs not in this set receive a 999-CP cost and
-        # are rejected.  Give agents the complete list so they never propose
-        # an off-map hex.
-        valid_hexes_str = ", ".join(sorted(gs.hexes.keys()))
-
         # ── Enemy ZOC hexes ───────────────────────────────────────────────────
         # Rule 8.14: a unit entering an enemy ZOC hex must STOP IMMEDIATELY.
         # Pre-compute the ZOC set so agents can see exactly which hexes are
@@ -357,6 +351,24 @@ No text outside the JSON block. If you have nothing to do, use `"actions": []`.
             zoc_str = ", ".join(sorted(zoc_set))
         else:
             zoc_str = "(none)"
+
+        # ── Per-unit legal next-hex list ──────────────────────────────────────
+        # Rather than exposing the raw offset algebra (confusing), pre-compute
+        # the 6 actual neighbors for every active friendly unit's current hex.
+        # Agents simply pick the best neighbor; they do NOT need to derive
+        # coordinates themselves.
+        own_side_units_adj: list[str] = []
+        for u in sorted(gs.units.values(), key=lambda x: x.id):
+            if u.side != self.side or not u.is_active() or not u.hex_id:
+                continue
+            nbrs = sorted(
+                v for v in hm.neighbors_by_direction(u.hex_id).values()
+                if v is not None
+            )
+            own_side_units_adj.append(
+                f"  {u.id} (at {u.hex_id}): neighbors = {', '.join(nbrs)}"
+            )
+        adjacency_str = "\n".join(own_side_units_adj) if own_side_units_adj else "  (none)"
 
         # ── OOS guidance ──────────────────────────────────────────────────────
         own_active = [u for u in units.values() if u.get("side") == self.side.value]
@@ -384,9 +396,25 @@ Turn {gs.turn} / OpStage {gs.opstage} / Weather: {gs.weather}
 ## Your Supply Dumps (move units toward these)
 {dump_str}
 
-## Valid Map Hexes (ONLY use hex IDs from this list in paths)
-{valid_hexes_str}
-Any hex ID NOT in the above list is off-map and costs 999 CP — the Arbiter will reject it.
+## Hex Grid — How to Build Valid Paths
+The board is a staggered-offset hex grid.  Hex IDs are <Section><Col:2d><Row:2d>
+(e.g. C3424 = section C, column 34, row 24).  The grid covers sections A–E,
+columns 01–60, rows 01–33.  Unoccupied hexes default to Desert (1 CP).
+
+CRITICAL: row numbers do NOT increase by 2 between adjacent hexes in the same column.
+  WRONG path: [C3424, C3426]  ← C3426 is NOT adjacent to C3424; this costs 999 CP.
+  RIGHT path:  [C3424, C3425, C3426]  ← two steps, each 1 row apart.
+
+Each hex has exactly 6 neighbors.  The offsets depend on column parity:
+  Even column (col % 2 == 0): N=(col,row-1) NE=(col+1,row) SE=(col+1,row+1)
+                               S=(col,row+1) SW=(col-1,row+1) NW=(col-1,row)
+  Odd  column (col % 2 == 1): N=(col,row-1) NE=(col+1,row-1) SE=(col+1,row)
+                               S=(col,row+1) SW=(col-1,row)   NW=(col-1,row-1)
+
+For your convenience, the valid neighbors of each of YOUR units' current hexes:
+{adjacency_str}
+Use ONLY these neighbor IDs as the next step from each unit's position.
+Building longer paths: apply the same offset rule at each intermediate hex.
 
 ## Impassable Hexes (DO NOT route through these)
 {impassable_str}

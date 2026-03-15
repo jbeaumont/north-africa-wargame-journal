@@ -107,8 +107,8 @@ class PlayerAgent:
             try:
                 with self._client.messages.stream(
                     model="claude-opus-4-6",
-                    max_tokens=4096,
-                    thinking={"type": "enabled", "budget_tokens": 2048},
+                    max_tokens=8192,
+                    thinking={"type": "adaptive"},
                     system=system,
                     messages=[{"role": "user", "content": user}],
                 ) as stream:

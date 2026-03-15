@@ -96,6 +96,12 @@ def _build_verdicts(
 
     # Step 3: fire arbiter API calls in parallel for those that need it.
     needs_arbiter = [i for i, (_, _, v) in enumerate(entries) if v is None]
+    n_precheck_approved = sum(1 for _, _, v in entries if v is not None and v.get("valid"))
+    n_precheck_rejected = sum(1 for _, _, v in entries if v is not None and not v.get("valid"))
+    log.info(
+        "Precheck: %d approved, %d rejected, %d → LLM arbiter",
+        n_precheck_approved, n_precheck_rejected, len(needs_arbiter),
+    )
 
     if needs_arbiter:
         n_workers = min(_ARBITER_MAX_WORKERS, len(needs_arbiter))

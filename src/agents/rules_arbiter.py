@@ -241,7 +241,7 @@ VALIDATION GUIDELINES for {action_type}:
 "  A hex cost of 999 means non-adjacent or impassable.  If ANY hex cost is 999, reject.",
 "  Otherwise, trust the engine values — do NOT re-derive costs from terrain names.",
 "- IMPORTANT: if your step-by-step analysis concludes that every rule is satisfied,",
-"  return {\"valid\": true}.  Never emit {\"valid\": false} after concluding the move is valid.",
+'  return {"valid": true}.  Never emit {"valid": false} after concluding the move is valid.',
 ]) if action_type == "move" else ""}
 
 {"COMBAT:" + chr(10) + chr(10).join([

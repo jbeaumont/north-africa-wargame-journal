@@ -204,9 +204,9 @@ the rules. You receive:
   2. Pre-computed context from the deterministic game engine. You must trust
      these values and must NOT recalculate them yourself.
 
-OUTPUT FORMAT (return ONLY valid JSON, nothing else):
-  If legal:   {{"valid": true}}
-  If illegal: {{"valid": false, "reason": "<concise explanation>", "rule_ref": "<rule number>"}}
+OUTPUT FORMAT — you MUST call the `verdict` tool with your decision.
+  If legal:   call verdict(valid=true)
+  If illegal: call verdict(valid=false, reason="<concise explanation>", rule_ref="<rule number>")
 
 The "rule_ref" field must cite the specific rule number from the rulebook that
 makes the action illegal (e.g. "8.14", "10.23").
@@ -254,8 +254,8 @@ VALIDATION GUIDELINES for {action_type}:
 "- ZOC combat requirements: units in enemy ZOC must attack that unit (rule 10.31).",
 ]) if action_type == "combat" else ""}
 
-Do not add commentary outside the JSON. Think carefully using the rules above, then
-output only the JSON verdict."""
+Think carefully using the rules above, then call the `verdict` tool with your decision.
+Do not emit any text outside the tool call."""
 
 
 # ── Mechanical pre-check (no LLM needed) ──────────────────────────────────────
@@ -440,42 +440,35 @@ def mechanical_precheck(action: Dict[str, Any], context: Dict[str, Any]) -> Opti
     return None  # unknown type: let arbiter handle
 
 
+# ── Forced tool definition (guarantees structured verdict, no text parsing) ────
+
+_VERDICT_TOOL: dict = {
+    "name": "verdict",
+    "description": "Submit your ruling on whether the action is legal under the CNA rules.",
+    "input_schema": {
+        "type": "object",
+        "required": ["valid"],
+        "properties": {
+            "valid": {
+                "type": "boolean",
+                "description": "True if the action is legal, False if illegal.",
+            },
+            "reason": {
+                "type": "string",
+                "description": "Concise explanation of why the action is illegal (omit if valid=true).",
+            },
+            "rule_ref": {
+                "type": "string",
+                "description": "The specific rule number that makes the action illegal, e.g. '8.14'.",
+            },
+        },
+    },
+}
+
 # ── Validation ─────────────────────────────────────────────────────────────────
 
 _FALLBACK_INVALID = {"valid": False, "reason": "Arbiter response could not be parsed as JSON.", "rule_ref": ""}
 _FALLBACK_ERROR   = {"valid": False, "reason": "Arbiter API call failed.", "rule_ref": ""}
-
-
-def _parse_verdict(text: str) -> dict:
-    """
-    Extract the JSON verdict from the model's response text.
-
-    Handles cases where the model wraps the JSON in a code block.
-    """
-    # Try direct parse first
-    text = text.strip()
-    try:
-        return json.loads(text)
-    except json.JSONDecodeError:
-        pass
-
-    # Try extracting from a markdown code block
-    code_block = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', text, re.DOTALL)
-    if code_block:
-        try:
-            return json.loads(code_block.group(1))
-        except json.JSONDecodeError:
-            pass
-
-    # Try finding a bare JSON object anywhere in the text
-    obj = re.search(r'\{[^{}]*"valid"[^{}]*\}', text, re.DOTALL)
-    if obj:
-        try:
-            return json.loads(obj.group(0))
-        except json.JSONDecodeError:
-            pass
-
-    return _FALLBACK_INVALID
 
 
 def validate_action(
@@ -522,27 +515,25 @@ def validate_action(
         "Respond with ONLY JSON. No text outside the JSON object."
     )
 
-    # Retry up to 2 extra times on parse failure or transient API error.
-    # Parse failures are rare but occur under parallel load (garbled JSON).
+    # Retry up to 2 extra times on transient API errors.
+    # tool_choice=any guarantees a tool_use block — no text parsing needed.
     # Exponential backoff: 1s, 2s.
     last_exc: Optional[Exception] = None
     for attempt in range(3):
         if attempt:
             time.sleep(2 ** (attempt - 1))  # 1s, 2s
         try:
-            # Use streaming with adaptive thinking; collect the final message.
-            # Opus + adaptive thinking is used here because the remaining
-            # actions that reach the arbiter (after mechanical_precheck) are
-            # genuine edge cases requiring real rules reasoning.
+            # Opus + adaptive thinking for genuine rules edge cases.
+            # tool_choice forces the model to call verdict() — no text parsing.
             with client.messages.stream(
                 model="claude-opus-4-6",
                 max_tokens=1024,
-                thinking={"type": "adaptive"},
+                tools=[_VERDICT_TOOL],
+                tool_choice={"type": "any"},
                 system=[
                     {
                         "type": "text",
                         "text": system_prompt,
-                        # Cache the large static system prompt across calls
                         "cache_control": {"type": "ephemeral"},
                     }
                 ],
@@ -550,21 +541,20 @@ def validate_action(
             ) as stream:
                 response = stream.get_final_message()
 
-            # Extract the text content block (thinking blocks are separate)
-            text_blocks = [b for b in response.content if b.type == "text"]
-            if not text_blocks:
-                last_exc = ValueError("No text block in arbiter response")
-                continue
+            # Extract the verdict from the tool_use block directly.
+            for block in response.content:
+                if block.type == "tool_use" and block.name == "verdict":
+                    inp = block.input
+                    if "valid" not in inp:
+                        break
+                    result = {"valid": bool(inp["valid"])}
+                    if not inp["valid"]:
+                        result["reason"]   = inp.get("reason", "Illegal (no reason given)")
+                        result["rule_ref"] = inp.get("rule_ref", "")
+                    return result
 
-            verdict = _parse_verdict(text_blocks[0].text)
-            # _parse_verdict returns _FALLBACK_INVALID on parse failure;
-            # check for that sentinel and retry rather than accepting a
-            # spurious rejection.
-            if verdict is _FALLBACK_INVALID:
-                last_exc = ValueError("Arbiter response could not be parsed as JSON")
-                continue
-
-            return verdict
+            last_exc = ValueError("No verdict tool call in arbiter response")
+            continue
 
         except anthropic.APIError as exc:
             last_exc = exc
